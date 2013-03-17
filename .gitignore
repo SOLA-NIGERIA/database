@@ -1,0 +1,12 @@
+# Subfolders to ignore
+logs/
+
+# Files to ignore 
+Thumbs.db
+thumbs.db
+*.log
+test-data/kano/*.sql
+test-data/kano/kano.7z
+
+#Ingore temporary vpp files
+*.vpp~*
