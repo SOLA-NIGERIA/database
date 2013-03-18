@@ -1,13 +1,11 @@
 ﻿  
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by Kano, Nigeria
+-- Remove layers from core SOLA that are not used by Ondo, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
 ---- Update existing layers to use correct sytles and item_order ----- 
 
--- Disable this map layer for the time being. LAA have requested 
--- orhtophotos, but this layer needs further configuration before
--- it is made availalbe.  
+-- Disable these map layers for the time being. 
 UPDATE system.config_map_layer
 SET item_order = 10, 
 	visible_in_start = FALSE,
@@ -34,13 +32,66 @@ SET item_order = 8,
 	active = FALSE
 WHERE "name" = 'roads';
 
-UPDATE system.config_map_layer
-SET style = 'parcel.xml', 
-    item_order = 30,
-    title = 'Parcels'
-WHERE "name" = 'parcels'; 
+-- Configure the new Navigation Layer
+ 
 
+-- Setup Spatial Config for Ondo, Nigeria
+-- CLEAR CADASTRE DATABASE TABLES
+DELETE FROM cadastre.spatial_value_area;
+DELETE FROM cadastre.spatial_unit;
+DELETE FROM cadastre.spatial_unit_historic;
+DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards');
 
+DELETE FROM cadastre.cadastre_object;
+DELETE FROM cadastre.cadastre_object_historic;
+-- Configure the Level data for Ondo, Nigeria
+-- add levels
+
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'LGA', 'all', 'polygon', 'mixed', 'test');
+
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Wards', 'all', 'polygon', 'mixed', 'test');
+
+--UPDATE system.config_map_layer
+
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards');
+
+INSERT INTO system.query(name, sql, description)
+    VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+
+INSERT INTO system.query(name, sql, description)
+    VALUES ('SpatialResult.getWards', 'select id, label, st_asewkb(geom) as the_geom from cadastre.wards where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Wards');
+
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards');
+
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
+
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('wards', 'Wards', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWards');
+
+--DROP VIEW cadastre.lga;
+
+CREATE OR REPLACE VIEW cadastre.lga AS 
+ SELECT su.id, su.label, su.geom
+   FROM cadastre.level l, cadastre.spatial_unit su
+  WHERE l.id::text = su.level_id::text AND l.name::text = 'LGA'::text;
+
+ALTER TABLE cadastre.lga
+  OWNER TO postgres;    
+
+--DROP VIEW cadastre.wards;
+
+CREATE OR REPLACE VIEW cadastre.wards AS 
+ SELECT su.id, su.label, su.geom
+   FROM cadastre.level l, cadastre.spatial_unit su
+  WHERE l.id::text = su.level_id::text AND l.name::text = 'Wards'::text;
+
+ALTER TABLE cadastre.wards
+  OWNER TO postgres; 
+     
 -- Name Translations
 --UPDATE system.config_map_layer SET title = 'Applications::::Talosaga' WHERE "name" = 'applications';
  
@@ -241,10 +292,6 @@ WHERE "name" = 'parcels';
 -- VALUES ('dynamic.informationtool.get_parcel_historic_current_ba', 5, 'the_geom', null); 
 -- Create Layers to be used by the SOLA for display
 	
--- Zones Layer --		
--- Remove any pre-existing data for the new navigation layer
-
-
  -- Add the necessary dynamic queries
 
 
@@ -252,81 +299,59 @@ WHERE "name" = 'parcels';
 
 
  
- -- Configure the new Navigation Layer
- 
-
--- Setup Spatial Config for Kano, Nigeria
--- CLEAR CADASTRE DATABASE TABLES
-DELETE FROM cadastre.spatial_value_area;
-DELETE FROM cadastre.spatial_unit;
-DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level;
-DELETE FROM cadastre.cadastre_object;
-DELETE FROM cadastre.cadastre_object_historic;
-
---SET NEW SRID and OTHER KANO PARAMETERS
-UPDATE public.geometry_columns SET srid = 32632; 
+ --SET NEW SRID and OTHER ONDO PARAMETERS
+UPDATE public.geometry_columns SET srid = 32631; 
 UPDATE application.application set location = null;
-UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '340000' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '1160000' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '533000' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '1390000' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '32631' WHERE "name" = 'map-srid'; 
+UPDATE system.setting SET vl = '-15000' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '650000' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '175000' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '862000' WHERE "name" = 'map-north'; 
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 ALTER TABLE cadastre.spatial_unit_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32632);
+ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32631);
 ALTER TABLE cadastre.spatial_unit_historic DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32632);
+ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32631);
 
 ALTER TABLE cadastre.cadastre_object DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32632);
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32631);
 ALTER TABLE cadastre.cadastre_object_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32632);
+ALTER TABLE cadastre.cadastre_object_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32631);
 
 ALTER TABLE cadastre.cadastre_object_target DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32632);
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32631);
 ALTER TABLE cadastre.cadastre_object_target_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_target_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32632);
+ALTER TABLE cadastre.cadastre_object_target_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32631);
 
 ALTER TABLE cadastre.cadastre_object_node_target DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 ALTER TABLE cadastre.cadastre_object_node_target_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.cadastre_object_node_target_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.cadastre_object_node_target_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 
 ALTER TABLE application.application DROP CONSTRAINT IF EXISTS enforce_srid_location;
-ALTER TABLE application.application ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32632);
+ALTER TABLE application.application ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32631);
 ALTER TABLE application.application_historic DROP CONSTRAINT IF EXISTS enforce_srid_location;
-ALTER TABLE application.application_historic ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32632);
+ALTER TABLE application.application_historic ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32631);
 
 ALTER TABLE cadastre.survey_point DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 ALTER TABLE cadastre.survey_point_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 
 ALTER TABLE cadastre.survey_point DROP CONSTRAINT IF EXISTS enforce_srid_original_geom;
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32632);
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32631);
 ALTER TABLE cadastre.survey_point_historic DROP CONSTRAINT IF EXISTS enforce_srid_original_geom;
-ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32632);
+ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32631);
 
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
+ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
 
--- Configure the Level data for Kano, Nigeria
--- add levels
--- Configure the Level data for Lesotho
--- add levels
-INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
-	VALUES (uuid_generate_v1(), 'LGA', 'all', 'polygon', 'mixed', 'test');
-
---INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
---	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
-			
 -- Create Views for each layer. Note that these views are not used by the application, but can be used
 -- from AtlasStyler to assist with layer styling. 
 -- Remove views that are not relevant to Lesotho
