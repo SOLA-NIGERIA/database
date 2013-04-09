@@ -1197,6 +1197,368 @@ COMMENT ON FUNCTION administrative.get_objections(
  namelastpart varchar
 ) IS '';
     
+-- Function administrative.getsysregstatus --
+CREATE OR REPLACE FUNCTION administrative.getsysregstatus(
+ fromdate varchar
+  , todate varchar
+  , namelastpart varchar
+) RETURNS SETOF record 
+AS $$
+DECLARE 
+
+       	block  			varchar;	
+       	appLodgedNoSP 		decimal:=0 ;	
+       	appLodgedSP   		decimal:=0 ;	
+       	SPnoApp 		decimal:=0 ;	
+       	appPendObj		decimal:=0 ;	
+       	appIncDoc		decimal:=0 ;	
+       	appPDisp		decimal:=0 ;	
+       	appCompPDispNoCert	decimal:=0 ;	
+       	appCertificate		decimal:=0 ;
+       	appPrLand		decimal:=0 ;	
+       	appPubLand		decimal:=0 ;	
+       	TotApp			decimal:=0 ;	
+       	TotSurvPar		decimal:=0 ;	
+
+
+
+      
+       rec     record;
+       sqlSt varchar;
+       statusFound boolean;
+       recToReturn record;
+
+        -- From Neil's email 9 march 2013
+	    -- STATUS REPORT
+		--Block	
+		--1. Total Number of Applications	
+		--2. No of Applications Lodged with Surveyed Parcel	
+		--3. No of Applications Lodged no Surveyed Parcel	     
+		--4. No of Surveyed Parcels with no application	
+		--5. No of Applications with pending Objection	        
+		--6. No of Applications with incomplete Documentation	
+		--7. No of Applications in Public Display	               
+		--8. No of Applications with Completed Public Display but Certificates not Issued	 
+		--9. No of Applications with Issued Certificate	
+		--10. No of Applications for Private Land	
+		--11. No of Applications for Public Land 	
+		--12. Total Number of Surveyed Parcels	
+
+    
+BEGIN  
+
+
+   sqlSt:= '';
+    
+    sqlSt:= 'select  bu.name_lastpart   as area
+                   FROM        application.application aa,
+			  application.service s,
+			  application.application_property ap,
+		          administrative.ba_unit bu
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = ''systematicRegn''::text
+			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+			    AND   aa.id::text = ap.application_id::text
+		
+    ';
+
+    --raise exception '%',sqlSt;
+       statusFound = false;
+
+    -- Loop through results
+    
+    FOR rec in EXECUTE sqlSt loop
+
+    
+    select        ( SELECT  
+		    count (distinct(aa.id)) 
+		    FROM  application.application aa,
+			  application.service s,
+			  administrative.ba_unit bu, 
+		          application.application_property ap
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = 'systematicRegn'::text
+                            AND   aa.id::text = ap.application_id::text
+			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+			    AND bu.name_lastpart = ''|| rec.area || ''
+			    AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          )
+			    ),
+
+		    (SELECT count (distinct(aa.id))
+		     FROM application.application aa,
+		     administrative.ba_unit bu, 
+		     administrative.ba_unit_contains_spatial_unit su, 
+		     application.application_property ap,
+		     application.service s
+			 WHERE 
+			 bu.id::text = su.ba_unit_id::text 
+			 AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+			 AND   aa.id::text = ap.application_id::text
+			 AND   s.request_type_code::text = 'systematicRegn'::text
+			 AND s.application_id = aa.id
+			 AND bu.name_lastpart = ''|| rec.area || ''
+			 AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          )),
+
+	          (SELECT count (*)
+	            FROM cadastre.cadastre_object co
+			    WHERE co.type_code='parcel'
+			    AND   co.id not in (SELECT su.spatial_unit_id FROM administrative.ba_unit_contains_spatial_unit su)
+			    AND co.name_lastpart = ''|| rec.area || ''
+	          ),
+
+                  (
+	          SELECT (COUNT(*)) 
+		   FROM  application.application aa, 
+		   application.service s,
+ 		   administrative.ba_unit bu, 
+		   application.application_property ap
+		  WHERE  s.application_id::text = aa.id::text 
+		  AND s.application_id::text in (select s.application_id 
+						 FROM application.service s
+						 where s.request_type_code::text = 'systematicRegn'::text
+						 ) 
+		  AND s.request_type_code::text = 'lodgeObjection'::text
+		  AND s.status_code::text != 'cancelled'::text
+		  AND   aa.id::text = ap.application_id::text
+		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+		  AND bu.name_lastpart = ''|| rec.area || ''
+		  AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          )
+		),
+
+		  ( WITH appSys AS 	(SELECT  
+		    distinct on (aa.id) aa.id as id
+		    FROM  application.application aa,
+			  application.service s,
+ 		          administrative.ba_unit bu, 
+		          application.application_property ap
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = 'systematicRegn'::text
+			    AND   aa.id::text = ap.application_id::text
+		            AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+		            AND bu.name_lastpart = ''|| rec.area || ''
+		            AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          )),
+		     sourceSys AS	
+		     (
+		     SELECT  DISTINCT (sc.id) FROM  application.application_uses_source a_s,
+							   source.source sc,
+							   appSys app
+						where sc.type_code='systematicRegn'
+						 and  sc.id = a_s.source_id
+						 and a_s.application_id=app.id
+						 AND  (
+						  (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+						   or
+						  (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+						  )
+						
+				)
+		      SELECT 	CASE 	WHEN (SELECT (SUM(1) IS NULL) FROM appSys) THEN 0
+				WHEN ((SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys) >= 0) THEN (SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys)
+				ELSE 0
+			END 
+				  ),
+     
+		  (select count(co.id)
+		    from cadastre.cadastre_object co, application.service s where s.request_type_code::text = 'systematicRegn'::text
+                    AND co.name_lastpart = ''|| rec.area || '' AND co.name_lastpart in (select ss.reference_nr 
+                                                        from   source.source ss 
+                                                        where  
+                                                        ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+                                                        AND 
+                                                        ss.expiration_date > now())
+                 ),
+
+                 (select count(co.id)
+                   from cadastre.cadastre_object co, application.service s, application.application aa
+                    where s.request_type_code::text = 'systematicRegn'::text
+					      AND s.application_id = aa.id
+					      AND co.name_lastpart = ''|| rec.area || '' 
+					      AND  co.name_lastpart in (select ss.reference_nr 
+									from   source.source ss 
+									where ss.type_code='publicNotification'
+									AND ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+                                                                        and ss.expiration_date <= now()
+                                                                        and ss.reference_nr not in (select ss.reference_nr 
+									from   source.source ss 
+									where ss.type_code='title')
+                                                                        )
+                                                  
+
+                 ),
+
+                 (select count(co.id)
+                   from cadastre.cadastre_object co, application.service s, application.application aa
+                    where s.request_type_code::text = 'systematicRegn'::text
+					      AND s.application_id = aa.id
+					      AND co.name_lastpart = ''|| rec.area || '' 
+					      AND  co.name_lastpart in (select ss.reference_nr 
+									from   source.source ss 
+									where ss.type_code='publicNotification'
+									AND ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+                                                                        and ss.expiration_date <= now()
+                                                                        and ss.reference_nr  in (select ss.reference_nr 
+									from   source.source ss 
+									where ss.type_code='title')
+                                                                        )
+                                                  
+
+                 ),
+		 (SELECT count (distinct (aa.id) )
+			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
+			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
+			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
+			administrative.rrr rrr, administrative.ba_unit bu
+			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
+			  AND sa.type_code::text = 'officialrec.area'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
+			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
+			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
+			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
+			  AND rrr.ba_unit_id::text = su.ba_unit_id::text
+			  AND co.name_lastpart = ''|| rec.area || '' 
+			  AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          )
+			  AND 
+			  (rrr.type_code::text = 'ownership'::text 
+			   OR rrr.type_code::text = 'apartment'::text 
+			   OR rrr.type_code::text = 'commonOwnership'::text 
+			   ) 
+			  AND bu.id::text = su.ba_unit_id::text
+		 ),		
+		 ( SELECT count (distinct (aa.id) )
+			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
+			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
+			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
+			administrative.rrr rrr, administrative.ba_unit bu
+			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
+			  AND sa.type_code::text = 'officialrec.area'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
+			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
+			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
+			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
+			  AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
+			  AND co.name_lastpart = ''|| rec.area || ''
+			  AND  (
+		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		           or
+		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          ) 
+	  	 ), 	
+                 (SELECT count (*)
+	            FROM cadastre.cadastre_object co
+			    WHERE co.type_code='parcel'
+			    AND co.name_lastpart = ''|| rec.area || '' 
+                 )    
+              INTO       TotApp,
+                         appLodgedSP,
+                         SPnoApp,
+                         appPendObj,
+                         appIncDoc,
+                         appPDisp,
+                         appCompPDispNoCert,
+                         appCertificate,
+                         appPrLand,
+                         appPubLand,
+                         TotSurvPar
+                
+              FROM        application.application aa,
+			  application.service s,
+			  application.application_property ap,
+		          administrative.ba_unit bu
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = 'systematicRegn'::text
+			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+			    AND   aa.id::text = ap.application_id::text
+			    AND bu.name_lastpart = ''|| rec.area || ''
+                                               
+	  ;        
+
+                block = rec.area;
+                TotApp = TotApp;
+		appLodgedSP = appLodgedSP;
+		SPnoApp = SPnoApp;
+                appPendObj = appPendObj;
+		appIncDoc = appIncDoc;
+		appPDisp = appPDisp;
+		appCompPDispNoCert = appCompPDispNoCert;
+		appCertificate = appCertificate;
+		appPrLand = appPrLand;
+		appPubLand = appPubLand;
+		TotSurvPar = TotSurvPar;
+		appLodgedNoSP = TotApp-appLodgedSP;
+		
+
+
+	  
+	  select into recToReturn
+	       	block::			varchar,
+		TotApp::  		decimal,
+		appLodgedSP::  		decimal,
+		SPnoApp::  		decimal,
+		appPendObj::  		decimal,
+		appIncDoc::  		decimal,
+		appPDisp::  		decimal,
+		appCompPDispNoCert::  	decimal,
+		appCertificate::  	decimal,
+		appPrLand::  		decimal,
+		appPubLand::  		decimal,
+		TotSurvPar::  		decimal,
+		appLodgedNoSP::  	decimal;
+
+		                         
+          return next recToReturn;
+          statusFound = true;
+          
+    end loop;
+   
+    if (not statusFound) then
+         block = 'none';
+                
+        select into recToReturn
+	       	block::			varchar,
+		TotApp::  		decimal,
+		appLodgedSP::  		decimal,
+		SPnoApp::  		decimal,
+		appPendObj::  		decimal,
+		appIncDoc::  		decimal,
+		appPDisp::  		decimal,
+		appCompPDispNoCert::  	decimal,
+		appCertificate::  	decimal,
+		appPrLand::  		decimal,
+		appPubLand::  		decimal,
+		TotSurvPar::  		decimal,
+		appLodgedNoSP::  	decimal;
+
+		                         
+          return next recToReturn;
+
+    end if;
+    return;
+END;
+$$ LANGUAGE plpgsql;
+COMMENT ON FUNCTION administrative.getsysregstatus(
+ fromdate varchar
+  , todate varchar
+  , namelastpart varchar
+) IS '';
+    
 -- Function cadastre.cadastre_object_name_is_valid --
 CREATE OR REPLACE FUNCTION cadastre.cadastre_object_name_is_valid(
  name_firstpart varchar
@@ -1990,6 +2352,7 @@ CREATE TABLE source.source(
     owner_name varchar(255),
     version varchar(10),
     description varchar(255),
+    signing_date date,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -2041,6 +2404,7 @@ CREATE TABLE source.source_historic
     owner_name varchar(255),
     version varchar(10),
     description varchar(255),
+    signing_date date,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -3782,7 +4146,8 @@ CREATE TABLE administrative.rrr(
     registration_date timestamp,
     expiration_date timestamp,
     share double precision,
-    mortgage_amount numeric(29, 2),
+    amount numeric(29, 2),
+    due_date date,
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
@@ -3829,7 +4194,8 @@ CREATE TABLE administrative.rrr_historic
     registration_date timestamp,
     expiration_date timestamp,
     share double precision,
-    mortgage_amount numeric(29, 2),
+    amount numeric(29, 2),
+    due_date date,
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
@@ -5986,6 +6352,7 @@ CREATE TABLE system.config_map_layer(
     security_user varchar(30),
     security_password varchar(30),
     added_from_bulk_operation bool NOT NULL DEFAULT (false),
+    use_in_public_display bool NOT NULL DEFAULT (false),
 
     -- Internal constraints
     
@@ -5998,15 +6365,17 @@ CREATE TABLE system.config_map_layer(
 comment on table system.config_map_layer is 'Sola extension: In this table are defined map layers for configuring the map component. The layers can be of different types. For the type of layers supported, check out the data in the table config_map_layer_type.';
     
  -- Data for the table system.config_map_layer -- 
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('parcels', 'Parcels::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcels', 'dynamic.informationtool.get_parcel');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('pending-parcels', 'Pending parcels::::Particelle pendenti', 'pojo', true, true, 30, 'pending_parcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsPending', 'dynamic.informationtool.get_parcel_pending');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('roads', 'Roads::::Strade', 'pojo', true, true, 40, 'road.xml', 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('survey-controls', 'Survey controls::::Piani di controllo', 'pojo', true, true, 50, 'survey_control.xml', 'theGeom:Point,label:""', 'SpatialResult.getSurveyControls', 'dynamic.informationtool.get_survey_control');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('applications', 'Applications::::Pratiche', 'pojo', true, true, 70, 'application.xml', 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', true, true, 10, 'parcel_historic_current_ba.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name) values('parcel-nodes', 'Parcel nodes', 'pojo', true, true, 5, 'parcel_node.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, url, wms_layers, wms_version, wms_format) values('orthophoto', 'Orthophoto', 'wms', true, false, 1, 'http://localhost:8085/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('parcels', 'Parcels::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcels', 'dynamic.informationtool.get_parcel', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('pending-parcels', 'Pending parcels::::Particelle pendenti', 'pojo', true, true, 30, 'pending_parcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsPending', 'dynamic.informationtool.get_parcel_pending', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('roads', 'Roads::::Strade', 'pojo', true, true, 40, 'road.xml', 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road', true);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('survey-controls', 'Survey controls::::Piani di controllo', 'pojo', true, true, 50, 'survey_control.xml', 'theGeom:Point,label:""', 'SpatialResult.getSurveyControls', 'dynamic.informationtool.get_survey_control', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('applications', 'Applications::::Pratiche', 'pojo', true, true, 70, 'application.xml', 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', true, true, 10, 'parcel_historic_current_ba.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('parcel-nodes', 'Parcel nodes', 'pojo', true, true, 5, 'parcel_node.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, url, wms_layers, wms_version, wms_format, use_in_public_display) values('orthophoto', 'Orthophoto', 'wms', true, false, 1, 'http://localhost:8085/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg', false);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('public-display-parcels', 'Public display parcels', 'pojo_public_display', true, true, 30, 'public_display_parcel.xml', 'theGeom:Polygon,label:""', 'public_display.parcels', true);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('public-display-parcels-next', 'Public display parcels next', 'pojo_public_display', true, true, 35, 'public_display_parcel_next.xml', 'theGeom:Polygon,label:""', 'public_display.parcels_next', true);
 
 
 
@@ -6035,6 +6404,7 @@ Not Applicable';
 insert into system.config_map_layer_type(code, display_value, status) values('wms', 'WMS server with layers::::Server WMS con layer', 'c');
 insert into system.config_map_layer_type(code, display_value, status) values('shape', 'Shapefile::::Shapefile', 'c');
 insert into system.config_map_layer_type(code, display_value, status) values('pojo', 'Pojo layer::::Pojo layer', 'c');
+insert into system.config_map_layer_type(code, display_value, status, description) values('pojo_public_display', 'Pojo layer used for public display', 'c', 'It is an extension of pojo layer. It is used only during the public display map generation.');
 
 
 
@@ -6073,6 +6443,8 @@ insert into system.query(name, sql) values('map_search.cadastre_object_by_baunit
 insert into system.query(name, sql) values('map_search.cadastre_object_by_baunit_owner', 'select distinct co.id,  coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''') || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(co.geom_polygon) as the_geom  from cadastre.cadastre_object  co     inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on bas.ba_unit_id= ba_unit.id     inner join administrative.rrr on (ba_unit.id = rrr.ba_unit_id and rrr.status_code = ''current'' and rrr.type_code = ''ownership'')     inner join administrative.party_for_rrr pfr on rrr.id = pfr.rrr_id     inner join party.party on pfr.party_id= party.id where (co.status_code= ''current'' or ba_unit.status_code= ''current'')     and compare_strings(#{search_string}, coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''')) limit 30');
 insert into system.query(name, sql, description) values('system_search.cadastre_object_by_baunit_id', 'SELECT id,  name_firstpart || ''/ '' || name_lastpart as label, st_asewkb(geom_polygon) as the_geom  FROM cadastre.cadastre_object WHERE transaction_id IN (  SELECT cot.transaction_id FROM (administrative.ba_unit_contains_spatial_unit ba_su     INNER JOIN cadastre.cadastre_object co ON ba_su.spatial_unit_id = co.id)     INNER JOIN cadastre.cadastre_object_target cot ON co.id = cot.cadastre_object_id     WHERE ba_su.ba_unit_id = #{search_string})  AND (SELECT COUNT(1) FROM administrative.ba_unit_contains_spatial_unit WHERE spatial_unit_id = cadastre_object.id) = 0 AND status_code = ''current''', 'Query used by BaUnitBean.loadNewParcels');
 insert into system.query(name, sql) values('SpatialResult.getParcelNodes', 'select distinct st_astext(geom) as id, '''' as label, st_asewkb(geom) as the_geom from (select (ST_DumpPoints(geom_polygon)).* from cadastre.cadastre_object co  where type_code= ''parcel'' and status_code= ''current''  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))) tmp_table ');
+insert into system.query(name, sql, description) values('public_display.parcels', 'select co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom from cadastre.cadastre_object co where type_code= ''parcel'' and status_code= ''current'' and name_lastpart = #{name_lastpart} and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Query is used from public display map. It retrieves parcels being of a certain area (name_lastpart).');
+insert into system.query(name, sql, description) values('public_display.parcels_next', 'SELECT co_next.id, co_next.name_firstpart as label,  st_asewkb(co_next.geom_polygon) as the_geom  from cadastre.cadastre_object co_next, cadastre.cadastre_object co where co.type_code= ''parcel'' and co.status_code= ''current'' and co_next.type_code= ''parcel'' and co_next.status_code= ''current'' and co.name_lastpart = #{name_lastpart} and co_next.name_lastpart != #{name_lastpart} and st_dwithin(co.geom_polygon, co_next.geom_polygon, 5) and ST_Intersects(co_next.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', ' Query is used from public display map. It retrieves parcels being near the parcels of the layer public-display-parcels.');
 
 
 
@@ -6314,6 +6686,7 @@ insert into system.approle(code, display_value, status, description) values('Bul
 insert into system.approle(code, display_value, status, description) values('sysRegnReports', 'Systematic Registration Reports', 'c', 'Allows generation of Systematic Registration Reports');
 insert into system.approle(code, display_value, status, description) values('systematicRegn', 'Systematic Registration', 'c', 'Allows to access Systematic Registration Service');
 insert into system.approle(code, display_value, status, description) values('lodgeObjection', 'Objection lodgment', 'c', 'Allows to access Lodge Objection Service');
+insert into system.approle(code, display_value, status, description) values('RightsExport', 'Export', 'c', 'Allows to export');
 
 
 
@@ -6345,6 +6718,7 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('ApplnUnas
 insert into system.approle_appgroup(approle_code, appgroup_id) values('BulkApplication', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('systematicRegn', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('lodgeObjection', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('RightsExport', 'super-group-id');
 
 
 
@@ -7361,20 +7735,22 @@ UNION
 
 -------View application.systematic_registration_certificates ---------
 DROP VIEW IF EXISTS application.systematic_registration_certificates CASCADE;
-CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.id, co.name_firstpart, co.name_lastpart, sa.size, get_translation(lu.display_value, NULL::character varying) AS land_use_code, get_translation(ast.display_value, NULL::character varying) AS application_status, su.ba_unit_id, bu.name, bu.creation_date, get_translation(rtc.display_value, NULL::character varying) AS type_code
-   FROM application.application_status_type ast, cadastre.land_use_type lu, cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, administrative.rrr rrr, administrative.rrr_type rtc
-  WHERE sa.spatial_unit_id::text = co.id::text 
-  AND sa.type_code::text = 'officialArea'::text 
-  AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-   AND (ap.ba_unit_id::text = su.ba_unit_id::text 
-           OR (ap.name_lastpart::text = bu.name_lastpart::text 
-           AND ap.name_firstpart::text = bu.name_firstpart::text)
-           )
-  AND aa.id::text = ap.application_id::text 
-  AND s.application_id::text = aa.id::text AND bu.id::text = su.ba_unit_id::text 
-  AND rrr.ba_unit_id::text = bu.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-  AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
-  AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text AND rrr.type_code::text = rtc.code::text;
+CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.name_firstpart, co.name_lastpart,
+ su.ba_unit_id
+   FROM application.application_status_type ast, 
+   cadastre.land_use_type lu, cadastre.cadastre_object co, 
+   administrative.ba_unit bu, cadastre.spatial_value_area sa, 
+   administrative.ba_unit_contains_spatial_unit su, 
+   application.application_property ap, application.application aa, 
+   application.service s
+   WHERE sa.spatial_unit_id::text = co.id::text 
+   AND sa.type_code::text = 'officialArea'::text 
+   AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
+   AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart)
+   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text 
+   AND s.request_type_code::text = 'systematicRegn'::text 
+   AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
+   AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text ;
 
 
 -- Scan tables and views for geometry columns                 and populate geometry_columns table
