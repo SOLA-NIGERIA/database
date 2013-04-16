@@ -303,10 +303,10 @@ ALTER TABLE cadastre.wards
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '-15000' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '650000' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '175000' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '862000' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '350000' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '1220000' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '550000' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '1395000' WHERE "name" = 'map-north'; 
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;
