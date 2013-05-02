@@ -111,6 +111,13 @@ UPDATE system.br_definition SET "body" = 'SELECT CASE WHEN CAST(#{cadastreObject
 	ELSE (SELECT to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
 			|| ''/200000'') END AS vl'
 WHERE br_id = 'generate-baunit-nr'; 
+---br for parcel numbering br
+UPDATE system.br_definition SET "body" = 'SELECT CASE WHEN CAST(#{cadastreObjectId} AS VARCHAR(40)) IS NOT NULL
+	THEN (SELECT (CASE WHEN co.type_code = ''parcel'' THEN regexp_replace(co.name_firstpart, ''\D*'',  '''') ELSE co.name_firstpart END) 
+	        || ''/'' || regexp_replace(co.name_lastpart, ''[\s|L|l]$'',  '''') FROM cadastre.cadastre_object co WHERE id = #{cadastreObjectId})
+	ELSE (SELECT to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
+			|| (select co.name_lastpart from cadastre.cadastre_object co WHERE id = #{cadastreObjectId})  ) END AS vl'
+WHERE br_id = 'generate-parcel-nr';
  
 -- *** 18-Nov-2012 TO BE REMOVED FOLLOWING SUITABLE TESTING OF NEW NUMBERING... 
 -- Reconfigure Source numbering 
