@@ -9,8 +9,8 @@
 UPDATE system.config_map_layer
 SET item_order = 10, 
 	visible_in_start = FALSE,
-	url = 'http://localhost:8085/geoserver/sola/wms',
-	wms_layers = 'sola:nz_orthophoto',
+	url = 'http://maps.gc-al.com:46767/geoserver/wms',
+	wms_layers = 'nigeria:orthophoto',
 	active = FALSE
 WHERE "name" = 'orthophoto';
 
@@ -40,7 +40,7 @@ WHERE "name" = 'roads';
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards');
+DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Ward');
 
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
@@ -51,26 +51,26 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 	VALUES (uuid_generate_v1(), 'LGA', 'all', 'polygon', 'mixed', 'test');
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
-	VALUES (uuid_generate_v1(), 'Wards', 'all', 'polygon', 'mixed', 'test');
+	VALUES (uuid_generate_v1(), 'Ward', 'all', 'polygon', 'mixed', 'test');
 
 --UPDATE system.config_map_layer
 
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards');
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getWards', 'select id, label, st_asewkb(geom) as the_geom from cadastre.wards where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Wards');
+    VALUES ('SpatialResult.getWard', 'select id, label, st_asewkb(geom) as the_geom from cadastre.ward where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Ward');
 
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards');
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('wards', 'Wards', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWards');
+	VALUES ('ward', 'Ward', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWard');
 
 --DROP VIEW cadastre.lga;
 
@@ -82,14 +82,14 @@ CREATE OR REPLACE VIEW cadastre.lga AS
 ALTER TABLE cadastre.lga
   OWNER TO postgres;    
 
---DROP VIEW cadastre.wards;
+--DROP VIEW cadastre.ward;
 
-CREATE OR REPLACE VIEW cadastre.wards AS 
+CREATE OR REPLACE VIEW cadastre.ward AS 
  SELECT su.id, su.label, su.geom
    FROM cadastre.level l, cadastre.spatial_unit su
-  WHERE l.id::text = su.level_id::text AND l.name::text = 'Wards'::text;
+  WHERE l.id::text = su.level_id::text AND l.name::text = 'Ward'::text;
 
-ALTER TABLE cadastre.wards
+ALTER TABLE cadastre.ward
   OWNER TO postgres; 
      
 -- Name Translations

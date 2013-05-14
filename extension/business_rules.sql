@@ -3,6 +3,8 @@
 --delete any existing br  generate-parcel-nr
 DELETE FROM system.br_definition WHERE br_id = 'generate-parcel-nr';
 DELETE FROM system.br WHERE id = 'generate-parcel-nr';
+INSERT INTO system.br(id, technical_type_code) VALUES ('generate-parcel-nr', 'sql');
+
 --Create series of sequences for each ward
 --will need to be made more general in the future
 DROP SEQUENCE cadastre.ward1_parcel_nr_seq;
@@ -127,36 +129,72 @@ RETURN var_result;
   $$
   LANGUAGE plpgsql IMMUTABLE STRICT
   COST 100;
-
--- To be completed
-  
---INSERT INTO system.br(id, technical_type_code) values('generate-parcel-nr', 'sql');
  
--- To be completed
---INSERT INTO  system.br_definition(br_id, active_from, active_until, body) 
---	VALUES ('generate-parcel-nr', now(), 'infinity', 
---		SELECT CASE	WHEN 	(SELECT (COUNT(*) > 0)
---					FROM cadastre.cadastre_object, cadastre.spatial_unit
---					WHERE cadastre.cadastre_object.id = cadastre.spatial_unit.id
---					AND type_code = 'parcel'
---					AND (ST_GeometryN(geom, 1) IS NOT NULL)
---					AND ST_WITHIN(point_inside_geometry(geom), geom)
---					AND label = 'Ungogo 1'
---					AND transaction_id = #{id}
---				THEN trim(to_char(nextval('cadastre.ward1_parcel_nr_seq'), '0000'))
-
---				WHEN 	(SELECT (COUNT(*) > 0)
---					FROM cadastre.cadastre_object, cadastre.spatial_unit
---					WHERE cadastre.cadastre_object.id = cadastre.spatial_unit.id
---					AND type_code = 'parcel'
---					AND (ST_GeometryN(geom, 1) IS NOT NULL)
---					AND ST_WITHIN(point_inside_geometry(geom), geom)
---					AND label = 'Fagge 1'
---					AND transaction_id = #{id})
---				THEN trim(to_char(nextval('cadastre.ward2_parcel_nr_seq'), '0000'))			
---				ELSE FALSE
---		END  AS vl
---			');  
+-- To be tested and ultimately re-worked as 4,000 char limit on br_definition is almost exceeded
+INSERT INTO  system.br_definition(br_id, active_from, active_until, body) 
+	VALUES ('generate-parcel-nr', now(), 'infinity', 
+		'SELECT CASE	WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom FROM cadastre.spatial_unit WHERE label = ''Fagge 1'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward1_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+				
+				WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom FROM cadastre.spatial_unit WHERE label = ''Fagge 2'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward2_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+				
+				WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom FROM cadastre.spatial_unit WHERE label = ''Fagge 3'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward3_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+				
+				WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom FROM cadastre.spatial_unit WHERE label = ''Fagge 4'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward4_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+				
+				WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom  FROM cadastre.spatial_unit WHERE label = ''Fagge 5'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward5_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+							
+				WHEN (SELECT COUNT(*) > 0
+					FROM cadastre.cadastre_object co
+					INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
+					INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+					INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+					INNER JOIN application.application ap ON (sv.application_id = ap.id)
+					AND ST_WITHIN(point_inside_geometry(geom_polygon), (SELECT geom FROM cadastre.spatial_unit WHERE label = ''Ungogo 1'')))
+					AND ap.id = #{id})					)
+				THEN (SELECT trim(to_char(nextval(''cadastre.ward7_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+				
+				ELSE NULL
+			END  AS vl ');  
 
 
 --Temporary Change for purposes of initial customisation in Kano
