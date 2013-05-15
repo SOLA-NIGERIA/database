@@ -1,8 +1,153 @@
-
+﻿
 -- Security Role Configurations
 
 -- Kano specific Roles
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'ApplnNr', 'Set Application Number', 'c', 'Set application number to match number allocated by LRS' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ApplnNr');
 
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'FeePayment', 'Record Fee Payment', 'c', 'Allows the user to set the Fee Paid flag on the Application Details screen' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'FeePayment');
+
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'ApplnCompleteDate', 'Edit Application Completion Date', 'c', 'Allows the user to update the completion date for the application on the Application Details screen' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ApplnCompleteDate');
+
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'ManageUserPassword', 'Manager User Details and Password', 'c', 'Allows the user to update their user details and/or password' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ManageUserPassword');
+
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'ViewSource', 'View Source Details', 'c', 'Allows the user to view source and document details.' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ViewSource');
+
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'PartySearch', 'Search Party', 'c', 'Allows the user access to the Party Search so they can edit existing parties (i.e. Agents and Bank details).' 
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'PartySearch');
+
+INSERT INTO system.approle (code, display_value, status, description)
+SELECT 'ExportMap', 'Export Map','c', 'Export a selected map feature to KML for display in Google Earth'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ExportMap');
+
+-- Accounts Role   
+INSERT INTO system.appgroup(id, "name", description)
+  (SELECT '50', 'Accounts', 'The Accounts staff of the Accounting Division have access to set the fee payment details for lodged ' ||
+                                          'applications. '
+   WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Accounts' )); 
+   
+DELETE FROM system.approle_appgroup WHERE appgroup_id = (SELECT id FROM system.appgroup WHERE "name" = 'Accounts'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Accounts');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Accounts');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Accounts');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Accounts');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Accounts'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Accounts');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Accounts'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'FeePayment', id FROM system.appgroup WHERE "name" = 'Accounts');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Accounts');
+
+ 
+-- Land Registry Staff Role
+INSERT INTO system.appgroup(id, "name", description)
+  (SELECT '60', 'Land Registry', 'The Land Registry staff of the Land Management Division. ' ||
+  'Users assigned this role can lodge and edit land registry applications as well as generate folio certificates.'
+   WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Land Registry' ));  
+   
+DELETE FROM system.approle_appgroup WHERE appgroup_id = (SELECT id FROM system.appgroup WHERE "name" = 'Land Registry'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnArchive', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ArchiveApps', id FROM system.appgroup WHERE "name" = 'Land Registry');    
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnAssignSelf', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnDispatch', id FROM system.appgroup WHERE "name" = 'Land Registry');    
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnCreate', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnRequisition', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Land Registry');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnUnassignSelf', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitCertificate', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitParcelSave', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'Land Registry');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'RevertService', id FROM system.appgroup WHERE "name" = 'Land Registry');    
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Land Registry');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'Land Registry'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Land Registry'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Land Registry'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Land Registry');
+
+
+-- Land Deeds Staff Role
+INSERT INTO system.appgroup(id, "name", description)
+  (SELECT '61', 'Land Deeds', 'The Land Deeds staff . ' ||
+  'Users assigned this role can register mortgage/other deeds and edit land deeds registered'
+   WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Land Deeds' ));  
+   
+DELETE FROM system.approle_appgroup WHERE appgroup_id = (SELECT id FROM system.appgroup WHERE "name" = 'Land Deeds'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'mortgage', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'newOwnership', id FROM system.appgroup WHERE "name" = 'Land Deeds');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');    
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'registerLease', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+--INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'regnDeeds', id FROM system.appgroup WHERE "name" = 'Land Deeds');    
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'regnOnTitle', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'regnPowerOfAttorney', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'regnStandardDocument', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');   
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Land Deeds'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Land Deeds'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Land Deeds');
+
+
+-- commissioner role
+INSERT INTO system.appgroup(id, "name", description)
+  (SELECT '20', 'Commissioner', 'Allows users to search and view property information. ' ||
+                                'Allows users to search and view application and document details ' ||
+                                'as well as the Map. Printing documents, map or application details is also permitted'
+   WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Commissioner' )); 
+   
+DELETE FROM system.approle_appgroup WHERE appgroup_id = (SELECT id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Commissioner'); 
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Commissioner');
+--INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Commissioner');
+--INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Commissioner');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ExportMap', id FROM system.appgroup WHERE "name" = 'Commissioner');
 
 
 -- Add new roles to the super group id
@@ -10,10 +155,14 @@
 
 -- Configure roles for services
 
+INSERT INTO system.approle (code, display_value, status)
+SELECT req.code, req.display_value, 'c'
+FROM   application.request_type req
+WHERE  NOT EXISTS (SELECT r.code FROM system.approle r WHERE req.code = r.code); 
 
--- This delete will cascade delete from the system.approle_appgroup table. 
-DELETE FROM system.approle WHERE code IN ('buildingRestriction', 'documentCopy', 'historicOrder', 'limtedRoadAccess', 
-'newApartment', 'serviceEnquiry', 'servitude', 'surveyPlanCopy', 'titleSearch', 'varyMortgage', 'varyRight'); 
+UPDATE  system.approle SET display_value = req.display_value
+FROM 	application.request_type req
+WHERE   system.approle.code = req.code; 
 
 -- Add any missing roles to the super-group-id
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
@@ -47,7 +196,7 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'PartySa
 
 -- View Property Information Role
 INSERT INTO system.appgroup(id, "name", description)
-  (SELECT '20', 'Search and View Property Information', 'Allows users to search and view property information. ' ||
+  (SELECT '21', 'Search and View Property Information', 'Allows users to search and view property information. ' ||
                                 'All MLPP staff have this role by default. Other staff (Technical, Accounts, etc) ' ||
                                 'can be assigned this role as required.'
    WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Search and View Property Information' )); 
@@ -96,7 +245,7 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'ApplnWi
 
 -- Registration Staff Role
 INSERT INTO system.appgroup(id, "name", description)
-  (SELECT '60', 'Registration', 'The Registration staff of the Land Management Division. ' ||
+  (SELECT '65', 'Registration', 'The Registration staff of the Land Management Division. ' ||
   'Users assigned this role can lodge and edit Registration applications as well as generate folio certificates.'
    WHERE NOT EXISTS (SELECT id FROM system.appgroup WHERE "name" = 'Registration' ));  
    
