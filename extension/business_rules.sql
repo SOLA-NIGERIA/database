@@ -149,7 +149,7 @@ INSERT INTO  system.br_definition(br_id, active_from, active_until, body)
                                                                                 WHEN ward_name = ''Fagge 4'' THEN (SELECT trim(to_char(nextval(''cadastre.ward4_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Fagge 5'' THEN (SELECT trim(to_char(nextval(''cadastre.ward5_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Fagge 6'' THEN (SELECT trim(to_char(nextval(''cadastre.ward6_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
-                                                                                WHEN ward_name = ''Ongogo 1'' THEN (SELECT trim(to_char(nextval(''cadastre.ward7_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+                                                                                WHEN ward_name = ''Ungogo 1'' THEN (SELECT trim(to_char(nextval(''cadastre.ward7_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 ELSE NULL
                                                                                 END  AS vl FROM theWard');  
 
