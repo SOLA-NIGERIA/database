@@ -134,7 +134,7 @@ RETURN var_result;
 INSERT INTO  system.br_definition(br_id, active_from, active_until, body) 
                 VALUES ('generate-parcel-nr', now(), 'infinity', 
                                 'WITH theWard AS           
-					SELECT su.label AS ward_name 
+					(SELECT su.label AS ward_name 
 					FROM cadastre.cadastre_object co
                                                                                                 INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
                                                                                                 INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
