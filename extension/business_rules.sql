@@ -133,17 +133,18 @@ RETURN var_result;
 -- To be tested 
 INSERT INTO  system.br_definition(br_id, active_from, active_until, body) 
                 VALUES ('generate-parcel-nr', now(), 'infinity', 
-                                'WITH theWard AS           
-					(SELECT su.label AS ward_name 
-					FROM cadastre.cadastre_object co
-                                                                                                INNER JOIN cadastre.spatial_unit su ON (co.id = su.id)
-                                                                                                INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
-                                                                                                INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
-                                                                                                INNER JOIN application.application ap ON (sv.application_id = ap.id)
-                                                                                WHERE ST_WITHIN(point_inside_geometry(geom_polygon), su.geom)
-                                                                                AND ap.id = #{id})                                                                            )
-					SELECT ward_name,       
-					CASE      				WHEN ward_name = ''Fagge 1'' THEN (SELECT trim(to_char(nextval(''cadastre.ward1_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
+                                'WITH 	parcelCentroid AS 
+						(SELECT point_inside_geometry(geom_polygon) AS pt_geom 
+						FROM cadastre.cadastre_object co
+							INNER JOIN transaction.transaction tn ON (co.transaction_id = tn.id)
+							INNER JOIN application.service sv ON (tn.from_service_id = sv.id) 
+	                                        WHERE sv.application_id = #{id}),
+					theWard AS           
+						(SELECT su.label AS ward_name FROM cadastre.spatial_unit su, cadastre.spatial_unit_in_group suig, parcelCentroid
+						WHERE ((su.id = suig.spatial_unit_id) AND (ST_WITHIN(pt_geom, su.geom)))
+						AND suig.spatial_unit_group_id = ''ward'')
+
+  					SELECT ward_name, CASE      		WHEN ward_name = ''Fagge 1'' THEN (SELECT trim(to_char(nextval(''cadastre.ward1_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Fagge 2'' THEN (SELECT trim(to_char(nextval(''cadastre.ward2_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Fagge 3'' THEN (SELECT trim(to_char(nextval(''cadastre.ward3_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Fagge 4'' THEN (SELECT trim(to_char(nextval(''cadastre.ward4_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
@@ -151,7 +152,7 @@ INSERT INTO  system.br_definition(br_id, active_from, active_until, body)
                                                                                 WHEN ward_name = ''Fagge 6'' THEN (SELECT trim(to_char(nextval(''cadastre.ward6_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 WHEN ward_name = ''Ungogo 1'' THEN (SELECT trim(to_char(nextval(''cadastre.ward7_parcel_nr_seq''), ''0000'')) FROM cadastre.cadastre_object LIMIT 1)
                                                                                 ELSE NULL
-                                                                                END  AS vl FROM theWard');  
+                                                           END  AS vl FROM theWard');  
 
 
 --Temporary Change for purposes of initial customisation in Kano
