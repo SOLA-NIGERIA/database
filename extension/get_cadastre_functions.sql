@@ -41,7 +41,7 @@ last_part geometry;
 val_to_return character varying;
  
 begin
-   last_part := ST_SETSRID(geom, 32632);
+   last_part := get_geometry_with_srid(geom);
 
    select name 
    into val_to_return
