@@ -9,7 +9,7 @@ val_to_return character varying;
    
 begin
   
-          select cadastre.spatial_unit_group.seq_nr+1
+          select max(cadastre.spatial_unit_group.seq_nr)+1
           into newseqnr
           from cadastre.spatial_unit_group
           where name=last_part
