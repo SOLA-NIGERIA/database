@@ -2271,6 +2271,38 @@ inout geom_to_snap geometry
   ,out target_is_changed bool
 ) IS 'It snaps one geometry to the other. If points needs to be added they will be added.';
     
+-- Function cadastre.get_new_cadastre_object_identifier_last_part --
+CREATE OR REPLACE FUNCTION cadastre.get_new_cadastre_object_identifier_last_part(
+ geom geometry
+  , cadastre_object_type varchar
+) RETURNS varchar 
+AS $$
+begin
+  return cadastre_object_type;
+end;
+$$ LANGUAGE plpgsql;
+COMMENT ON FUNCTION cadastre.get_new_cadastre_object_identifier_last_part(
+ geom geometry
+  , cadastre_object_type varchar
+) IS 'This function generates the last part of the cadastre object identifier.
+It has to be overridden to apply the algorithm specific to the situation.';
+    
+-- Function cadastre.get_new_cadastre_object_identifier_first_part --
+CREATE OR REPLACE FUNCTION cadastre.get_new_cadastre_object_identifier_first_part(
+ last_part geometry
+  , cadastre_object_type varchar
+) RETURNS varchar 
+AS $$
+begin
+  return '1';
+end;
+$$ LANGUAGE plpgsql;
+COMMENT ON FUNCTION cadastre.get_new_cadastre_object_identifier_first_part(
+ last_part geometry
+  , cadastre_object_type varchar
+) IS 'This function generates the first part of the cadastre object identifier.
+It has to be overridden to apply the algorithm specific to the situation.';
+    
 -- Sequence application.application_nr_seq --
 DROP SEQUENCE IF EXISTS application.application_nr_seq;
 CREATE SEQUENCE application.application_nr_seq
@@ -6025,6 +6057,7 @@ CREATE TABLE cadastre.spatial_unit_group(
         CONSTRAINT enforce_valid_geom CHECK (st_isvalid(geom)),
         CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'MULTIPOLYGON'::text OR geom IS NULL),
     found_in_spatial_unit_group_id varchar(40),
+    seq_nr integer,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -6079,6 +6112,7 @@ CREATE TABLE cadastre.spatial_unit_group_historic
         CONSTRAINT enforce_valid_geom CHECK (st_isvalid(geom)),
         CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'MULTIPOLYGON'::text OR geom IS NULL),
     found_in_spatial_unit_group_id varchar(40),
+    seq_nr integer,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -6867,6 +6901,7 @@ CREATE TABLE system.config_map_layer(
     wms_layers varchar(500),
     wms_version varchar(10),
     wms_format varchar(15),
+    wms_data_source varchar(200),
     pojo_structure varchar(500),
     pojo_query_name varchar(100),
     pojo_query_name_for_select varchar(100),
@@ -7519,46 +7554,59 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON administrative.lease_condition_for_rrr FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
---Table application.application_ba_unit ----
-DROP TABLE IF EXISTS application.application_ba_unit CASCADE;
-CREATE TABLE application.application_ba_unit(
-    id varchar(40) NOT NULL,
-    application_id varchar(40) NOT NULL,
-    ba_unit_id varchar(40),
-    name_firstpart varchar(20),
-    name_lastpart varchar(20),
-    area numeric(20, 2) NOT NULL,
-    total_value numeric(20, 2) NOT NULL,
-
-    -- Internal constraints
-    
-    CONSTRAINT application_ba_unit_pkey PRIMARY KEY (id)
-);
-
-
-comment on table application.application_ba_unit is '';
-    
 --Table application.application_spatial_unit ----
 DROP TABLE IF EXISTS application.application_spatial_unit CASCADE;
 CREATE TABLE application.application_spatial_unit(
-    id varchar(40) NOT NULL,
     application_id varchar(40) NOT NULL,
-    spatial_unit_id varchar(40),
-    name_firstpart varchar(20),
-    name_lastpart varchar(20),
-    survey_plan_number varchar(20),
-    area numeric(20, 2),
-    address_id varchar(40),
-    cadastre_object_type_code varchar(20),
-    land_use_code varchar(20) NOT NULL,
+    spatial_unit_id varchar(40) NOT NULL,
+    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+    rowversion integer NOT NULL DEFAULT (0),
+    change_action char(1) NOT NULL DEFAULT ('i'),
+    change_user varchar(50),
+    change_time timestamp NOT NULL DEFAULT (now()),
 
     -- Internal constraints
     
-    CONSTRAINT application_spatial_unit_pkey PRIMARY KEY (id)
+    CONSTRAINT application_spatial_unit_pkey PRIMARY KEY (application_id,spatial_unit_id)
 );
 
 
+
+-- Index application_spatial_unit_index_on_rowidentifier  --
+CREATE INDEX application_spatial_unit_index_on_rowidentifier ON application.application_spatial_unit (rowidentifier);
+    
+
 comment on table application.application_spatial_unit is '';
+    
+DROP TRIGGER IF EXISTS __track_changes ON application.application_spatial_unit CASCADE;
+CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
+   ON application.application_spatial_unit FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
+    
+
+----Table application.application_spatial_unit_historic used for the history of data of table application.application_spatial_unit ---
+DROP TABLE IF EXISTS application.application_spatial_unit_historic CASCADE;
+CREATE TABLE application.application_spatial_unit_historic
+(
+    application_id varchar(40),
+    spatial_unit_id varchar(40),
+    rowidentifier varchar(40),
+    rowversion integer,
+    change_action char(1),
+    change_user varchar(50),
+    change_time timestamp,
+    change_time_valid_until TIMESTAMP NOT NULL default NOW()
+);
+
+
+-- Index application_spatial_unit_historic_index_on_rowidentifier  --
+CREATE INDEX application_spatial_unit_historic_index_on_rowidentifier ON application.application_spatial_unit_historic (rowidentifier);
+    
+
+DROP TRIGGER IF EXISTS __track_history ON application.application_spatial_unit CASCADE;
+CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
+   ON application.application_spatial_unit FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_history();
     
 
 ALTER TABLE source.source ADD CONSTRAINT source_archive_id_fk0 
@@ -8089,33 +8137,13 @@ ALTER TABLE administrative.lease_condition_for_rrr ADD CONSTRAINT lease_conditio
             FOREIGN KEY (rrr_id) REFERENCES administrative.rrr(id) ON UPDATE CASCADE ON DELETE Cascade;
 CREATE INDEX lease_condition_for_rrr_rrr_id_fk131_ind ON administrative.lease_condition_for_rrr (rrr_id);
 
-ALTER TABLE application.application_ba_unit ADD CONSTRAINT application_ba_unit_ba_unit_id_fk132 
-            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_ba_unit_ba_unit_id_fk132_ind ON application.application_ba_unit (ba_unit_id);
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk132 
+            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_spatial_unit_spatial_unit_id_fk132_ind ON application.application_spatial_unit (spatial_unit_id);
 
-ALTER TABLE application.application_ba_unit ADD CONSTRAINT application_ba_unit_application_id_fk133 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_ba_unit_application_id_fk133_ind ON application.application_ba_unit (application_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk134 
-            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_spatial_unit_id_fk134_ind ON application.application_spatial_unit (spatial_unit_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk135 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_application_id_fk135_ind ON application.application_spatial_unit (application_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_land_use_code_fk136 
-            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_land_use_code_fk136_ind ON application.application_spatial_unit (land_use_code);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_cadastre_object_type_code_fk137 
-            FOREIGN KEY (cadastre_object_type_code) REFERENCES cadastre.cadastre_object_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_cadastre_object_type_code_fk137_ind ON application.application_spatial_unit (cadastre_object_type_code);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_address_id_fk138 
-            FOREIGN KEY (address_id) REFERENCES address.address(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_address_id_fk138_ind ON application.application_spatial_unit (address_id);
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk133 
+            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_spatial_unit_application_id_fk133_ind ON application.application_spatial_unit (application_id);
 --Generate triggers for tables --
 -- triggers for table source.source -- 
 

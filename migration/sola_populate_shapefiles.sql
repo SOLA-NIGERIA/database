@@ -52,20 +52,15 @@ INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom,
 	SELECT adm1||'/'||adm2, 2, adm2, adm1||'/'||adm2, the_geom, 'test'
 	FROM interim_data.lga WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
-INSERT INTO cadastre.spatial_unit_in_group (spatial_unit_group_id, spatial_unit_id, change_user)
-	SELECT 'lga', cadastre.spatial_unit.id, 'test' FROM cadastre.spatial_unit, cadastre.level
-			WHERE cadastre.spatial_unit.level_id = cadastre.level.id
-			AND cadastre.level.name = 'LGA';
-      
 --------------- Wards
 
-INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user)
-select lga_group.name || '/' || w.name, 3, w.name, lga_group.name || '/' || w.name, w.the_geom, 'test'
+INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
+select lga_group.name || '/' || w.name, 3, w.name, lga_group.name || '/' || w.name, w.the_geom, 'test', 0
 from cadastre.spatial_unit_group as lga_group,  interim_data.wards as w 
 where lga_group.hierarchy_level = 2 and st_intersects(lga_group.geom, st_pointonsurface(w.the_geom));
 
-INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user)
-select lga_group.name || '/' || w.name, 3, w.name, lga_group.name || '/' || w.name, w.the_geom, 'test'
+INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
+select lga_group.name || '/' || w.name, 3, w.name, lga_group.name || '/' || w.name, w.the_geom, 'test', 0
 from cadastre.spatial_unit_group as lga_group,  interim_data.wards_corrected as w 
 where lga_group.hierarchy_level = 2 and st_intersects(lga_group.geom, st_pointonsurface(w.the_geom));
 
