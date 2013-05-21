@@ -1,4 +1,4 @@
-
+﻿
 -- Starting up the database script generation
 ALTER DATABASE sola SET bytea_output TO 'escape';
     
@@ -2289,7 +2289,7 @@ It has to be overridden to apply the algorithm specific to the situation.';
     
 -- Function cadastre.get_new_cadastre_object_identifier_first_part --
 CREATE OR REPLACE FUNCTION cadastre.get_new_cadastre_object_identifier_first_part(
- last_part geometry
+ last_part varchar
   , cadastre_object_type varchar
 ) RETURNS varchar 
 AS $$
@@ -2298,7 +2298,7 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION cadastre.get_new_cadastre_object_identifier_first_part(
- last_part geometry
+ last_part last_part
   , cadastre_object_type varchar
 ) IS 'This function generates the first part of the cadastre object identifier.
 It has to be overridden to apply the algorithm specific to the situation.';
