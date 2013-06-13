@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 
 set psql_path=%~dp0
 set psql_path="%psql_path%psql\psql.exe"
@@ -48,6 +48,8 @@ echo Loading SOLA business rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_cadastre_object.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_rrr.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_source.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_bulk_operation.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_public_display.sql >> build.log 2>&1
 
 echo Loading Kano Extensions...
 echo Loading Kano Extensions... >> build.log 2>&1
@@ -61,8 +63,9 @@ echo Loading Kano Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
 echo Loading Kano Cadastre Functions... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
-echo Loading Kano Reference Data...
-echo Loading Kano Reference Data... >> build.log 2>&1
+echo Loading Kano User Roles... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
+
 echo Loading Kano LGA and Ward Boundaries... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
 echo Extracting Kano data files...
