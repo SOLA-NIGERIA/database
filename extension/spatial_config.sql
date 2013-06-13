@@ -14,6 +14,16 @@ SET item_order = 10,
 	active = FALSE
 WHERE "name" = 'orthophoto';
 
+--- This is for correctly setting up the orthophoto onto localhost
+--UPDATE system.config_map_layer 
+--SET url = 'http://localhost:8085/geoserver/nigeria/wms',
+--wms_layers= 'nigeria:orthophoto',
+--wms_format= 'image/jpeg',
+--visible_in_start = TRUE,
+--active = TRUE
+--WHERE name='orthophoto'
+
+
 UPDATE system.config_map_layer
 SET item_order = 9, 
     visible_in_start = FALSE,
