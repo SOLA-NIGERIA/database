@@ -11,7 +11,7 @@ SET item_order = 10,
 	visible_in_start = FALSE,
 	url = 'http://maps.gc-al.com:46767/geoserver/wms',
 	wms_layers = 'nigeria:orthophoto',
-	active = FALSE
+	active = TRUE
 WHERE "name" = 'orthophoto';
 
 --- This is for correctly setting up the orthophoto onto localhost

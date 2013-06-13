@@ -14,6 +14,7 @@ set testDataPath=test-data\kano\
 set rulesPath=rules\
 set extensionPath=extension\
 set utilitiesPath=utilities\
+set migrationPath=migration\
 
 set /p host= Host name [%host%] :
 
@@ -58,46 +59,15 @@ echo Loading Spatial Config... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%spatial_config.sql >> build.log 2>&1
 echo Loading Kano Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
-
-
+echo Loading Kano Cadastre Functions... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
+echo Loading Kano Reference Data...
+echo Loading Kano Reference Data... >> build.log 2>&1
+echo Loading Kano LGA and Ward Boundaries... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
 echo Extracting Kano data files...
 echo Extracting Kano data files... >> build.log 2>&1
 %utilitiesPath%\7z.exe e -y -o%testDataPath% %testDataPath%kanoDev.7z >> build.log 2>&1
-REM %utilitiesPath%\7z.exe e -y -p%archive_password% -o%testDataPath% %testDataPath%kano.7z >> build.log 2>&1
-
-REM Load the Kano test data. 
-REM Direct standard output to NUL, but capture any errors in the build.log
-echo >> build.log
-echo Loading system schema...
-echo Loading system schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%system.sql >NUL 2>>build.log
-echo Loading cadastre schema...
-echo Loading cadastre schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%cadastre.sql >NUL 2>>build.log
-echo Loading address schema...
-echo Loading address schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%address.sql >NUL 2>>build.log
-echo Loading party schema...
-echo Loading party schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%party.sql >NUL 2>>build.log
-echo Loading administration schema...
-echo Loading administration schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%administration.sql >NUL 2>>build.log
-echo Loading application schema...
-echo Loading application schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%application.sql >NUL 2>>build.log
-echo Loading document schema...
-echo Loading document schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%documents.sql >NUL 2>>build.log
-echo Loading source schema...
-echo Loading source schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%source.sql >NUL 2>>build.log
-echo Loading transaction schema...
-echo Loading transaction schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%transaction.sql >NUL 2>>build.log
-echo Applying data fixes...
-echo Applying data fixes... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%data-fixes.sql >> build.log 2>&1
 
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
