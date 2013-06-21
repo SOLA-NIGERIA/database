@@ -10,7 +10,7 @@ set archive_password=?
 
 set createDB=NO
 
-set testDataPath=test-data\kano\
+set testDataPath=test-data\kaduna\
 set rulesPath=rules\
 set extensionPath=extension\
 set utilitiesPath=utilities\
