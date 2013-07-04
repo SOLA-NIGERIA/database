@@ -156,7 +156,7 @@ ALTER TABLE administrative.sys_reg_owner_name OWNER TO postgres;
 	AND (ap.ba_unit_id::text = su.ba_unit_id::text OR (ap.name_firstpart::text || ap.name_lastpart::text) = (bu.name_firstpart::text || bu.name_lastpart::text)) 
 	AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text
         AND s.request_type_code::text = 'systematicRegn'::text 
-	AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
+	AND aa.status_code::text = ast.code::text AND (aa.status_code::text = 'approved'::text or aa.status_code::text = 'archived'::text) 
 	AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text;
  
 	ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;

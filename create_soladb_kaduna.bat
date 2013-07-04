@@ -63,6 +63,8 @@ echo Loading Kano Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
 echo Loading Kano Cadastre Functions... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
+echo Loading Kano Systematic Registration Reports... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%systematic_registration_reports.sql >> build.log 2>&1
 echo Loading Kano User Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
 echo Loading Kano LGA and Ward Boundaries... >> build.log 2>&1

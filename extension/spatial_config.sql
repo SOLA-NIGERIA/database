@@ -21,7 +21,7 @@ WHERE "name" = 'orthophoto';
 --wms_format= 'image/jpeg',
 --visible_in_start = TRUE,
 --active = TRUE
---WHERE name='orthophoto'
+--WHERE name='orthophoto';
 
 
 UPDATE system.config_map_layer
@@ -63,10 +63,18 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES (uuid_generate_v1(), 'Ward', 'all', 'polygon', 'mixed', 'test');
 
+
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Section', 'all', 'polygon', 'mixed', 'test');
+
 --UPDATE system.config_map_layer
 
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+--DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
+--DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'section');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSection');
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
@@ -74,13 +82,23 @@ INSERT INTO system.query(name, sql, description)
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getWard', 'select id, label, st_asewkb(geom) as the_geom from cadastre.ward where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Ward');
 
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+INSERT INTO system.query(name, sql, description)
+    VALUES ('SpatialResult.getSection', 'select id, label, st_asewkb(geom) as the_geom from cadastre.section where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Section');
+
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+--DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'section');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('ward', 'Ward', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWard');
+
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('section', 'Section', 'pojo', true, true, 80, 'section.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
 
 --DROP VIEW cadastre.lga;
 
@@ -101,6 +119,35 @@ CREATE OR REPLACE VIEW cadastre.ward AS
 
 ALTER TABLE cadastre.ward
   OWNER TO postgres; 
+
+--Changes made by Paola to add a new layer for sections - 26/06/2013
+CREATE OR REPLACE VIEW cadastre.section AS 
+ SELECT su.id, su.label, su.geom
+   FROM cadastre.level l, cadastre.spatial_unit su
+  WHERE l.id::text = su.level_id::text AND l.name::text = 'Section'::text;
+
+ALTER TABLE cadastre.section
+  OWNER TO postgres; 
+
+
+
+--Changes made by Paola to add a new search query for sections - 28/06/2013
+
+delete from system.map_search_option  where code = 'SECTION';
+delete from system.query  where name = 'map_search.cadastre_object_by_section';
+
+insert into system.query(name, sql) values('map_search.cadastre_object_by_section', 'select s.id, s.label, st_asewkb(s.geom) as the_geom from  cadastre.spatial_unit s, 
+cadastre.spatial_unit_group sg 
+where compare_strings(#{search_string}, sg.name) 
+and s.label= sg.label and sg.hierarchy_level=4
+and ST_Intersects(ST_PointOnSurface(s.geom), sg.geom)
+and s.level_id in (select distinct(s1.level_id) from cadastre.spatial_unit s1, cadastre.level cl where s1.level_id = cl.id 
+and cl.name=''Section'' )
+ limit 30');
+
+insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) 
+values('SECTION', 'Section', 'map_search.cadastre_object_by_section', true, 3, 50);
+
      
 -- Name Translations
 --UPDATE system.config_map_layer SET title = 'Applications::::Talosaga' WHERE "name" = 'applications';
