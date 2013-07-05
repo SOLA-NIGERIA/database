@@ -362,3 +362,21 @@ INSERT INTO system.appuser(id, username, first_name, last_name, passwd, active, 
 DELETE FROM system.appuser_appgroup WHERE appuser_id = (SELECT id FROM system.appuser WHERE username = 'qauser'); 
 INSERT INTO system.appuser_appgroup (appuser_id, appgroup_id)
 VALUES ((SELECT id FROM system.appuser WHERE username = 'qauser'), (SELECT id FROM system.appgroup WHERE "name" = 'GIS'));
+
+
+
+
+--- Added Role for record Lien LH # 4
+--
+-- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres
+--
+
+insert into system.approle(code, display_value, status, description) values('recordLien', 'Record Lien', 'c', 'Allows to make changes for registration of lien');
+
+
+--
+-- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres
+--
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) values ('recordLien', 'super-group-id');  
