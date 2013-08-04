@@ -45,7 +45,7 @@ UPDATE rrr_type SET display_value = 'Grazing Right', is_primary = false, party_r
 UPDATE rrr_type SET display_value = 'Informal Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'informalOccupation';
 UPDATE rrr_type SET display_value = 'Lease', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lease';
 UPDATE rrr_type SET display_value = 'Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
-UPDATE rrr_type SET display_value = 'Ownership', is_primary = true, party_required = true, description = '', status = 'c' WHERE code = 'occupation';
+UPDATE rrr_type SET display_value = 'Ownership', is_primary = true, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
 UPDATE rrr_type SET display_value = 'Ownership Assumed', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'ownershipAssumed';
 UPDATE rrr_type SET display_value = 'Superficies', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'superficies';
 UPDATE rrr_type SET display_value = 'Tenancy', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'tenancy';

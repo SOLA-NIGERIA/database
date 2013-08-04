@@ -39,9 +39,13 @@ AS $$
 declare
 last_part geometry;
 val_to_return character varying;
- 
+srid_found integer;
 begin
-   last_part := get_geometry_with_srid(geom);
+  
+  srid_found = (select srid from system.crs);
+  
+   
+   last_part := ST_SetSRID(geom,srid_found);
 
    select name 
    into val_to_return

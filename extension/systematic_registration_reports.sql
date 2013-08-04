@@ -64,11 +64,10 @@ BEGIN
 
     
      sqlSt:= 'select sg.name   as area
-			  from  cadastre.spatial_unit s, 
+			  from  
 			  cadastre.spatial_unit_group sg 
-			  where  s.label= sg.label
-			  and sg.hierarchy_level=4
-		          and ST_Intersects(ST_PointOnSurface(s.geom), sg.geom)
+			  where 
+			  sg.hierarchy_level=4
     ';
     if namelastpart != '' then
           sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
@@ -646,11 +645,10 @@ BEGIN
     --';
 
      sqlSt:= 'select sg.name   as area
-			  from  cadastre.spatial_unit s, 
+			  from  
 			  cadastre.spatial_unit_group sg 
-			  where  s.label= sg.label
-			  and sg.hierarchy_level=4
-		          and ST_Intersects(ST_PointOnSurface(s.geom), sg.geom)
+			  where 
+			  sg.hierarchy_level=4
     ';
     if namelastpart != '' then
           sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
