@@ -148,7 +148,7 @@ insert into system.map_search_option(code, title, query_name, active, min_search
 values('SECTION', 'Section', 'map_search.cadastre_object_by_section', true, 3, 50);
 
  
- --SET NEW SRID and OTHER Kano PARAMETERS
+ --SET NEW SRID and OTHER Kaduna PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 
