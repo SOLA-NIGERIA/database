@@ -225,20 +225,25 @@ ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
 ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
 
+--------------------  altering the geom type enforce constraint on interim_data tables
 CREATE TABLE interim_data.lga_temp ( LIKE interim_data.lga INCLUDING ALL);
-ALTER TABLE interim_data.lga_temp DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
+ALTER TABLE interim_data.lga_temp DROP CONSTRAINT IF EXISTS enforce_geotype_the_geom;
 
-INSERT INTO interim_data.lga_temp SELECT gid, id, lbl, fip, mmt_id, short__frm, long_frm, adm0, adm1, 
-       adm2, adm3, adm4, adm5, "stl-0", "stl-1", "stl-2", "stl-3", "stl-4", 
-       "stl-5",(ST_Dump(the_geom)).geom as the_geom from interim_data.lga;
+INSERT INTO interim_data.lga_temp SELECT gid, id, 
+--lbl, fip, mmt_id, short__frm, long_frm, adm0, adm1, 
+--adm2, adm3, adm4, adm5, "stl-0", "stl-1", "stl-2", "stl-3", "stl-4", "stl-5",
+(ST_Dump(the_geom)).geom as the_geom from interim_data.lga;
 
 ALTER TABLE interim_data.lga RENAME TO lga_old;
 ALTER TABLE interim_data.lga_temp RENAME TO lga;
 
 CREATE TABLE interim_data.wards_temp ( LIKE interim_data.wards INCLUDING ALL);
-ALTER TABLE interim_data.wards_temp DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
+ALTER TABLE interim_data.wards_temp DROP CONSTRAINT IF EXISTS enforce_geotype_the_geom;
 
-INSERT INTO interim_data.wards_temp SELECT gid, "name", upicode,(ST_Dump(the_geom)).geom as the_geom from interim_data.wards;
+INSERT INTO interim_data.wards_temp SELECT gid, id, "ward", 
+--"name", upicode,
+(ST_Dump(the_geom)).geom as the_geom from interim_data.wards;
 
 ALTER TABLE interim_data.wards RENAME TO wards_old;
 ALTER TABLE interim_data.wards_temp RENAME TO wards;
+ 
