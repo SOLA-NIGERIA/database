@@ -51,10 +51,11 @@ DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
 DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Ward');
-
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward', 'section');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
--- Configure the Level data for Kano, Nigeria
+
+-- Configure the Level data for Kaduna, Nigeria
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -74,7 +75,7 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 --DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
 --DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
 DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'section');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSection');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard', 'SpatialResult.getSection');
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
@@ -88,7 +89,6 @@ INSERT INTO system.query(name, sql, description)
 
 --Changes made by Paola to add a new layer for sections - 26/06/2013
 --DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'section');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
@@ -181,16 +181,6 @@ ALTER TABLE cadastre.spatial_unit_group_historic DROP CONSTRAINT IF EXISTS enfor
 ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32632);
 
 
-ALTER TABLE cadastre.spatial_unit_group  DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
-ALTER TABLE cadastre.spatial_unit_group ADD  CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'POLYGON'::text OR geom IS NULL);
-ALTER TABLE cadastre.spatial_unit_group_historic  DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
-ALTER TABLE cadastre.spatial_unit_group_historic ADD  CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'POLYGON'::text OR geom IS NULL);
-
-ALTER TABLE cadastre.spatial_unit_group DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
-ALTER TABLE cadastre.spatial_unit_group ADD  CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'MULTIPOLYGON'::text OR geom IS NULL);
-ALTER TABLE cadastre.spatial_unit_group_historic DROP CONSTRAINT IF EXISTS enforce_geotype_geom;
-ALTER TABLE cadastre.spatial_unit_group_historic ADD  CONSTRAINT enforce_geotype_geom CHECK (geometrytype(geom) = 'MULTIPOLYGON'::text OR geom IS NULL);
-  
 
 ALTER TABLE cadastre.cadastre_object DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
 ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32632);
@@ -224,26 +214,3 @@ ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_
 
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
 ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32632);
-
---------------------  altering the geom type enforce constraint on interim_data tables
-CREATE TABLE interim_data.lga_temp ( LIKE interim_data.lga INCLUDING ALL);
-ALTER TABLE interim_data.lga_temp DROP CONSTRAINT IF EXISTS enforce_geotype_the_geom;
-
-INSERT INTO interim_data.lga_temp SELECT gid, id, 
---lbl, fip, mmt_id, short__frm, long_frm, adm0, adm1, 
---adm2, adm3, adm4, adm5, "stl-0", "stl-1", "stl-2", "stl-3", "stl-4", "stl-5",
-(ST_Dump(the_geom)).geom as the_geom from interim_data.lga;
-
-ALTER TABLE interim_data.lga RENAME TO lga_old;
-ALTER TABLE interim_data.lga_temp RENAME TO lga;
-
-CREATE TABLE interim_data.wards_temp ( LIKE interim_data.wards INCLUDING ALL);
-ALTER TABLE interim_data.wards_temp DROP CONSTRAINT IF EXISTS enforce_geotype_the_geom;
-
-INSERT INTO interim_data.wards_temp SELECT gid, id, "ward", 
---"name", upicode,
-(ST_Dump(the_geom)).geom as the_geom from interim_data.wards;
-
-ALTER TABLE interim_data.wards RENAME TO wards_old;
-ALTER TABLE interim_data.wards_temp RENAME TO wards;
- 
