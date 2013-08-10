@@ -222,7 +222,9 @@ UPDATE party_role_type SET display_value = 'Transferee', status = 'x', descripti
 UPDATE party_role_type SET display_value = 'Transferor', status = 'x', description = '' WHERE code = 'transferor';
 UPDATE party_role_type SET display_value = 'Applicant', status = 'c', description = '' WHERE code = 'applicant';
 
-
+insert into party.party_role_type(code, display_value, status) values('claimant', 'Claimant::::Reclamante', 'c');
+insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
+insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
 --
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
