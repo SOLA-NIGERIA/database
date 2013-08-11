@@ -146,23 +146,31 @@ UNION
 ALTER TABLE administrative.sys_reg_owner_name OWNER TO postgres;
 
 --application.systematic_registration_certificates;
-	CREATE OR REPLACE VIEW application.systematic_registration_certificates AS 
-	SELECT aa.nr, co.name_firstpart, co.name_lastpart, su.ba_unit_id, sg.name::text as name 
-	FROM application.application_status_type ast,cadastre.spatial_unit_group sg, cadastre.land_use_type lu, 
-	cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s
-	WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text 
-        AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom)
-	AND su.spatial_unit_id::text = sa.spatial_unit_id::text
-	AND (ap.ba_unit_id::text = su.ba_unit_id::text OR (ap.name_firstpart::text || ap.name_lastpart::text) = (bu.name_firstpart::text || bu.name_lastpart::text)) 
-	AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text
-        AND s.request_type_code::text = 'systematicRegn'::text 
-	AND aa.status_code::text = ast.code::text AND (aa.status_code::text = 'approved'::text or aa.status_code::text = 'archived'::text) 
-	AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text;
- 
-	ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;
- 
- 
- 
+
+CREATE OR REPLACE VIEW application.systematic_registration_certificates AS 
+ SELECT distinct (aa.nr), co.name_firstpart, co.name_lastpart, 
+ su.ba_unit_id, sg.name::text AS name, aa.id ::text AS appId, aa.change_time as commencingDate,
+ lu.display_value::text AS landUse,
+ 'LOCATION'::text AS propLocation,
+ sa.size as size
+FROM application.application_status_type ast, cadastre.spatial_unit_group sg, 
+   cadastre.land_use_type lu, cadastre.cadastre_object co, 
+   administrative.ba_unit bu, cadastre.spatial_value_area sa, 
+   administrative.ba_unit_contains_spatial_unit su, 
+   application.application_property ap, application.application aa, application.service s
+  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text 
+  AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom)
+  AND sg.hierarchy_level = 3 
+  AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
+  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR (ap.name_firstpart::text || ap.name_lastpart::text) = (bu.name_firstpart::text || bu.name_lastpart::text)) 
+  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text
+  AND s.request_type_code::text = 'systematicRegn'::text AND aa.status_code::text = ast.code::text 
+  AND (aa.status_code::text = 'approved'::text OR aa.status_code::text = 'archived'::text)
+  AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text;
+
+ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;
+
+
 
 
 

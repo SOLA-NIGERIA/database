@@ -64,6 +64,8 @@ echo Loading kaduna Systematic Registration Reports... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%systematic_registration_reports.sql >> build.log 2>&1
 echo Loading kaduna User Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
+echo Loading kaduna Dispute Module... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%dispute_module.sql >> build.log 2>&1
 echo Loading kaduna LGA and Ward Boundaries... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
 echo Finished at %time% - Check build.log for errors!
