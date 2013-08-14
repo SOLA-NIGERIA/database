@@ -27,12 +27,19 @@
 
 	ALTER TABLE  party.party DROP COLUMN IF EXISTS dob;
 	ALTER TABLE  party.party ADD COLUMN  dob date;
+	ALTER TABLE  party.party_historic DROP COLUMN IF EXISTS dob;
+	ALTER TABLE  party.party_historic ADD COLUMN  dob date;
+
 
 	ALTER TABLE  party.party DROP COLUMN IF EXISTS state;
 	ALTER TABLE  party.party ADD COLUMN  state character varying(255);
+        ALTER TABLE  party.party_historic DROP COLUMN IF EXISTS state;
+	ALTER TABLE  party.party_historic ADD COLUMN  state character varying(255);
 
 	ALTER TABLE  party.party DROP COLUMN IF EXISTS nationality;
 	ALTER TABLE  party.party ADD COLUMN  nationality character varying(255);
+	ALTER TABLE  party.party_historic DROP COLUMN IF EXISTS nationality;
+	ALTER TABLE  party.party_historic ADD COLUMN  nationality character varying(255);
 	
 	
 	
