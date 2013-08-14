@@ -1,4 +1,4 @@
-﻿--Codelist Changes - Ondo State, Nigeria
+﻿--Codelist Changes - Kaduna State, Nigeria
 
 
 
@@ -164,12 +164,10 @@ SET search_path = cadastre, pg_catalog;
 --
 
 --- empty table before inserting new values
-DROP cadastre.land_use_type ;
-
-UPDATE land_use_type SET display_value = 'Commercial', status = 'c', description = '' WHERE code = 'commercial';
-UPDATE land_use_type SET display_value = 'Residential', status = 'c', description = '' WHERE code = 'residential';
-UPDATE land_use_type SET display_value = 'Industrial', status = 'c', description = '' WHERE code = 'industrial';
-UPDATE land_use_type SET display_value = 'Agricultural', status = 'c', description = '' WHERE code = 'agricultural';
+DELETE from  cadastre.land_use_type   WHERE code = 'commercial';
+DELETE from  cadastre.land_use_type   WHERE code = 'residential';
+DELETE from  cadastre.land_use_type   WHERE code = 'industrial';
+DELETE from  cadastre.land_use_type   WHERE code = 'agricultural';
 
 
 
