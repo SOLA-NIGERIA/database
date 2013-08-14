@@ -124,9 +124,9 @@ UPDATE administrative_source_type SET display_value = 'Agricultural Lease', stat
 UPDATE administrative_source_type SET display_value = 'Agricultural Notary Statement', status = 'x', description = '' WHERE code = 'agriNotaryStatement';
 UPDATE administrative_source_type SET display_value = 'Deed', status = 'c', description = '' WHERE code = 'deed';
 UPDATE administrative_source_type SET display_value = 'Lease', status = 'c', description = '' WHERE code = 'lease';
-UPDATE administrative_source_type SET display_value = 'Mortgage', status = 'c', description = '' WHERE code = 'mortgage';
-UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'c', description = '' WHERE code = 'title';
-UPDATE administrative_source_type SET display_value = 'Proclamation', status = 'c', description = '' WHERE code = 'proclamation';
+UPDATE administrative_source_type SET display_value = 'Mortgage', status = 'x', description = '' WHERE code = 'mortgage';
+UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'x', description = '' WHERE code = 'title';
+UPDATE administrative_source_type SET display_value = 'Proclamation', status = 'x', description = '' WHERE code = 'proclamation';
 UPDATE administrative_source_type SET display_value = 'Court Order', status = 'c', description = '' WHERE code = 'courtOrder';
 UPDATE administrative_source_type SET display_value = 'Agreement', status = 'c', description = '' WHERE code = 'agreement';
 UPDATE administrative_source_type SET display_value = 'Contract for Sale', status = 'c', description = '' WHERE code = 'contractForSale';
@@ -163,10 +163,37 @@ SET search_path = cadastre, pg_catalog;
 -- Data for Name: land_use_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
 --
 
+--- empty table before inserting new values
+DROP cadastre.land_use_type ;
+
 UPDATE land_use_type SET display_value = 'Commercial', status = 'c', description = '' WHERE code = 'commercial';
 UPDATE land_use_type SET display_value = 'Residential', status = 'c', description = '' WHERE code = 'residential';
 UPDATE land_use_type SET display_value = 'Industrial', status = 'c', description = '' WHERE code = 'industrial';
 UPDATE land_use_type SET display_value = 'Agricultural', status = 'c', description = '' WHERE code = 'agricultural';
+
+
+
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home','RESIDENTIAL---Home', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home_agric','RESIDENTIAL---Home Agric', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_commercial','BUSINESS---Commecial', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_industrial','BUSINESS---industrial', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_fstation','BUSINESS---Filling Station', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_argic','BUSINESS---Agric', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_other','BUSINESS---Other', '', 'c');
+
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('rel_mosque','RELIGIOUS---Masjid', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('rel_church','RELIGIOUS---Church', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('rel_other','RELIGIOUS---Other', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('gov_federal','GOVT---Federal', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('gov_state','GOVT---State', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('inst_school','INSTITUTION---School', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('inst_hosp','INSTITUTION---Hospital', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('inst_other','INSTITUTION---Other', '', 'c');
+
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('comm_community_land','COMMUNAL---Community', '', 'c');
+
+
+
 
 
 SET search_path = party, pg_catalog;
@@ -195,9 +222,19 @@ UPDATE group_party_type SET display_value = 'Basic Administrative Unit Group', s
 -- Data for Name: id_type; Type: TABLE DATA; Schema: party; Owner: postgres
 --
 
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('int_passport','International Passport', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('voting_card','Voting Card', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('birth_cert','Birth Certificate', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('driv_lic','Drivers License', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('national_id','National ID Card', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('no_evidence','No Evidence', '', 'c');
+
+
+
 UPDATE id_type SET display_value = 'National ID', status = 'c', description = '' WHERE code = 'nationalID';
 UPDATE id_type SET display_value = 'National Passport', status = 'c', description = '' WHERE code = 'nationalPassport';
 UPDATE id_type SET display_value = 'Other Passport', status = 'c', description = '' WHERE code = 'otherPassport';
+
 
 
 --

@@ -24,6 +24,19 @@
 	ALTER TABLE  source.source_historic DROP COLUMN reference_nr;
 	ALTER TABLE  source.source_historic ADD COLUMN reference_nr character varying(255);
 
+
+	ALTER TABLE  party.party DROP COLUMN IF EXISTS dob;
+	ALTER TABLE  party.party ADD COLUMN  dob date;
+
+	ALTER TABLE  party.party DROP COLUMN IF EXISTS state;
+	ALTER TABLE  party.party ADD COLUMN  state character varying(255);
+
+	ALTER TABLE  party.party DROP COLUMN IF EXISTS nationality;
+	ALTER TABLE  party.party ADD COLUMN  nationality character varying(255);
+	
+	
+	
+
 --Creating again the views
 -- View: administrative.systematic_registration_listing
 
