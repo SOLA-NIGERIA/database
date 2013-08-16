@@ -163,11 +163,12 @@ SET search_path = cadastre, pg_catalog;
 -- Data for Name: land_use_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
 --
 
---- empty table before inserting new values
-DELETE from  cadastre.land_use_type   WHERE code = 'commercial';
-DELETE from  cadastre.land_use_type   WHERE code = 'residential';
-DELETE from  cadastre.land_use_type   WHERE code = 'industrial';
-DELETE from  cadastre.land_use_type   WHERE code = 'agricultural';
+--- update table before inserting new values
+--- please do not delete these landUse_type
+UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'residential';
+UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'commercial';
+UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'industrial';
+UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'agricultural';
 
 
 

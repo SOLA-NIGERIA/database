@@ -36,16 +36,16 @@ INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  chang
 --------------- LGA
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user) 
 	--SELECT 'KD/'||adm2, 2, adm2, 'KD/'||adm2, the_geom, 'test'
-	SELECT 'KD/'||id, 2, id, 'KD/'||id, geom, 'test'
+	SELECT 'KD/'||id, 2, id, 'KD/'||id, the_geom, 'test'
 	FROM interim_data.lga;
 	-- WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
 --------------- Wards
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
-   SELECT lga_group.name || '/' ||w.ward,3, w.ward,lga_group.name || '/' ||w.ward, w.geom, 'test', 0
+   SELECT lga_group.name || '/' ||w.ward,3, w.ward,lga_group.name || '/' ||w.ward, w.the_geom, 'test', 0
    FROM cadastre.spatial_unit_group AS lga_group,  interim_data.wards AS w 
    WHERE lga_group.hierarchy_level = 2 
-   AND st_intersects(lga_group.geom, st_pointonsurface(w.geom));
+   AND st_intersects(lga_group.geom, st_pointonsurface(w.the_geom));
 
 ----------- SPATIAL_UNIT_GROUP_IN TABLE POPULATION ----------------------------------------
 
