@@ -385,7 +385,7 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE administrative.dispute_role_type OWNER TO postgres;
-COMMENT ON TABLE administrative.dispute_role_type IS 'Reference table for different types of disputant.'
+COMMENT ON TABLE administrative.dispute_role_type IS 'Reference table for different types of disputant.';
 
 
 
@@ -430,8 +430,8 @@ insert into administrative.dispute_status(code, display_value, description, stat
 insert into administrative.dispute_status(code, display_value, description, status) values('resolved', 'Resolved', ' ', 'c');
 insert into administrative.dispute_status(code, display_value, description, status) values('rejected', 'Rejected', ' ', 'c');
 insert into administrative.dispute_status(code, display_value, description, status) values('unsolved', 'Unsolved', ' ', 'c');
-insert into administrative.dispute_status(code, display_value, description, status) values('resolvedProClaimant', 'ResolvedProClaimant', ' ', 'c');
-insert into administrative.dispute_status(code, display_value, description, status) values('resolvedAgainstClaimant', 'ResolvedAgainstClaimant', ' ', 'c');
+insert into administrative.dispute_status(code, display_value, description, status) values('resProClaimant', 'ResolvedProClaimant', ' ', 'c');
+insert into administrative.dispute_status(code, display_value, description, status) values('resAgainstClaimant', 'ResolvedAgainstClaimant', ' ', 'c');
 
  -- Data for the table administrative.other_authorities -- 
 insert into administrative.other_authorities(code, display_value, description, status) values('courtoflaw', 'Courts of Law', '', 'c');
