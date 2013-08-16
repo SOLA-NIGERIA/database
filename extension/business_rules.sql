@@ -2,17 +2,20 @@
 --target-ba_unit-check-if-pending
 --target-parcels-check-isapolygon
 --target-parcels-check-nopending
+
+-- other br disabled for first registration
 --target-parcels-present
-
---update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-ba_unit-check-if-pending';
---update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-check-isapolygon';
---update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-check-nopending';
---update system.br_definition set active_from = now() - interval '48 hours', active_until= now() - interval '24 hours' where  br_id = 'target-parcels-present';
-
+--target-and-new-union-the-same
+--service-has-person-verification
 update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='target-ba_unit-check-if-pending';
 update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='target-parcels-check-isapolygon';
 update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='target-parcels-check-nopending';
 update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='target-parcels-present';
+update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='target-and-new-union-the-same';
+update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='service-has-person-verification';
+
+--documents-present  this has to update the logic and enabled again 
+update system.br_validation set target_application_moment  = null, target_service_moment = null, target_reg_moment = null where br_id='documents-present';
 
 --LH # 15
 --CHANGE cadastre-object-check-name for NIGERIA UPI Standard
