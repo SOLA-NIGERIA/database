@@ -125,7 +125,7 @@ UPDATE administrative_source_type SET display_value = 'Agricultural Notary State
 UPDATE administrative_source_type SET display_value = 'Deed', status = 'c', description = '' WHERE code = 'deed';
 UPDATE administrative_source_type SET display_value = 'Lease', status = 'c', description = '' WHERE code = 'lease';
 UPDATE administrative_source_type SET display_value = 'Mortgage', status = 'x', description = '' WHERE code = 'mortgage';
-UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'x', description = '' WHERE code = 'title';
+UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'c', description = '' WHERE code = 'title';
 UPDATE administrative_source_type SET display_value = 'Proclamation', status = 'x', description = '' WHERE code = 'proclamation';
 UPDATE administrative_source_type SET display_value = 'Court Order', status = 'c', description = '' WHERE code = 'courtOrder';
 UPDATE administrative_source_type SET display_value = 'Agreement', status = 'c', description = '' WHERE code = 'agreement';
@@ -170,6 +170,23 @@ UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'commercial';
 UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'industrial';
 UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'agricultural';
 
+
+DELETE FROM cadastre.land_use_type WHERE code = 'res_home';
+DELETE FROM cadastre.land_use_type WHERE code = 'res_home_agric';
+DELETE FROM cadastre.land_use_type WHERE code = 'bus_commercial';
+DELETE FROM cadastre.land_use_type WHERE code = 'bus_industrial';
+DELETE FROM cadastre.land_use_type WHERE code = 'bus_fstation';
+DELETE FROM cadastre.land_use_type WHERE code = 'bus_argic';
+DELETE FROM cadastre.land_use_type WHERE code = 'bus_other';
+DELETE FROM cadastre.land_use_type WHERE code = 'rel_mosque';
+DELETE FROM cadastre.land_use_type WHERE code = 'rel_church';
+DELETE FROM cadastre.land_use_type WHERE code = 'rel_other';
+DELETE FROM cadastre.land_use_type WHERE code = 'gov_federal';
+DELETE FROM cadastre.land_use_type WHERE code = 'gov_state';
+DELETE FROM cadastre.land_use_type WHERE code = 'inst_school';
+DELETE FROM cadastre.land_use_type WHERE code = 'inst_hosp';
+DELETE FROM cadastre.land_use_type WHERE code = 'inst_other';
+DELETE FROM cadastre.land_use_type WHERE code = 'comm_community_land';
 
 
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home','RESIDENTIAL---Home', '', 'c');
@@ -220,6 +237,12 @@ UPDATE group_party_type SET display_value = 'Basic Administrative Unit Group', s
 --
 -- Data for Name: id_type; Type: TABLE DATA; Schema: party; Owner: postgres
 --
+DELETE FROM  party.id_type WHERE code = 'int_passport';
+DELETE FROM  party.id_type WHERE code = 'voting_card';
+DELETE FROM  party.id_type WHERE code = 'birth_cert';
+DELETE FROM  party.id_type WHERE code = 'driv_lic';
+DELETE FROM  party.id_type WHERE code = 'national_id';
+DELETE FROM  party.id_type WHERE code = 'no_evidence';
 
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('int_passport','International Passport', '', 'c');
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('voting_card','Voting Card', '', 'c');
@@ -258,9 +281,17 @@ UPDATE party_role_type SET display_value = 'Transferee', status = 'x', descripti
 UPDATE party_role_type SET display_value = 'Transferor', status = 'x', description = '' WHERE code = 'transferor';
 UPDATE party_role_type SET display_value = 'Applicant', status = 'c', description = '' WHERE code = 'applicant';
 
+DELETE FROM  party.party_role_type WHERE code = 'claimant';
+DELETE FROM  party.party_role_type WHERE code = 'complainant';
+DELETE FROM  party.party_role_type WHERE code = 'resistent';
+DELETE FROM  party.party_role_type WHERE code = 'recOfficer';
+DELETE FROM  party.party_role_type WHERE code = 'authRep';
+
 insert into party.party_role_type(code, display_value, status) values('claimant', 'Claimant::::Reclamante', 'c');
 insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
 insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
+insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recordation Officer', 'c');
+insert into party.party_role_type(code, display_value, status) values('authRep', 'Authorized Representative', 'c');
 --
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
@@ -284,6 +315,7 @@ UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
 UPDATE source.administrative_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+DELETE FROM  source.administrative_source_type WHERE code = 'recordLien';
 insert into source.administrative_source_type(code, display_value, status) values('recordLien', 'Lien', 'c');
 
 --
@@ -292,26 +324,43 @@ insert into source.administrative_source_type(code, display_value, status) value
 
 UPDATE source.spatial_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
 
+
+
+--
+-- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
+--
+DELETE FROM  application.request_type WHERE code = 'recordLien';
+
+
 --
 -- Data for Name: rrr_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
 --
 
 UPDATE administrative.rrr_type SET display_value = 'Public Land'  WHERE code = 'stateOwnership';
+
+DELETE FROM  administrative.rrr_type WHERE code = 'regnDeeds';
+DELETE FROM  administrative.rrr_type WHERE code = 'regnPowerOfAttorney';
+DELETE FROM  administrative.rrr_type WHERE code = 'recordLien';
 insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('regnDeeds', 'responsibilities', 'Deed Registration', true, false, false, 'c');
 insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('regnPowerOfAttorney', 'responsibilities', 'Power of Attorney', true, false, false, 'c');
 insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('recordLien', 'restrictions', 'Lien', false, true, true, 'c');
+
 
 --
 -- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
 UPDATE application.request_type SET rrr_type_code = null, type_action_code = null  WHERE code = 'systematicRegn';
+DELETE FROM  application.request_type WHERE code = 'recordLien';
+
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('recordLien', 'registrationServices', 'Record Lien', 'c', 5, 0.00, 0.00, 0, 1, 'Lien to <lender>', 'recordLien', 'new');
+
+
 
 --
 -- Data for Name: request_type_requires_source_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
-
+delete from application.request_type_requires_source_type where request_type_code =  'recordLien' ;
 insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('recordLien', 'recordLien');
 insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'recordLien');
 

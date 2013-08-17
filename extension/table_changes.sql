@@ -12,8 +12,21 @@
 	ALTER TABLE  administrative.ba_unit_historic DROP COLUMN name_lastpart;
 	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN name_lastpart character varying(50);
 
+	ALTER TABLE administrative.ba_unit DROP COLUMN is_not_developed;
+	ALTER TABLE administrative.ba_unit DROP COLUMN years_for_dev;
+	ALTER TABLE administrative.ba_unit DROP COLUMN value_to_imp;
+	ALTER TABLE administrative.ba_unit DROP COLUMN term;
+	ALTER TABLE administrative.ba_unit DROP COLUMN land_use_code;
+	ALTER TABLE administrative.ba_unit DROP COLUMN "location";
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN is_not_developed;
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN years_for_dev;
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN value_to_imp;
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN term;
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN land_use_code;
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN "location";
+
         ALTER TABLE  administrative.ba_unit ADD COLUMN is_not_developed boolean;
-	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN is_not_developed boolean;
+        ALTER TABLE  administrative.ba_unit_historic ADD COLUMN is_not_developed boolean;
 	ALTER TABLE  administrative.ba_unit ADD COLUMN years_for_dev integer;
 	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN years_for_dev integer;
 	ALTER TABLE  administrative.ba_unit ADD COLUMN value_to_imp numeric (19,2);
@@ -194,7 +207,7 @@ FROM application.application_status_type ast, cadastre.spatial_unit_group sg,
    application.application_property ap, application.application aa, application.service s
   WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text 
   AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom)
-  AND sg.hierarchy_level = 3 
+  AND sg.hierarchy_level = 4 
   AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
   AND (ap.ba_unit_id::text = su.ba_unit_id::text OR (ap.name_firstpart::text || ap.name_lastpart::text) = (bu.name_firstpart::text || bu.name_lastpart::text)) 
   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text
