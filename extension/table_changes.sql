@@ -12,6 +12,20 @@
 	ALTER TABLE  administrative.ba_unit_historic DROP COLUMN name_lastpart;
 	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN name_lastpart character varying(50);
 
+        ALTER TABLE  administrative.ba_unit ADD COLUMN is_not_developed boolean;
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN is_not_developed boolean;
+	ALTER TABLE  administrative.ba_unit ADD COLUMN years_for_dev integer;
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN years_for_dev integer;
+	ALTER TABLE  administrative.ba_unit ADD COLUMN value_to_imp numeric (19,2);
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN value_to_imp numeric (19,2);
+	ALTER TABLE  administrative.ba_unit ADD COLUMN term integer;
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN term integer;
+	ALTER TABLE  administrative.ba_unit ADD COLUMN land_use_code character varying(20);
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN land_use_code character varying(20);
+	ALTER TABLE  administrative.ba_unit ADD COLUMN location character varying(255);
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN location character varying(255);
+	
+
 
 	ALTER TABLE  application.application_property DROP COLUMN name_lastpart;
 	ALTER TABLE  application.application_property ADD COLUMN name_lastpart character varying(50);
