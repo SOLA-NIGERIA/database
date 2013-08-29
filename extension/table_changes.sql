@@ -213,7 +213,7 @@ FROM application.application_status_type ast, cadastre.spatial_unit_group sg,
   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text
   AND s.request_type_code::text = 'systematicRegn'::text AND aa.status_code::text = ast.code::text 
   AND (aa.status_code::text = 'approved'::text OR aa.status_code::text = 'archived'::text)
-  AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text;
+  AND COALESCE(bu.land_use_code, 'residential'::character varying)::text = lu.code::text;
 
 ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;
 

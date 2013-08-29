@@ -275,11 +275,11 @@ UPDATE party_role_type SET display_value = 'Farmer', status = 'x', description =
 UPDATE party_role_type SET display_value = 'Citizen', status = 'c', description = '' WHERE code = 'citizen';
 UPDATE party_role_type SET display_value = 'Approving Officer', status = 'x', description = '' WHERE code = 'stateAdministrator';
 UPDATE party_role_type SET display_value = 'Land Officer', status = 'x', description = '' WHERE code = 'landOfficer';
-UPDATE party_role_type SET display_value = 'Lodging Agent', status = 'x', description = '' WHERE code = 'lodgingAgent';
 UPDATE party_role_type SET display_value = 'Power of Attorney', status = 'c', description = '' WHERE code = 'powerOfAttorney';
 UPDATE party_role_type SET display_value = 'Transferee', status = 'x', description = '' WHERE code = 'transferee';
 UPDATE party_role_type SET display_value = 'Transferor', status = 'x', description = '' WHERE code = 'transferor';
 UPDATE party_role_type SET display_value = 'Applicant', status = 'c', description = '' WHERE code = 'applicant';
+UPDATE party_role_type SET display_value = 'Authorized Representative', status = 'c', description = '' WHERE code = 'lodgingAgent';
 
 DELETE FROM  party.party_role_type WHERE code = 'claimant';
 DELETE FROM  party.party_role_type WHERE code = 'complainant';
@@ -291,7 +291,6 @@ insert into party.party_role_type(code, display_value, status) values('claimant'
 insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
 insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
 insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recordation Officer', 'c');
-insert into party.party_role_type(code, display_value, status) values('authRep', 'Authorized Representative', 'c');
 --
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
