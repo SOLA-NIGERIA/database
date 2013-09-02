@@ -139,7 +139,7 @@ UPDATE administrative_source_type SET display_value = 'Waiver to Caveat or other
 UPDATE administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'c', description = '' WHERE code = 'idVerification';
 UPDATE administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
 UPDATE administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'c', description = '' WHERE code = 'publicNotification';
-UPDATE administrative_source_type SET display_value = 'Systematic Registration Application', status = 'c', description = '' WHERE code = 'systematicRegn';
+UPDATE administrative_source_type SET display_value = 'FORM LTR-F2', status = 'c', description = '' WHERE code = 'systematicRegn';
 UPDATE administrative_source_type SET display_value = 'Objection', status = 'c', description = '' WHERE code = 'objection';
 UPDATE administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
 UPDATE administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
@@ -151,8 +151,8 @@ SET search_path = application, pg_catalog;
 --
 -- Data for Name: request_type_requires_source_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
---DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'systematicRegn';
---INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'systematicRegn');
+DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'systematicRegn';
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'systematicRegn');
 DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'lodgeObjection';
 INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('lodgeObjection', 'objection');
 
@@ -192,7 +192,7 @@ DELETE FROM cadastre.land_use_type WHERE code = 'comm_community_land';
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home','RESIDENTIAL---Home', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home_agric','RESIDENTIAL---Home Agric', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_commercial','BUSINESS---Commecial', '', 'c');
-INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_industrial','BUSINESS---industrial', '', 'c');
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_industrial','BUSINESS---Industrial', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_fstation','BUSINESS---Filling Station', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_argic','BUSINESS---Agric', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_other','BUSINESS---Other', '', 'c');
