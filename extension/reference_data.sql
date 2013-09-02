@@ -36,81 +36,82 @@ UPDATE mortgage_type SET display_value = 'Micro Credit', status = 'x', descripti
 -- Data for Name: rrr_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
 --
 
-UPDATE rrr_type SET display_value = 'Agriculture Activity', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'agriActivity';
-UPDATE rrr_type SET display_value = 'Common Ownership', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'commonOwnership';
-UPDATE rrr_type SET display_value = 'Customary Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'customaryRight';
-UPDATE rrr_type SET display_value = 'Firewood Collection', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'firewood';
-UPDATE rrr_type SET display_value = 'Fishing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'fishing';
-UPDATE rrr_type SET display_value = 'Grazing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'grazing';
-UPDATE rrr_type SET display_value = 'Informal Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'informalOccupation';
-UPDATE rrr_type SET display_value = 'Lease', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lease';
-UPDATE rrr_type SET display_value = 'Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
-UPDATE rrr_type SET display_value = 'Ownership', is_primary = true, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
-UPDATE rrr_type SET display_value = 'Ownership Assumed', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'ownershipAssumed';
-UPDATE rrr_type SET display_value = 'Superficies', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'superficies';
-UPDATE rrr_type SET display_value = 'Tenancy', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'tenancy';
-UPDATE rrr_type SET display_value = 'Usufruct', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'usufruct';
-UPDATE rrr_type SET display_value = 'Water Rights', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterrights';
-UPDATE rrr_type SET display_value = 'Administrative Public Servitude', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'adminPublicServitude';
-UPDATE rrr_type SET display_value = 'Monument', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monument';
-UPDATE rrr_type SET display_value = 'Mortgage', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'mortgage';
-UPDATE rrr_type SET display_value = 'Building Restriction', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'noBuilding';
-UPDATE rrr_type SET display_value = 'Servitude', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'servitude';
-UPDATE rrr_type SET display_value = 'Monument Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monumentMaintenance';
-UPDATE rrr_type SET display_value = 'Waterway Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterwayMaintenance';
-UPDATE rrr_type SET display_value = 'Life Estate', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lifeEstate';
-UPDATE rrr_type SET display_value = 'Apartment', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'apartment';
-UPDATE rrr_type SET display_value = 'State Ownership', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'stateOwnership';
-UPDATE rrr_type SET display_value = 'Caveat', is_primary = false, party_required = true, description = '', status = 'c' WHERE code = 'caveat';
-UPDATE rrr_type SET display_value = 'Historic Preservation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'historicPreservation';
-UPDATE rrr_type SET display_value = 'Limited Access (to Road)', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'limitedAccess';
+UPDATE administrative.rrr_type SET display_value = 'Agriculture Activity', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'agriActivity';
+UPDATE administrative.rrr_type SET display_value = 'Common Ownership', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'commonOwnership';
+UPDATE administrative.rrr_type SET display_value = 'Customary Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'customaryRight';
+UPDATE administrative.rrr_type SET display_value = 'Firewood Collection', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'firewood';
+UPDATE administrative.rrr_type SET display_value = 'Fishing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'fishing';
+UPDATE administrative.rrr_type SET display_value = 'Grazing Right', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'grazing';
+UPDATE administrative.rrr_type SET display_value = 'Informal Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'informalOccupation';
+UPDATE administrative.rrr_type SET display_value = 'Lease', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lease';
+UPDATE administrative.rrr_type SET display_value = 'Occupation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'occupation';
+UPDATE administrative.rrr_type SET display_value = 'Ownership', is_primary = true, party_required = true, description = '', status = 'c' WHERE code = 'occupation';
+UPDATE administrative.rrr_type SET display_value = 'Ownership Assumed', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'ownershipAssumed';
+UPDATE administrative.rrr_type SET display_value = 'Superficies', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'superficies';
+UPDATE administrative.rrr_type SET display_value = 'Tenancy', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'tenancy';
+UPDATE administrative.rrr_type SET display_value = 'Usufruct', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'usufruct';
+UPDATE administrative.rrr_type SET display_value = 'Water Rights', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterrights';
+UPDATE administrative.rrr_type SET display_value = 'Administrative Public Servitude', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'adminPublicServitude';
+UPDATE administrative.rrr_type SET display_value = 'Monument', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monument';
+UPDATE administrative.rrr_type SET display_value = 'Mortgage', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'mortgage';
+UPDATE administrative.rrr_type SET display_value = 'Building Restriction', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'noBuilding';
+UPDATE administrative.rrr_type SET display_value = 'Servitude', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'servitude';
+UPDATE administrative.rrr_type SET display_value = 'Monument Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'monumentMaintenance';
+UPDATE administrative.rrr_type SET display_value = 'Waterway Maintenance', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'waterwayMaintenance';
+UPDATE administrative.rrr_type SET display_value = 'Life Estate', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'lifeEstate';
+UPDATE administrative.rrr_type SET display_value = 'Apartment', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'apartment';
+UPDATE administrative.rrr_type SET display_value = 'State Ownership', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'stateOwnership';
+UPDATE administrative.rrr_type SET display_value = 'Caveat', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'caveat';
+UPDATE administrative.rrr_type SET display_value = 'Historic Preservation', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'historicPreservation';
+UPDATE administrative.rrr_type SET display_value = 'Limited Access (to Road)', is_primary = false, party_required = true, description = '', status = 'x' WHERE code = 'limitedAccess';
 
---
 -- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
 UPDATE application.request_type SET display_value = 'Change to Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'cadastreChange';
-UPDATE application.request_type SET display_value = 'Redefine Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'redefineCadastre';
-UPDATE application.request_type SET display_value = 'Document Copy', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'documentCopy';
+UPDATE application.request_type SET display_value = 'Redefine Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'redefineCadastre';
+UPDATE application.request_type SET display_value = 'Document Copy', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'documentCopy';
 UPDATE application.request_type SET display_value = 'Vary Mortgage', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation to mortgage with < bank name>', description = '', status = 'x' WHERE code = 'varyMortgage';
 UPDATE application.request_type SET display_value = 'New Freehold Title', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'newFreehold';
 UPDATE application.request_type SET display_value = 'Service Enquiry', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'serviceEnquiry';
 UPDATE application.request_type SET display_value = 'Deed Registration', nr_days_to_complete = 3, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'regnDeeds';
 UPDATE application.request_type SET display_value = 'Registration on Title', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'regnOnTitle';
-UPDATE application.request_type SET display_value = 'Record of Power of Attorney', nr_days_to_complete = 3, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'regnPowerOfAttorney';
+UPDATE application.request_type SET display_value = 'Record of Power of Attorney', nr_days_to_complete = 3, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'regnPowerOfAttorney';
 UPDATE application.request_type SET display_value = 'Registration of Standard Document', nr_days_to_complete = 3, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'regnStandardDocument';
 UPDATE application.request_type SET display_value = 'Title Search', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'titleSearch';
 UPDATE application.request_type SET display_value = 'Survey Plan Copy', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'surveyPlanCopy';
-UPDATE application.request_type SET display_value = 'Map Print', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'cadastrePrint';
+UPDATE application.request_type SET display_value = 'Map Print', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastrePrint';
 UPDATE application.request_type SET display_value = 'Cadastre Export', nr_days_to_complete = 1, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastreExport';
 UPDATE application.request_type SET display_value = 'Cadastre Bulk Export', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'x' WHERE code = 'cadastreBulk';
-UPDATE application.request_type SET display_value = 'Record Lease', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'registerLease';
+UPDATE application.request_type SET display_value = 'Record Lease', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'registerLease';
 UPDATE application.request_type SET display_value = 'Occupation Noted', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'noteOccupation';
 UPDATE application.request_type SET display_value = 'Change of Ownership', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Transfer to <name>', description = '', status = 'x' WHERE code = 'newOwnership';
 UPDATE application.request_type SET display_value = 'Register Usufruct', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<usufruct right granted to <name>', description = '', status = 'x' WHERE code = 'usufruct';
 UPDATE application.request_type SET display_value = 'Register Water Rights', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Water Rights granted to <name>', description = '', status = 'x' WHERE code = 'waterRights';
-UPDATE application.request_type SET display_value = 'Record Mortgage', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Mortgage to <lender>', description = '', status = 'c' WHERE code = 'mortgage';
+UPDATE application.request_type SET display_value = 'Record Mortgage', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Mortgage to <lender>', description = '', status = 'x' WHERE code = 'mortgage';
 UPDATE application.request_type SET display_value = 'Register Building Restriction', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Building Restriction', description = '', status = 'x' WHERE code = 'noBuilding';
-UPDATE application.request_type SET display_value = 'Record Servitude', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Servitude over <parcel1> in favour of <parcel2>', description = '', status = 'c' WHERE code = 'servitude';
+UPDATE application.request_type SET display_value = 'Record Servitude', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Servitude over <parcel1> in favour of <parcel2>', description = '', status = 'x' WHERE code = 'servitude';
 UPDATE application.request_type SET display_value = 'Establish Life Estate', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Life Estate for <name1> with Remainder Estate in <name2, name3>', description = '', status = 'x' WHERE code = 'lifeEstate';
 UPDATE application.request_type SET display_value = 'New Apartment Title', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Apartment Estate', description = '', status = 'x' WHERE code = 'newApartment';
-UPDATE application.request_type SET display_value = 'Record State Property', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'State Estate', description = '', status = 'c' WHERE code = 'newState';
+UPDATE application.request_type SET display_value = 'Record State Property', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'State Estate', description = '', status = 'x' WHERE code = 'newState';
 UPDATE application.request_type SET display_value = 'Register Caveat', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Caveat in the name of <name>', description = '', status = 'x' WHERE code = 'caveat';
 UPDATE application.request_type SET display_value = 'Remove Caveat', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Caveat <reference> removed', description = '', status = 'x' WHERE code = 'removeCaveat';
 UPDATE application.request_type SET display_value = 'Register Historic Preservation Order', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Historic Preservation Order', description = '', status = 'x' WHERE code = 'historicOrder';
 UPDATE application.request_type SET display_value = 'Register Limited Road Access', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Limited Road Access', description = '', status = 'x' WHERE code = 'limitedRoadAccess';
 UPDATE application.request_type SET display_value = 'Vary Lease', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of Lease <reference>', description = '', status = 'x' WHERE code = 'varyLease';
 UPDATE application.request_type SET display_value = 'Vary Right (General)', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of <right> <reference>', description = '', status = 'x' WHERE code = 'varyRight';
-UPDATE application.request_type SET display_value = 'Remove Right', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<right> <reference> cancelled', description = '', status = 'c' WHERE code = 'removeRight';
-UPDATE application.request_type SET display_value = 'Record Existing C of O', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title converted to digital format', description = '', status = 'c' WHERE code = 'newDigitalTitle';
-UPDATE application.request_type SET display_value = 'Remove Restriction', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<restriction> <reference> cancelled', description = '', status = 'c' WHERE code = 'removeRestriction';
+UPDATE application.request_type SET display_value = 'Remove Right', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<right> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRight';
+UPDATE application.request_type SET display_value = 'Record Existing C of O', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title converted to digital format', description = '', status = 'x' WHERE code = 'newDigitalTitle';
+UPDATE application.request_type SET display_value = 'Remove Restriction', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<restriction> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRestriction';
 UPDATE application.request_type SET display_value = 'Cancel Title', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title Cancelled', description = '', status = 'x' WHERE code = 'cancelProperty';
 UPDATE application.request_type SET display_value = 'Vary Caveat', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation to Caveat <reference>', description = '', status = 'x' WHERE code = 'varyCaveat';
-UPDATE application.request_type SET display_value = 'Cancel Power of Attorney', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'cnclPowerOfAttorney';
+UPDATE application.request_type SET display_value = 'Cancel Power of Attorney', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'cnclPowerOfAttorney';
 UPDATE application.request_type SET display_value = 'Withdraw Standard Document', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = 'To withdraw from use any standard document (such as standard mortgage or standard lease)', status = 'x' WHERE code = 'cnclStandardDocument';
 UPDATE application.request_type SET display_value = 'Lodge SLTR Claim', nr_days_to_complete = 90, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title issued at completion of systematic registration', description = '', status = 'c' WHERE code = 'systematicRegn';
-UPDATE application.request_type SET display_value = 'Lodge Objection', nr_days_to_complete = 90, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'lodgeObjection';
+UPDATE application.request_type SET display_value = 'Lodge Objection', nr_days_to_complete = 90, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x' WHERE code = 'lodgeObjection';
 
+UPDATE application.request_type SET display_value = 'Record Lien', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Lien to <lender>', description = '', status = 'x',  type_action_code ='new' WHERE code = 'recordLien';
+UPDATE application.request_type SET display_value = 'Register Building Restriction::::Registrazione restrizioni edificabilita', nr_days_to_complete = 5, base_fee = 5.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'x',  type_action_code ='new' WHERE code = 'buildingRestriction';
 
 
 SET search_path = source, pg_catalog;
@@ -119,32 +120,45 @@ SET search_path = source, pg_catalog;
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
 
-UPDATE administrative_source_type SET display_value = 'Agricultural Consent', status = 'x', description = '' WHERE code = 'agriConsent';
-UPDATE administrative_source_type SET display_value = 'Agricultural Lease', status = 'x', description = '' WHERE code = 'agriLease';
-UPDATE administrative_source_type SET display_value = 'Agricultural Notary Statement', status = 'x', description = '' WHERE code = 'agriNotaryStatement';
-UPDATE administrative_source_type SET display_value = 'Deed', status = 'c', description = '' WHERE code = 'deed';
-UPDATE administrative_source_type SET display_value = 'Lease', status = 'c', description = '' WHERE code = 'lease';
-UPDATE administrative_source_type SET display_value = 'Mortgage', status = 'x', description = '' WHERE code = 'mortgage';
-UPDATE administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'c', description = '' WHERE code = 'title';
-UPDATE administrative_source_type SET display_value = 'Proclamation', status = 'x', description = '' WHERE code = 'proclamation';
-UPDATE administrative_source_type SET display_value = 'Court Order', status = 'c', description = '' WHERE code = 'courtOrder';
-UPDATE administrative_source_type SET display_value = 'Agreement', status = 'c', description = '' WHERE code = 'agreement';
-UPDATE administrative_source_type SET display_value = 'Contract for Sale', status = 'c', description = '' WHERE code = 'contractForSale';
-UPDATE administrative_source_type SET display_value = 'Will', status = 'x', description = '' WHERE code = 'will';
-UPDATE administrative_source_type SET display_value = 'Power of Attorney', status = 'c', description = '' WHERE code = 'powerOfAttorney';
-UPDATE administrative_source_type SET display_value = 'Standard Document', status = 'x', description = '' WHERE code = 'standardDocument';
-UPDATE administrative_source_type SET display_value = 'Cadastral Map', status = 'x', description = '' WHERE code = 'cadastralMap';
-UPDATE administrative_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
-UPDATE administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'c', description = '' WHERE code = 'waiver';
-UPDATE administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'c', description = '' WHERE code = 'idVerification';
-UPDATE administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
-UPDATE administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'c', description = '' WHERE code = 'publicNotification';
-UPDATE administrative_source_type SET display_value = 'Systematic Registration Application', status = 'c', description = '' WHERE code = 'systematicRegn';
-UPDATE administrative_source_type SET display_value = 'Objection', status = 'c', description = '' WHERE code = 'objection';
-UPDATE administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
-UPDATE administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
-UPDATE administrative_source_type SET display_value = 'JPG Scanned Document', status = 'x', description = '' WHERE code = 'jpg';
-UPDATE administrative_source_type SET display_value = 'TIF Scanned Document', status = 'x', description = '' WHERE code = 'tif';
+UPDATE source.administrative_source_type SET display_value = 'Agricultural Consent', status = 'x', description = '' WHERE code = 'agriConsent';
+UPDATE source.administrative_source_type SET display_value = 'Agricultural Lease', status = 'x', description = '' WHERE code = 'agriLease';
+UPDATE source.administrative_source_type SET display_value = 'Agricultural Notary Statement', status = 'x', description = '' WHERE code = 'agriNotaryStatement';
+UPDATE source.administrative_source_type SET display_value = 'Deed', status = 'x', description = '' WHERE code = 'deed';
+UPDATE source.administrative_source_type SET display_value = 'Lease', status = 'x', description = '' WHERE code = 'lease';
+UPDATE source.administrative_source_type SET display_value = 'Mortgage', status = 'x', description = '' WHERE code = 'mortgage';
+UPDATE source.administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'x', description = '' WHERE code = 'title';
+UPDATE source.administrative_source_type SET display_value = 'Proclamation', status = 'x', description = '' WHERE code = 'proclamation';
+UPDATE source.administrative_source_type SET display_value = 'Court Order', status = 'x', description = '' WHERE code = 'courtOrder';
+UPDATE source.administrative_source_type SET display_value = 'Agreement', status = 'x', description = '' WHERE code = 'agreement';
+UPDATE source.administrative_source_type SET display_value = 'Contract for Sale', status = 'x', description = '' WHERE code = 'contractForSale';
+UPDATE source.administrative_source_type SET display_value = 'Will', status = 'x', description = '' WHERE code = 'will';
+UPDATE source.administrative_source_type SET display_value = 'Power of Attorney', status = 'x', description = '' WHERE code = 'powerOfAttorney';
+UPDATE source.administrative_source_type SET display_value = 'Standard Document', status = 'x', description = '' WHERE code = 'standardDocument';
+UPDATE source.administrative_source_type SET display_value = 'Cadastral Map', status = 'x', description = '' WHERE code = 'cadastralMap';
+UPDATE source.administrative_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'x', description = '' WHERE code = 'waiver';
+UPDATE source.administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'x', description = '' WHERE code = 'idVerification';
+UPDATE source.administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
+UPDATE source.administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'x', description = '' WHERE code = 'publicNotification';
+UPDATE source.administrative_source_type SET display_value = 'Systematic Registration Application', status = 'x', description = '' WHERE code = 'systematicRegn';
+UPDATE source.administrative_source_type SET display_value = 'Objection', status = 'x', description = '' WHERE code = 'objection';
+UPDATE source.administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
+UPDATE source.administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
+UPDATE source.administrative_source_type SET display_value = 'JPG Scanned Document', status = 'x', description = '' WHERE code = 'jpg';
+UPDATE source.administrative_source_type SET display_value = 'TIF Scanned Document', status = 'x', description = '' WHERE code = 'tif';
+
+
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('mainClaimantPhoto','Main Claimant Photo', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('mainClaimantId','Main Claimant ID', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('otherClaimantPhoto','Other Claimant Photo', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('otherClaimantId','Other Claimant ID', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('authorizedRepPhoto','Authorised Representative Photo', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('authorizedRepId','Authorised Representative ID', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('evidenceOfOwnership','Evidence of Ownership', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('claimsForm','Claims Form', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('disputesForm','Disputes Form', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('sketchMap','Sketch Map', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
 
 SET search_path = application, pg_catalog;
 
