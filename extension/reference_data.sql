@@ -126,7 +126,7 @@ UPDATE source.administrative_source_type SET display_value = 'Agricultural Notar
 UPDATE source.administrative_source_type SET display_value = 'Deed', status = 'x', description = '' WHERE code = 'deed';
 UPDATE source.administrative_source_type SET display_value = 'Lease', status = 'x', description = '' WHERE code = 'lease';
 UPDATE source.administrative_source_type SET display_value = 'Mortgage', status = 'x', description = '' WHERE code = 'mortgage';
-UPDATE source.administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'x', description = '' WHERE code = 'title';
+UPDATE source.administrative_source_type SET display_value = 'Certificate of Occupancy', status = 'c', description = '' WHERE code = 'title';
 UPDATE source.administrative_source_type SET display_value = 'Proclamation', status = 'x', description = '' WHERE code = 'proclamation';
 UPDATE source.administrative_source_type SET display_value = 'Court Order', status = 'x', description = '' WHERE code = 'courtOrder';
 UPDATE source.administrative_source_type SET display_value = 'Agreement', status = 'x', description = '' WHERE code = 'agreement';
@@ -139,8 +139,8 @@ UPDATE source.administrative_source_type SET display_value = 'Boundary Definitio
 UPDATE source.administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'x', description = '' WHERE code = 'waiver';
 UPDATE source.administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'x', description = '' WHERE code = 'idVerification';
 UPDATE source.administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
-UPDATE source.administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'x', description = '' WHERE code = 'publicNotification';
-UPDATE source.administrative_source_type SET display_value = 'Systematic Registration Application', status = 'x', description = '' WHERE code = 'systematicRegn';
+UPDATE source.administrative_source_type SET display_value = 'Public Notification for Systematic Registration', status = 'c', description = '' WHERE code = 'publicNotification';
+UPDATE source.administrative_source_type SET display_value = 'Claims Form', status = 'c', description = '' WHERE code = 'systematicRegn';
 UPDATE source.administrative_source_type SET display_value = 'Objection', status = 'x', description = '' WHERE code = 'objection';
 UPDATE source.administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
 UPDATE source.administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
@@ -155,7 +155,7 @@ INSERT INTO source.administrative_source_type (code,display_value, description, 
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('authorizedRepPhoto','Authorised Representative Photo', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('authorizedRepId','Authorised Representative ID', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('evidenceOfOwnership','Evidence of Ownership', '', 'c');
-INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('claimsForm','Claims Form', '', 'c');
+--INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('claimsForm','Claims Form', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('disputesForm','Disputes Form', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('sketchMap','Sketch Map', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
