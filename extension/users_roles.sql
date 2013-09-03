@@ -380,3 +380,5 @@ insert into system.approle(code, display_value, status, description) values('rec
 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) values ('recordLien', 'super-group-id');  
+
+
