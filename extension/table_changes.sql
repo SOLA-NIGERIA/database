@@ -18,12 +18,16 @@
 	ALTER TABLE administrative.ba_unit DROP COLUMN term;
 	ALTER TABLE administrative.ba_unit DROP COLUMN land_use_code;
 	ALTER TABLE administrative.ba_unit DROP COLUMN "location";
+	ALTER TABLE administrative.ba_unit DROP COLUMN floors_number;
+	
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN is_not_developed;
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN years_for_dev;
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN value_to_imp;
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN term;
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN land_use_code;
 	ALTER TABLE administrative.ba_unit_historic DROP COLUMN "location";
+	ALTER TABLE administrative.ba_unit_historic DROP COLUMN floors_number;
+	
 
         ALTER TABLE  administrative.ba_unit ADD COLUMN is_not_developed boolean;
         ALTER TABLE  administrative.ba_unit_historic ADD COLUMN is_not_developed boolean;
@@ -37,6 +41,9 @@
 	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN land_use_code character varying(20);
 	ALTER TABLE  administrative.ba_unit ADD COLUMN location character varying(255);
 	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN location character varying(255);
+	ALTER TABLE  administrative.ba_unit ADD COLUMN floors_number integer;
+	ALTER TABLE  administrative.ba_unit_historic ADD COLUMN floors_number integer;
+	
 	
 
 
