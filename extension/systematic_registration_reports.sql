@@ -176,7 +176,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
+			  AND s.request_type_code::text = 'dispute'::text
 			  AND s.status_code::text != 'cancelled'::text
 			  AND   aa.id::text = ap.application_id::text
 			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
@@ -202,7 +202,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
+			  AND s.request_type_code::text = 'dispute'::text
 			  AND s.status_code::text != 'cancelled'::text
 			  AND   aa.id::text = ap.application_id::text
 			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
@@ -232,7 +232,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
+		  AND s.request_type_code::text = 'dispute'::text
 		  AND s.status_code::text = 'cancelled'::text
 		  AND   aa.id::text = ap.application_id::text
 		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
@@ -443,7 +443,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
+			  AND s.request_type_code::text = 'dispute'::text
 			  AND s.status_code::text = 'lodged'::text
 			  AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
@@ -459,7 +459,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
+			  AND s.request_type_code::text = 'dispute'::text
 			  AND s.status_code::text = 'lodged'::text
 			  AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
@@ -479,7 +479,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
+		  AND s.request_type_code::text = 'dispute'::text
 		  AND s.status_code::text = 'cancelled'::text
 		  AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
@@ -735,7 +735,7 @@ BEGIN
 						 FROM application.service s
 						 where s.request_type_code::text = 'systematicRegn'::text
 						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
+		  AND s.request_type_code::text = 'dispute'::text
 		  AND s.status_code::text != 'cancelled'::text
 		  AND   aa.id::text = ap.application_id::text
 		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
