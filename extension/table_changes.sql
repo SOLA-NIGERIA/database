@@ -224,7 +224,111 @@ FROM application.application_status_type ast, cadastre.spatial_unit_group sg,
 
 ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;
 
+--- party.source_describes_party; tables
+
+DROP TABLE party.source_describes_party;
+
+CREATE TABLE party.source_describes_party
+(
+  source_id character varying(40) NOT NULL,
+  party_id character varying(40) NOT NULL,
+  rowidentifier character varying(40) NOT NULL DEFAULT uuid_generate_v1(),
+  rowversion integer NOT NULL DEFAULT 0,
+  change_action character(1) NOT NULL DEFAULT 'i'::bpchar,
+  change_user character varying(50),
+  change_time timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT source_describes_party_pkey PRIMARY KEY (source_id, party_id),
+  CONSTRAINT source_describes_party_party_id_fk41 FOREIGN KEY (party_id)
+      REFERENCES party.party (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT source_describes_party_source_id_fk42 FOREIGN KEY (source_id)
+      REFERENCES source.source (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE party.source_describes_party OWNER TO postgres;
+COMMENT ON TABLE party.source_describes_party IS 'Implements the many-to-many relationship identifying administrative source instances with party instances
+LADM Reference Object 
+Relationship LA_AdministrativeSource - LA_PARTY
+LADM Definition
+Not Defined';
+
+-- Index: party.source_describes_party_party_id_fk41_ind
+
+DROP INDEX party.source_describes_party_party_id_fk41_ind;
+
+CREATE INDEX source_describes_party_party_id_fk41_ind
+  ON party.source_describes_party
+  USING btree
+  (party_id);
+
+-- Index: source_describes_party_index_on_rowidentifier
+
+DROP INDEX source_describes_party_index_on_rowidentifier;
+
+CREATE INDEX source_describes_party_index_on_rowidentifier
+  ON party.source_describes_party
+  USING btree
+  (rowidentifier);
+
+-- Index: party.source_describes_party_source_id_fk42_ind
+
+DROP INDEX party.source_describes_party_source_id_fk42_ind;
+
+CREATE INDEX source_describes_party_source_id_fk42_ind
+  ON party.source_describes_party
+  USING btree
+  (source_id);
 
 
+-- Trigger: __track_changes on aparty.source_describes_party
+
+DROP TRIGGER __track_changes ON party.source_describes_party;
+
+CREATE TRIGGER __track_changes
+  BEFORE INSERT OR UPDATE
+  ON party.source_describes_party
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_changes();
+
+-- Trigger: __track_history on party.source_describes_party
+
+DROP TRIGGER __track_history ON party.source_describes_party;
+
+CREATE TRIGGER __track_history
+  AFTER UPDATE OR DELETE
+  ON party.source_describes_party
+  FOR EACH ROW
+  EXECUTE PROCEDURE f_for_trg_track_history();
+-- Table: party.source_describes_party_historic
+
+DROP TABLE party.source_describes_party_historic;
+
+CREATE TABLE party.source_describes_party_historic
+(
+  source_id character varying(40),
+  party_id character varying(40),
+  rowidentifier character varying(40),
+  rowversion integer,
+  change_action character(1),
+  change_user character varying(50),
+  change_time timestamp without time zone,
+  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now()
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE party.source_describes_party_historic OWNER TO postgres;
+
+-- Index: party.source_describes_party_historic_index_on_rowidentifier
+
+DROP INDEX party.source_describes_party_historic_index_on_rowidentifier;
+
+CREATE INDEX source_describes_party_historic_index_on_rowidentifier
+  ON party.source_describes_party_historic
+  USING btree
+  (rowidentifier);
 
 
