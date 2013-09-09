@@ -1,4 +1,29 @@
-﻿--LH # 14 DISABLE
+﻿--- BR for not being allowed to create a new parcel which overlaps with existing ones
+delete from system.br_validation where br_id ='new-co-do-not-overlap-with-existing';
+delete from system.br_definition where br_id ='new-co-do-not-overlap-with-existing';
+delete from system.br where id ='new-co-do-not-overlap-with-existing';
+
+insert into system.br(id, technical_type_code, feedback, technical_description) 
+values('new-co-do-not-overlap-with-existing', 'sql', 
+    'New polygons do not overlap with existing ones',
+ '#{id} is the parameter asked. It is the transaction id.');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('new-co-do-not-overlap-with-existing', now(), 'infinity', 
+'with appo AS (select geom_polygon as pend_geom, id as pend_id from cadastre.cadastre_object  where transaction_id  =  #{id})
+select (count (co.name_firstpart)=0) as vl from cadastre.cadastre_object co, appo  where 
+id  !=  appo.pend_id and
+ST_Intersects(appo.pend_geom, co.geom_polygon)
+and co.status_code = ''current'' 
+');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('new-co-do-not-overlap-with-existing', 'cadastre_object', 'current', 'cadastreChange', 'critical', 115);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('new-co-do-not-overlap-with-existing', 'cadastre_object', 'pending', 'cadastreChange', 'warning', 425);
+-----------------------------------------------------------------------------------------------------------
+--LH # 14 DISABLE
 --target-ba_unit-check-if-pending
 --target-parcels-check-isapolygon
 --target-parcels-check-nopending
