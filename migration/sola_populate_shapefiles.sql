@@ -1,5 +1,5 @@
 ﻿--INTO SOLA KADuna DATABASE
---modified Paola Rizzo 17 May 2013
+
 --- 
 --interim measure to add names to imported Ward Shapefiles
 ALTER TABLE interim_data.wards DROP COLUMN IF EXISTS name;
@@ -41,14 +41,14 @@ INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  chang
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user)
 	--SELECT 'KD/'||adm2, 2, adm2, 'KD/'||adm2, the_geom, 'test'
 	--SELECT 'KD/'||id, 2, id, 'KD/'||id, the_geom, 'test'
-	SELECT 'KD/'||id, 2, lga_code, 'KD/'||lga_code, the_geom, 'test'
+	SELECT 'KD/'||id, 2, lga_code, 'KD/'||lga_code, ST_GeometryN(the_geom, 1), 'test'
 	FROM interim_data.lga;
 	-- WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
 --------------- Wards
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
    --SELECT lga_group.name || '/' ||w.ward,3, w.ward,lga_group.name || '/' ||w.ward, w.the_geom, 'test', 0
-   SELECT lga_group.name || '/' ||w.ward_code,3, w.ward_code,lga_group.name || '/' ||w.ward_code, w.the_geom, 'test', 0
+   SELECT lga_group.name || '/' ||w.ward_code,3, w.ward_code,lga_group.name || '/' ||w.ward_code, ST_GeometryN(w.the_geom, 1), 'test', 0
 
    FROM cadastre.spatial_unit_group AS lga_group,  interim_data.wards AS w
    WHERE lga_group.hierarchy_level = 2
