@@ -9,7 +9,7 @@ parcel_number_exists integer;
 val_to_return character varying;
    
 begin
-   if last_part is not null then    
+   if last_part != 'NO LGA/WARD' then    
           
           select cadastre.spatial_unit_group.seq_nr+1
           into newseqnr
@@ -38,7 +38,7 @@ begin
           and cadastre.spatial_unit_group.hierarchy_level = 3;
       end if;
    else
-      val_to_return:= 0000 ; 
+       RAISE EXCEPTION 'no_lga/ward_found';
 
    end if;
 
