@@ -5,22 +5,44 @@
 AS $$
 declare
 newseqnr integer;
+parcel_number_exists integer;
 val_to_return character varying;
    
 begin
-  
+   if last_part is not null then    
+          
           select cadastre.spatial_unit_group.seq_nr+1
           into newseqnr
           from cadastre.spatial_unit_group
           where name=last_part
           and cadastre.spatial_unit_group.hierarchy_level = 3;
 
+          select count (*) 
+          into parcel_number_exists
+          from cadastre.cadastre_object
+          where name_firstpart||name_lastpart= newseqnr||last_part;
+        if parcel_number_exists > 0 then
+          select max (name_firstpart)
+          into newseqnr
+          from  cadastre.cadastre_object
+          where name_lastpart= last_part;
+          newseqnr:=newseqnr+1;
+        end if;  
+
+          
+      if newseqnr is not null then
+
           update cadastre.spatial_unit_group
           set seq_nr = newseqnr
           where name=last_part
           and cadastre.spatial_unit_group.hierarchy_level = 3;
+      end if;
+   else
+      val_to_return:= 0000 ; 
 
-          val_to_return := newseqnr;
+   end if;
+
+  val_to_return := newseqnr;
   return val_to_return;        
 end;
 $$ LANGUAGE plpgsql;
@@ -54,6 +76,9 @@ begin
    and sg.hierarchy_level = 3
    ;
 
+   if val_to_return is null then
+    val_to_return := 'NO LGA/WARD';
+   end if;
 
   return val_to_return;
 end;
