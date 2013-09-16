@@ -147,6 +147,46 @@ limit 30');
 insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) 
 values('SECTION', 'Section', 'map_search.cadastre_object_by_section', true, 3, 50);
 
+
+---  changed public display map query
+update system.query
+set sql =
+'select co.id, co.name_lastpart||''/''||co.name_firstpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) 
+as the_geom 
+from cadastre.cadastre_object co, 
+cadastre.spatial_unit_group sg
+ where co.type_code= ''parcel'' and co.status_code= ''current'' 
+and sg.name = #{name_lastpart}
+and sg.hierarchy_level=4 
+and sg.name in( select ss.reference_nr from   source.source ss where ss.type_code=''publicNotification'')
+and ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom) 
+and ST_Intersects(st_transform(co.geom_polygon, #{srid}), 
+ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))'
+where name = 'public_display.parcels';
+
+update system.query
+set sql =
+ 'SELECT co_next.id, co.name_lastpart||''/''||co.name_firstpart as label, 
+  st_asewkb(st_transform(co_next.geom_polygon, #{srid})) 
+ as the_geom  
+ from cadastre.cadastre_object co_next, 
+ cadastre.cadastre_object co, 
+ cadastre.spatial_unit_group sg
+ where co.type_code= ''parcel'' 
+ and co.status_code= ''current'' 
+ and co_next.type_code= ''parcel'' 
+ and co_next.status_code= ''current'' 
+ and sg.name = #{name_lastpart}
+ and sg.name in( select ss.reference_nr from   source.source ss where ss.type_code=''publicNotification'')
+ and sg.hierarchy_level=4 
+ and ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom) 
+ and not (ST_Intersects(ST_PointOnSurface(co_next.geom_polygon), sg.geom)) 
+ and st_dwithin(st_transform(co.geom_polygon, #{srid}), st_transform(co_next.geom_polygon, #{srid}), 5)
+  and ST_Intersects(st_transform(co_next.geom_polygon, #{srid}), ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),
+  ST_Point(#{maxx}, #{maxy})), #{srid}))' 
+where name = 'public_display.parcels_next';
+---------------------------------------------
+
  
  --SET NEW SRID and OTHER Kaduna PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
