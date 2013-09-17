@@ -390,8 +390,9 @@ COMMENT ON TABLE administrative.dispute_role_type IS 'Reference table for differ
 
 
 -- Data for application.request_type
+delete from application.request_type where code = 'dispute';
 --insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('DisputeView', 'informationServices', 'Dispute Search', 'c', 0, 0, 0, 0, 0, ' ');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('dispute', 'registrationServices', 'Dispute and Court Cases', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('dispute', 'registrationServices', 'Disputes', 'c', 0, 0, 0, 0, 0, ' ');
 
 
 -- Data for source.administrative_source_type
@@ -416,14 +417,14 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePa
 insert into system.approle_appgroup (approle_code, appgroup_id) VALUES('DisputeView', 'super-group-id');
 
  -- Data for the table administrative.dispute_action -- 
-insert into administrative.dispute_action(code, display_value, status) values('notheard', 'Not Heard', 'c');
-insert into administrative.dispute_action(code, display_value, status) values('awaitinginfo', 'Awaiting Information', 'c');
-insert into administrative.dispute_action(code, display_value, status) values('referredtoadr', 'Referred to ADR', 'c');
+delete from administrative.dispute_action;
+--insert into administrative.dispute_action(code, display_value, status) values('notheard', 'Not Heard', 'c');
+--insert into administrative.dispute_action(code, display_value, status) values('awaitinginfo', 'Awaiting Information', 'c');
+--insert into administrative.dispute_action(code, display_value, status) values('referredtoadr', 'Referred to ADR', 'c');
     
  -- Data for the table administrative.dispute_category -- 
-insert into administrative.dispute_category(code, display_value, description, status) values('sporadic', 'Sporadic', '', 'c');
-insert into administrative.dispute_category(code, display_value, description, status) values('regularization', 'Regularization', '', 'c');
-insert into administrative.dispute_category(code, display_value, description, status) values('unregistered', 'Un-Registered', '', 'c');
+delete from administrative.dispute_category;
+insert into administrative.dispute_category(code, display_value, description, status) values('regularization', 'SLTR', '', 'c');
     
  -- Data for the table administrative.dispute_status -- 
 insert into administrative.dispute_status(code, display_value, description, status) values('pending', 'Pending', '', 'c');
@@ -434,29 +435,31 @@ insert into administrative.dispute_status(code, display_value, description, stat
 insert into administrative.dispute_status(code, display_value, description, status) values('resAgainstClaimant', 'ResolvedAgainstClaimant', ' ', 'c');
 
  -- Data for the table administrative.other_authorities -- 
-insert into administrative.other_authorities(code, display_value, description, status) values('courtoflaw', 'Courts of Law', '', 'c');
-insert into administrative.other_authorities(code, display_value, description, status) values('localauthority', 'Local Authorities', '', 'c');
-insert into administrative.other_authorities(code, display_value, description, status) values('areachief', 'Area Chief', '', 'c');
+delete from administrative.other_authorities;
+insert into administrative.other_authorities(code, display_value, description, status) values('courtoflaw', 'Court of Law', '', 'c');
 insert into administrative.other_authorities(code, display_value, description, status) values('police', 'Police', '', 'c');
-insert into administrative.other_authorities(code, display_value, description, status) values('other', 'Other Authorities', '', 'c');
 insert into administrative.other_authorities(code, display_value, description, status) values('lga', 'LGA', '', 'c');
 
 
   
  -- Data for the table administrative.dispute_type -- 
-insert into administrative.dispute_type(code, display_value, status) values('title', 'Title', 'c');
-insert into administrative.dispute_type(code, display_value, status) values('boundaries', 'Boundaries', 'c');
+delete from administrative.dispute_type;
+insert into administrative.dispute_type(code, display_value, status) values('title', 'Existing CofO', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('ownership', 'Ownership', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('boundary', 'Boundary', 'c');
 insert into administrative.dispute_type(code, display_value, status) values('encroachment', 'Encroachment', 'c');
 insert into administrative.dispute_type(code, display_value, status) values('inheritance', 'Inheritance', 'c');
-insert into administrative.dispute_type(code, display_value, status) values('tenancy', 'Tenancy', 'c');
 insert into administrative.dispute_type(code, display_value, status) values('conflictingClaims', 'Conflicting Claims', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('rightOfWay', 'Right of Way', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('landUse', 'Land Use', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('values', 'Values (cultural)', 'c');
+insert into administrative.dispute_type(code, display_value, status) values('relationship', 'Relationship Problem', 'c');
 insert into administrative.dispute_type(code, display_value, status) values('other', 'Other', 'c');
-
-
   
- -- Data for the table administrative.dispute_role_type -- 
+ -- Data for the table administrative.dispute_role_type --
+delete from administrative.dispute_role_type; 
 insert into administrative.dispute_role_type(code, display_value, status) values('complainant', 'Complainant', 'c');
-insert into administrative.dispute_role_type(code, display_value, status) values('resistent', 'Resistent', 'c');
+--insert into administrative.dispute_role_type(code, display_value, status) values('resistent', 'Resistent', 'c');
 
 
 
