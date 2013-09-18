@@ -1,4 +1,38 @@
-﻿--- BR for not being allowed to create a new parcel which overlaps with existing ones
+﻿-- BR for not Approving a Systematic Registration Claim if there is a Dispute on the same parcel
+INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
+VALUES('application-on-approve-check-systematic-reg-no-dispute', 'sql', 'There must be no dispute on the same parcel',
+'Checks the absence of dispute for systematic registration service related to the application');
+
+INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
+VALUES('application-on-approve-check-systematic-reg-no-dispute', now(), 'infinity', 
+'  SELECT (COUNT(*) = 0)  AS vl
+FROM  application.application aasr,
+      application.application aad,
+      application.application_property apsr,
+      application.application_property apd,  
+      application.service ssr,
+      application.service sd
+  WHERE  ssr.application_id::text = aasr.id::text 
+  AND    ssr.request_type_code::text = ''systematicRegn''::text
+  AND    sd.application_id::text = aad.id::text 
+  AND    sd.request_type_code::text = ''dispute''::text
+  AND    (sd.status_code::text != ''cancelled''::text AND (aad.status_code != ''annulled''))
+  AND    apsr.application_id = aasr.id
+  AND    apd.application_id = aad.id
+  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+  AND    aasr.id::text = #{id};');
+
+INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
+VALUES ('application-on-approve-check-systematic-reg-no-dispute', 'application', 'approve', 'critical', 601);
+
+INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
+VALUES ('application-on-approve-check-systematic-reg-no-dispute', 'application', 'validate', 'critical', 600);
+
+
+
+
+
+--- BR for not being allowed to create a new parcel which overlaps with existing ones
 delete from system.br_validation where br_id ='new-co-must-not-overlap-with-existing';
 delete from system.br_definition where br_id ='new-co-must-not-overlap-with-existing';
 delete from system.br where id ='new-co-must-not-overlap-with-existing';
