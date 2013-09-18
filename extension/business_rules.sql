@@ -1,6 +1,11 @@
-﻿-- BR for not Approving a Systematic Registration Claim if there is a Dispute on the same parcel
+﻿delete from system.br_validation where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
+delete from system.br_definition  where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
+delete from system.br  where id= 'application-on-approve-check-systematic-reg-no-dispute';
+
+
+-- BR for not Approving a Systematic Registration Claim if there is a Dispute on the same parcel
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
-VALUES('application-on-approve-check-systematic-reg-no-dispute', 'sql', 'There must be no dispute on the same parcel',
+VALUES('application-on-approve-check-systematic-reg-no-dispute', 'sql', 'There must be no dispute on the same parcel of the Systematic Registration Claim',
 'Checks the absence of dispute for systematic registration service related to the application');
 
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
@@ -27,10 +32,6 @@ VALUES ('application-on-approve-check-systematic-reg-no-dispute', 'application',
 
 INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
 VALUES ('application-on-approve-check-systematic-reg-no-dispute', 'application', 'validate', 'critical', 600);
-
-
-
-
 
 --- BR for not being allowed to create a new parcel which overlaps with existing ones
 delete from system.br_validation where br_id ='new-co-must-not-overlap-with-existing';
@@ -104,12 +105,14 @@ ALTER FUNCTION cadastre.cadastre_object_name_is_valid(character varying, charact
 
 -----------  BR FOR GROUND RENT -----------------------
 ----------------------------------------------------------------------------------------------------
+delete from system.br_definition where br_id =  'generate_ground_rent';
+delete from system.br  where id= 'generate_ground_rent';
+
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
 VALUES('generate_ground_rent', 'sql', 
 'ground rent for the property',
 'generates the grount rent for a property');
 
-delete from system.br_definition where br_id =  'generate_ground_rent';
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
 VALUES('generate_ground_rent', now(), 'infinity', 
 'SELECT 

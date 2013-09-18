@@ -102,22 +102,6 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
     
 --Table administrative.dispute_action ----
 DROP TABLE IF EXISTS administrative.dispute_action CASCADE;
-CREATE TABLE administrative.dispute_action(
-    code varchar(40) NOT NULL,
-    display_value varchar(255) NOT NULL,
-    description varchar(555),
-    status char(1) NOT NULL,
-
-    -- Internal constraints
-    
-    CONSTRAINT dispute_action_display_value_unique UNIQUE (display_value),
-    CONSTRAINT dispute_action_pkey PRIMARY KEY (code)
-);
-
-
-comment on table administrative.dispute_action is 'Reference tables for actions taken on a dispute. For example, Refere to ADR, Not Heard etc.';
-
-
 
 --Table administrative.dispute_category ----
 DROP TABLE IF EXISTS administrative.dispute_category CASCADE;
@@ -143,7 +127,6 @@ DROP TABLE IF EXISTS administrative.dispute_comments CASCADE;
 CREATE TABLE administrative.dispute_comments(
     id varchar(50) NOT NULL,
     dispute_nr varchar(50) NOT NULL,
-    dispute_action_code varchar(40) NOT NULL,
     other_authorities_code varchar(40),
     update_date timestamp NOT NULL DEFAULT (now()),
     comments varchar(500),
@@ -181,7 +164,6 @@ CREATE TABLE administrative.dispute_comments_historic
 (
     id varchar(50),
     dispute_nr varchar(50),
-    dispute_action_code varchar(40),
     other_authorities_code varchar(40),
     update_date timestamp,
     comments varchar(500),
@@ -415,12 +397,6 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeCo
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSearch', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePartySave', 'super-group-id');
 insert into system.approle_appgroup (approle_code, appgroup_id) VALUES('DisputeView', 'super-group-id');
-
- -- Data for the table administrative.dispute_action -- 
-delete from administrative.dispute_action;
---insert into administrative.dispute_action(code, display_value, status) values('notheard', 'Not Heard', 'c');
---insert into administrative.dispute_action(code, display_value, status) values('awaitinginfo', 'Awaiting Information', 'c');
---insert into administrative.dispute_action(code, display_value, status) values('referredtoadr', 'Referred to ADR', 'c');
     
  -- Data for the table administrative.dispute_category -- 
 delete from administrative.dispute_category;
@@ -476,9 +452,6 @@ ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_disp
             FOREIGN KEY (dispute_nr) REFERENCES administrative.dispute(nr) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX dispute_comments_dispute_nr_fk87_ind ON administrative.dispute_comments (dispute_nr);
 
-ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_dispute_action_code_fk88 
-            FOREIGN KEY (dispute_action_code) REFERENCES administrative.dispute_action(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX dispute_comments_dispute_action_code_fk88_ind ON administrative.dispute_comments (dispute_action_code);
 
 ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_other_authorities_code_fk89 
             FOREIGN KEY (other_authorities_code) REFERENCES administrative.other_authorities(code) ON UPDATE CASCADE ON DELETE RESTRICT;
