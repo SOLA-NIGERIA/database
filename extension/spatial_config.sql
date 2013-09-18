@@ -186,8 +186,12 @@ set sql =
   ST_Point(#{maxx}, #{maxy})), #{srid}))' 
 where name = 'public_display.parcels_next';
 ---------------------------------------------
+----- update map search option
+update system.map_search_option set active = false where code = 'BAUNIT';
+update system.map_search_option set active = false where code = 'OWNER_OF_BAUNIT';
+update system.config_map_layer set active = false, visible_in_start= false where name = 'parcels-historic-current-ba';
 
- 
+-------------------------------------------- 
  --SET NEW SRID and OTHER Kaduna PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
