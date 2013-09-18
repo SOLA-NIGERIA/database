@@ -1,9 +1,55 @@
-﻿delete from system.br_validation where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
-delete from system.br_definition  where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
-delete from system.br  where id= 'application-on-approve-check-systematic-reg-no-dispute';
+﻿-- BR for not Approving a Systematic Registration Claim if there has not been a public display
+
+delete from system.br_validation where br_id= 'application-on-approve-check-systematic-reg-no-pubdisp';
+delete from system.br_definition  where br_id= 'application-on-approve-check-systematic-reg-no-pubdisp';
+delete from system.br  where id= 'application-on-approve-check-systematic-reg-no-pubdisp';
+
+INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
+VALUES('application-on-approve-check-systematic-reg-no-pubdisp', 'sql', 'There must have been a public display for the Systematic Registration Claim',
+'Checks the absence of dispute for systematic registration service related to the application');
+
+INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
+VALUES('application-on-approve-check-systematic-reg-no-pubdisp', now(), 'infinity', 
+'  SELECT (COUNT(*) > 0)  AS vl
+FROM  application.application aa,
+			  application.service s,
+			  application.application_property ap
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = ''systematicRegn''::text
+			    AND   aa.id::text = ap.application_id::text
+			    AND ap.name_lastpart in 
+                            ( select co.name_lastpart 
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
+                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                               
+                            ) 
+			    AND ap.name_lastpart in (select co.name_lastpart 
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
+                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                              and sg.name in( 
+		                             select ss.reference_nr 
+									from   source.source ss 
+									where ss.type_code=''publicNotification''
+									 )
+                                             )     
+
+       and  aa.id = #{id};');
+
+INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
+VALUES ('application-on-approve-check-systematic-reg-no-pubdisp', 'application', 'approve', 'critical', 603);
+
+INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
+VALUES ('application-on-approve-check-systematic-reg-no-pubdisp', 'application', 'validate', 'critical', 602);
+
+
 
 
 -- BR for not Approving a Systematic Registration Claim if there is a Dispute on the same parcel
+
+delete from system.br_validation where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
+delete from system.br_definition  where br_id= 'application-on-approve-check-systematic-reg-no-dispute';
+delete from system.br  where id= 'application-on-approve-check-systematic-reg-no-dispute';
+
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
 VALUES('application-on-approve-check-systematic-reg-no-dispute', 'sql', 'There must be no dispute on the same parcel of the Systematic Registration Claim',
 'Checks the absence of dispute for systematic registration service related to the application');
