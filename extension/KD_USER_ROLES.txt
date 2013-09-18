@@ -1,0 +1,401 @@
+
+--Super Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCreate', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnAssignSelf', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnUnassignSelf', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnAssignOthers', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnUnassignOthers', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BulkApplication', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'systematicRegn', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'lodgeObjection', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'RightsExport', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'RevertService', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnRequisition', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnWithdraw', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnReject', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnDispatch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnArchive', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitParcelSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitCertificate', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ReportGenerate', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ArchiveApps', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageSecurity', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageRefdata', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageSettings', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageBR', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'buildingRestriction', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cadastreChange', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cadastrePrint', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cancelProperty', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'caveat', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cnclPowerOfAttorney', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cnclStandardDocument', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'documentCopy', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'historicOrder', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'limtedRoadAccess', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'mortgage', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newApartment', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newDigitalTitle', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newFreehold', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newOwnership', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'redefineCadastre', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'registerLease', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnOnTitle', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnPowerOfAttorney', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnStandardDocument', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'removeCaveat', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'removeRestriction', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'removeRight', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'serviceEnquiry', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'servitude', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'surveyPlanCopy', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'titleSearch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'varyCaveat', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'varyLease', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'varyMortgage', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'varyRight', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'sysRegnReports', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'editSpatialUnitGr', id FROM system.appgroup WHERE "name" = 'Super group');	
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnNr', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'FeePayment', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCompleteDate', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ExportMap', id FROM system.appgroup WHERE "name" = 'Super group');	
+		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'dispute', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeCommentsSave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeSearch', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputePartySave', id FROM system.appgroup WHERE "name" = 'Super group');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeView', id FROM system.appgroup WHERE "name" = 'Super group');	
+		
+		
+		
+--Accounts Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'FeePayment', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Accounts');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnArchive', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ArchiveApps', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnAssignSelf', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnDispatch', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCreate', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnRequisition', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnUnassignSelf', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitCertificate', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitParcelSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'RevertService', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Land Registry');	
+		
+		
+--Lands Deed Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'mortgage', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newOwnership', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'registerLease', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnOnTitle', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnPowerOfAttorney', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnStandardDocument', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Land Deeds');	
+		
+--Search & View Property Information Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ExportMap', id FROM system.appgroup WHERE "name" = 'Commissioner');	
+		
+		
+		
+		
+		
+--Administrator Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageBR', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageRefdata', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageSettings', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageSecurity', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ReportGenerate', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Administrator');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Administrator');	
+		
+		
+--Search & View		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Search and View Property Information');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Search and View Property Information');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Search and View Property Information');	
+		
+--Team Leader Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ReportGenerate', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnAssignOthers', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnUnassignOthers', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'FeePayment', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCompleteDate', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnNr', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnReject', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnWithdraw', id FROM system.appgroup WHERE "name" = 'Team Leader');	
+		
+		
+		
+--Registration  Group
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCreate', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnRequisition', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitCertificate', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitParcelSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'RevertService', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Registration');	
+		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'dispute', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeCommentsSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeSave', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeSearch', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DisputeView', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'documentCopy', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'systematicRegn', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'lodgeObjection', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newApartment', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newFreehold', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newDigitalTitle', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'FeePayment', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'registerLease', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'mortgage', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'servitude', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'regnPowerOfAttorney', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Registration');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'serviceEnquiry', id FROM system.appgroup WHERE "name" = 'Registration');	
+		
+--GIS Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PrintMap', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourcePrint', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewMap', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'RevertService', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'StartService', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CancelService', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ManageUserPassword', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'CompleteService', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ExportMap', id FROM system.appgroup WHERE "name" = 'GIS');	
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cadastreChange', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cadastrePrint', id FROM system.appgroup WHERE "name" = 'GIS');	
+		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'serviceEnquiry', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'redefineCadastre', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ReportGenerate', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'GIS');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'GIS');	
+		
+		
+		
+--Application Starter Group		
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnAssignOthers', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BulkApplication', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BauunitrrrSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ParcelSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitParcelSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitNotatSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSave', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'dispute', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'systematicRegn', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'cadastreChange', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnUnassignOthers', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewUnassign', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'newOwnership', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCreate', id FROM system.appgroup WHERE "name" = 'Application Starter');	
+		
+		
+		
+--Application Approver Group
+		
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnEdit', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ArchiveApps', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnArchive', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnCompleteDate', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnResubmit', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnReject', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnView', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BaunitSearch', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'PartySearch', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'SourceSearch', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'serviceEnquiry', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'titleSearch', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnValidate', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewAssign', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'DashbrdViewOwn', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ViewSource', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnWithdraw', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'TransactionCommit', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnApprove', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'BulkApplication', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'ApplnStatus', id FROM system.appgroup WHERE "name" = 'Application Approver');	
+		
+
+
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
