@@ -50,19 +50,6 @@ BEGIN
 
    sqlSt:= '';
     
-    --sqlSt:= 'select  bu.name_lastpart   as area
-      --             FROM        application.application aa,
-	--		  application.service s,
-	--		  application.application_property ap,
-	--	          administrative.ba_unit bu
-	--		    WHERE s.application_id = aa.id
-	--		    AND   s.request_type_code::text = ''systematicRegn''::text
-	--		    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-	--		    AND   aa.id::text = ap.application_id::text
-		
-    --';
-
-    
      sqlSt:= 'select sg.name   as area
 			  from  
 			  cadastre.spatial_unit_group sg 
@@ -163,92 +150,64 @@ BEGIN
 	   )
                  ,  ---TotParcelLoaded
                   
-                  (
-                  SELECT 
-                  (
-	            (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service s,
-			   administrative.ba_unit bu, 
-			   application.application_property ap
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'dispute'::text
-			  AND s.status_code::text != 'cancelled'::text
-			  AND   aa.id::text = ap.application_id::text
-			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			  AND bu.name_lastpart in ( select co.name_lastpart 
+                (SELECT (COUNT(*)) 
+ 	                         FROM  application.application aasr,
+				      application.application aad,
+				      application.application_property apsr,
+				      application.application_property apd,  
+				      application.service ssr,
+				      application.service sd
+				  WHERE  ssr.application_id::text = aasr.id::text 
+				  AND    ssr.request_type_code::text = 'systematicRegn'::text
+				  AND    sd.application_id::text = aad.id::text 
+				  AND    sd.request_type_code::text = 'dispute'::text
+				  --AND    (sd.status_code::text != 'cancelled'::text AND (aad.status_code != 'annulled'))
+				  AND    apsr.application_id = aasr.id
+				  AND    apd.application_id = aad.id
+				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+
+			  AND apd.name_firstpart||apd.name_lastpart in ( select co.name_firstpart||co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
 			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		          (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
-		        ) +
-		        (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service_historic s,
-			   administrative.ba_unit bu, 
-			   application.application_property ap
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'dispute'::text
-			  AND s.status_code::text != 'cancelled'::text
-			  AND   aa.id::text = ap.application_id::text
-			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			  AND bu.name_lastpart in ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        )  
-		   )  
 		),  --TotLodgedObj
 
                 (
 	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s,
- 		   administrative.ba_unit bu, 
-		   application.application_property ap
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'dispute'::text
-		  AND s.status_code::text = 'cancelled'::text
-		  AND   aa.id::text = ap.application_id::text
-		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		  AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
-		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		), --TotSolvedObj
+		 
+ 	                         FROM  application.application aasr,
+				      application.application aad,
+				      application.application_property apsr,
+				      application.application_property apd,  
+				      application.service ssr,
+				      application.service sd
+				  WHERE  ssr.application_id::text = aasr.id::text 
+				  AND    ssr.request_type_code::text = 'systematicRegn'::text
+				  AND    sd.application_id::text = aad.id::text 
+				  AND    sd.request_type_code::text = 'dispute'::text
+				  AND    (sd.status_code::text = 'cancelled'::text OR (aad.status_code = 'annulled'))
+				  AND    apsr.application_id = aasr.id
+				  AND    apd.application_id = aad.id
+				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+				  AND apd.name_firstpart||apd.name_lastpart in 
+					    ( select co.name_firstpart||co.name_lastpart 
+					      from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
+					      where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+					      and sg.name = ''|| rec.area ||''
+					      
+					    )
+				  AND  (
+					  (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+					   or
+					  (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+					  )
+				), --TotSolvedObj
 		
 		(
 		SELECT  
@@ -326,18 +285,7 @@ BEGIN
                          TotAppPDisp,
                          TotPrepCertificate,
                          TotIssuedCertificate
-                
-              --FROM        application.application aa,
-		--	  application.service s,
-		--	  application.application_property ap,
-		  --        administrative.ba_unit bu
-			--    WHERE s.application_id = aa.id
-			  --  AND   s.request_type_code::text = 'systematicRegn'::text
-			    --AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    --AND   aa.id::text = ap.application_id::text
-			    --AND bu.name_lastpart = ''|| rec.area ||''
-                                               
-	  ;        
+          ;        
 
                 block = rec.area;
                 TotAppLod = TotAppLod;
@@ -432,60 +380,49 @@ BEGIN
 
 	   ),  ---TotParcelLoaded
                   
-                  (
-                  SELECT 
-                  (
-	            (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service s
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'dispute'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        ) +
-		        (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service_historic s
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'dispute'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        )  
-		   )  
-		),  --TotLodgedObj
+                    (SELECT (COUNT(*)) 
+	                 	 FROM  application.application aasr,
+				      application.application aad,
+				      application.application_property apsr,
+				      application.application_property apd,  
+				      application.service ssr,
+				      application.service sd
+				  WHERE  ssr.application_id::text = aasr.id::text 
+				  AND    ssr.request_type_code::text = 'systematicRegn'::text
+				  AND    sd.application_id::text = aad.id::text 
+				  AND    sd.request_type_code::text = 'dispute'::text
+				  --AND    (sd.status_code::text != 'cancelled'::text AND (aad.status_code != 'annulled'))
+				  AND    apsr.application_id = aasr.id
+				  AND    apd.application_id = aad.id
+				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+   				  AND  (
+				  (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+				   or
+				  (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+				  )
+		        ),  --TotLodgedObj
 
                 (
 	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'dispute'::text
-		  AND s.status_code::text = 'cancelled'::text
-		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
+		  FROM  application.application aasr,
+				      application.application aad,
+				      application.application_property apsr,
+				      application.application_property apd,  
+				      application.service ssr,
+				      application.service sd
+				  WHERE  ssr.application_id::text = aasr.id::text 
+				  AND    ssr.request_type_code::text = 'systematicRegn'::text
+				  AND    sd.application_id::text = aad.id::text 
+				  AND    sd.request_type_code::text = 'dispute'::text
+				  AND    (sd.status_code::text = 'cancelled'::text OR (aad.status_code = 'annulled'))
+				  AND    apsr.application_id = aasr.id
+				  AND    apd.application_id = aad.id
+				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+				  AND  (
+					  (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+					   or
+					  (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+					  )
 		), --TotSolvedObj
 		
 		(
@@ -631,18 +568,6 @@ BEGIN
 
 
    sqlSt:= '';
-    
-    --sqlSt:= 'select  bu.name_lastpart   as area
-      --             FROM        application.application aa,
-	--		  application.service s,
-	--		  application.application_property ap,
-	--	          administrative.ba_unit bu
-	--		    WHERE s.application_id = aa.id
-	--		    AND   s.request_type_code::text = ''systematicRegn''::text
-	--		    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-	--		    AND   aa.id::text = ap.application_id::text
-		
-    --';
 
      sqlSt:= 'select sg.name   as area
 			  from  
@@ -726,32 +651,33 @@ BEGIN
 
                   (
 	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s,
- 		   administrative.ba_unit bu, 
-		   application.application_property ap
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'dispute'::text
-		  AND s.status_code::text != 'cancelled'::text
-		  AND   aa.id::text = ap.application_id::text
-		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		  AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
+                 FROM  application.application aasr,
+				      application.application aad,
+				      application.application_property apsr,
+				      application.application_property apd,  
+				      application.service ssr,
+				      application.service sd
+				  WHERE  ssr.application_id::text = aasr.id::text 
+				  AND    ssr.request_type_code::text = 'systematicRegn'::text
+				  AND    sd.application_id::text = aad.id::text 
+				  AND    sd.request_type_code::text = 'dispute'::text
+				  AND    (sd.status_code::text != 'cancelled'::text AND (aad.status_code != 'annulled'))
+				  AND    apsr.application_id = aasr.id
+				  AND    apd.application_id = aad.id
+				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
+   		  AND apd.name_firstpart||apd.name_lastpart in 
+                            ( select co.name_firstpart||co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
                               
                             )
 		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
+		          (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
+		          (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
-		),
+		), 
 
 		  ( WITH appSys AS 	(SELECT  
 		    distinct on (aa.id) aa.id as id
