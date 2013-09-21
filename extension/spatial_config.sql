@@ -91,14 +91,14 @@ INSERT INTO system.query(name, sql, description)
 --DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
+	VALUES ('sug_lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('ward', 'Ward', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWard');
+	VALUES ('sug_ward', 'Ward', 'pojo', true, true, 80, 'ward.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getWard');
 
 --Changes made by Paola to add a new layer for sections - 26/06/2013
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('section', 'Section', 'pojo', true, true, 80, 'section.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
+	VALUES ('sug_section', 'Section', 'pojo', true, true, 80, 'section.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
 
 --DROP VIEW cadastre.lga;
 
