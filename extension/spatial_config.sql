@@ -75,6 +75,8 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 --DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
 --DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
 DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'section');
+DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_section');
+
 DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard', 'SpatialResult.getSection');
 
 INSERT INTO system.query(name, sql, description)
