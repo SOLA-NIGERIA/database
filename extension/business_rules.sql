@@ -10,7 +10,17 @@ VALUES('application-on-approve-check-systematic-reg-no-pubdisp', 'sql', 'There m
 
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
 VALUES('application-on-approve-check-systematic-reg-no-pubdisp', now(), 'infinity', 
-'  SELECT (COUNT(*) > 0)  AS vl
+'  SELECT
+(Select count (*)
+FROM  application.application aa,
+			  application.service s,
+			  application.application_property ap
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text =  ''systematicRegn''::text
+                            AND   aa.id::text = ap.application_id::text
+                            AND  aa.id = #{id}
+) -	
+(Select count(*)
 FROM  application.application aa,
 			  application.service s,
 			  application.application_property ap
@@ -33,7 +43,7 @@ FROM  application.application aa,
 									 )
                                              )     
 
-       and  aa.id = #{id};');
+       and  aa.id = #{id}) = 0  AS vl;');
 
 INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
 VALUES ('application-on-approve-check-systematic-reg-no-pubdisp', 'application', 'approve', 'critical', 603);
