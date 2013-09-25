@@ -319,7 +319,7 @@ DELETE FROM  party.party_role_type WHERE code = 'authRep';
 insert into party.party_role_type(code, display_value, status) values('claimant', 'Claimant::::Reclamante', 'c');
 insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
 --insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
-insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recordation Officer', 'c');
+insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recording Officer', 'c');
 --
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
