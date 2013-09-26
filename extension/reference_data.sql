@@ -179,6 +179,7 @@ SET search_path = application, pg_catalog;
 DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'systematicRegn';
 INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'systematicRegn');
 INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'evidenceOfOwnership');
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('systematicRegn', 'sketchMap');
 DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'lodgeObjection';
 INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('lodgeObjection', 'objection');
 DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'dispute';
@@ -315,22 +316,25 @@ DELETE FROM  party.party_role_type WHERE code = 'complainant';
 DELETE FROM  party.party_role_type WHERE code = 'resistent';
 DELETE FROM  party.party_role_type WHERE code = 'recOfficer';
 DELETE FROM  party.party_role_type WHERE code = 'authRep';
+DELETE FROM  party.party_role_type WHERE code = 'demOfficer';
 
 insert into party.party_role_type(code, display_value, status) values('claimant', 'Claimant::::Reclamante', 'c');
 insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
 --insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
 insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recording Officer', 'c');
+insert into party.party_role_type(code, display_value, status) values('demOfficer', 'Demarcation Officer', 'c');
+
 --
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
 
-UPDATE source.spatial_source_type SET display_value = 'Field Sketch', status = 'c', description = '' WHERE code = 'fieldSketch';
+UPDATE source.spatial_source_type SET display_value = 'Field Sketch', status = 'x', description = '' WHERE code = 'fieldSketch';
 UPDATE source.spatial_source_type SET display_value = 'GNSS (GPS) Survey', status = 'c', description = '' WHERE code = 'gnssSurvey';
 UPDATE source.spatial_source_type SET display_value = 'Orthophoto or Satellite Imagery', status = 'c', description = '' WHERE code = 'orthophoto';
 UPDATE source.spatial_source_type SET display_value = 'Relative Measurements', status = 'x', description = '' WHERE code = 'relativeMeasurement';
 UPDATE source.spatial_source_type SET display_value = 'Topographical Map', status = 'c', description = '' WHERE code = 'topoMap';
 UPDATE source.spatial_source_type SET display_value = 'Video', status = 'x', description = '' WHERE code = 'video';
-UPDATE source.spatial_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.spatial_source_type SET display_value = 'Field Map', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c', description = '' WHERE code = 'surveyData';
 
 --
