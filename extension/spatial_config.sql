@@ -1,28 +1,28 @@
 ﻿  
------ Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by Kano, Nigeria
---DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
-
----- Update existing layers to use correct sytles and item_order ----- 
-
--- Disable these map layers for the time being. 
---UPDATE system.config_map_layer
---SET item_order = 10, 
---	visible_in_start = FALSE,
---	url = 'http://maps.gc-al.com:46767/geoserver/wms',
---	wms_layers = 'nigeria:orthophoto',
---	active = TRUE
---WHERE "name" = 'orthophoto';
-
 --- This is for correctly setting up the orthophoto onto localhost
+---UPDATE system.config_map_layer 
+---SET url = 'http://localhost:8085/geoserver/kaduna/wms',
+---wms_layers= 'kaduna:orthophoto',
+---wms_format= 'image/jpeg',
+---visible_in_start = TRUE,
+---active = TRUE
+---WHERE name='orthophoto';
+
+--- This is for correctly setting up the orthophoto onto kaduna land ministry server
 UPDATE system.config_map_layer 
-SET url = 'http://localhost:8085/geoserver/kaduna/wms',
+SET url = 'http://192.168.0.6:8085/geoserver/kaduna/wms',
 wms_layers= 'kaduna:orthophoto',
 wms_format= 'image/jpeg',
 visible_in_start = TRUE,
 active = TRUE
 WHERE name='orthophoto';
 
+
+----- Existing Layer Updates ----
+-- Remove layers from core SOLA that are not used by Kaduna, Nigeria
+--DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
+
+---- Update existing layers to use correct sytles and item_order ----- 
 
 UPDATE system.config_map_layer
 SET item_order = 9, 
@@ -45,13 +45,15 @@ WHERE "name" = 'roads';
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for Kano, Nigeria
+-- Setup Spatial Config for kaduna, Nigeria
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Ward');
+DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Ward', 'Section');
+DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards', 'Sections');
 DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward', 'section');
+DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
@@ -72,12 +74,12 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 --UPDATE system.config_map_layer
 
 --Changes made by Paola to add a new layer for sections - 26/06/2013
---DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward');
---DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard');
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'section');
-DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_section');
-
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward', 'section');
+DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'sections');
+DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_ward', 'sug_section');
+DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_sections');
 DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard', 'SpatialResult.getSection');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSections');
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getLGA', 'select id, label, st_asewkb(geom) as the_geom from cadastre.lga where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
@@ -90,7 +92,6 @@ INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getSection', 'select id, label, st_asewkb(geom) as the_geom from cadastre.section where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Section');
 
 --Changes made by Paola to add a new layer for sections - 26/06/2013
---DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getLGA');
@@ -192,6 +193,7 @@ where name = 'public_display.parcels_next';
 update system.map_search_option set active = false where code = 'BAUNIT';
 update system.map_search_option set active = false where code = 'OWNER_OF_BAUNIT';
 update system.config_map_layer set active = false, visible_in_start= false where name = 'parcels-historic-current-ba';
+update system.map_search_option set title = 'Parcel' where code = 'NUMBER';
 
 -------------------------------------------- 
  --SET NEW SRID and OTHER Kaduna PARAMETERS
