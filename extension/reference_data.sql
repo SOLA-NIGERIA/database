@@ -119,7 +119,7 @@ SET search_path = source, pg_catalog;
 --
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
-UPDATE source.administrative_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.administrative_source_type SET display_value = 'Field Map', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE source.administrative_source_type SET display_value = 'Claims Form', status = 'c', description = '' WHERE code = 'systematicRegn';
 UPDATE source.administrative_source_type SET display_value = 'Mortgage', status = 'c', description = '' WHERE code = 'mortgage';
 UPDATE source.administrative_source_type SET display_value = 'Proclamation', status = 'c', description = '' WHERE code = 'proclamation';
@@ -168,7 +168,7 @@ INSERT INTO source.administrative_source_type (code,display_value, description, 
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('evidenceOfOwnership','Evidence of Ownership', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('disputesForm','Disputes Form', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('sketchMap','Sketch Map', '', 'c');
-INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
+--INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
 
 
 SET search_path = application, pg_catalog;
@@ -346,7 +346,7 @@ UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c
 --
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
-UPDATE source.administrative_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+UPDATE source.administrative_source_type SET display_value = 'Field Map'  WHERE code = 'cadastralSurvey';
 DELETE FROM  source.administrative_source_type WHERE code = 'recordLien';
 insert into source.administrative_source_type(code, display_value, status) values('recordLien', 'Lien', 'c');
 
@@ -354,7 +354,7 @@ insert into source.administrative_source_type(code, display_value, status) value
 -- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
 
-UPDATE source.spatial_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+UPDATE source.spatial_source_type SET display_value = 'Field Map'  WHERE code = 'cadastralSurvey';
 
 
 
