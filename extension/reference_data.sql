@@ -10,6 +10,25 @@ SET client_min_messages = warning;
 
 SET search_path = administrative, pg_catalog;
 
+
+---- NEW SERVICE FOR EXISTING CofO
+DELETE from application.request_type where code = 'mapExistingParcel';
+INSERT INTO application.request_type(
+            code, request_category_code, display_value, description, status, 
+            nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template)
+    VALUES ('mapExistingParcel','registrationServices', 'Map Existing Parcel', '', 'c', 30, 
+            0.00, 0.00, 0.00, 0, 
+            'Allows to make changes to the cadastre');
+DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'mapExistingParcel';
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('cadastralSurvey', 'mapExistingParcel');
+UPDATE application.request_type SET display_value = 'Record Existing CofO', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title converted to digital format', description = '', status = 'c' WHERE code = 'newDigitalTitle';
+DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'newDigitalTitle';
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('newDigitalTitle', 'title');
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('newDigitalTitle', 'systematicRegn');
+INSERT INTO application.request_type_requires_source_type (request_type_code, source_type_code) VALUES('newDigitalTitle', 'sketchMap');
+
+
 --
 -- Data for Name: ba_unit_rel_type; Type: TABLE DATA; Schema: administrative; Owner: postgres
 --
@@ -68,7 +87,7 @@ UPDATE administrative.rrr_type SET display_value = 'Limited Access (to Road)', i
 -- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
-UPDATE application.request_type SET display_value = 'Change to Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'cadastreChange';
+UPDATE application.request_type SET display_value = 'Change to Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'cadastreChange';
 UPDATE application.request_type SET display_value = 'Lodge SLTR Claim', nr_days_to_complete = 90, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title issued at completion of systematic registration', description = '', status = 'c' WHERE code = 'systematicRegn';
 
 UPDATE application.request_type SET display_value = 'Redefine Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'redefineCadastre';
@@ -103,7 +122,6 @@ UPDATE application.request_type SET display_value = 'Register Limited Road Acces
 UPDATE application.request_type SET display_value = 'Vary Lease', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of Lease <reference>', description = '', status = 'x' WHERE code = 'varyLease';
 UPDATE application.request_type SET display_value = 'Vary Right (General)', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation of <right> <reference>', description = '', status = 'x' WHERE code = 'varyRight';
 UPDATE application.request_type SET display_value = 'Remove Right', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<right> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRight';
-UPDATE application.request_type SET display_value = 'Record Existing C of O', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title converted to digital format', description = '', status = 'x' WHERE code = 'newDigitalTitle';
 UPDATE application.request_type SET display_value = 'Remove Restriction', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = '<restriction> <reference> cancelled', description = '', status = 'x' WHERE code = 'removeRestriction';
 UPDATE application.request_type SET display_value = 'Cancel Title', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title Cancelled', description = '', status = 'x' WHERE code = 'cancelProperty';
 UPDATE application.request_type SET display_value = 'Vary Caveat', nr_days_to_complete = 5, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Variation to Caveat <reference>', description = '', status = 'x' WHERE code = 'varyCaveat';

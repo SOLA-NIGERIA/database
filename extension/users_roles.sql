@@ -1,7 +1,7 @@
 ﻿
 -- Security Role Configurations
 
--- Kano specific Roles
+-- kaduna specific Roles
 INSERT INTO system.approle (code, display_value, status, description)
 SELECT 'ApplnNr', 'Set Application Number', 'c', 'Set application number to match number allocated by LRS' 
 WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ApplnNr');
@@ -483,18 +483,22 @@ VALUES ((SELECT id FROM system.appuser WHERE username = 'appapprover'), (SELECT 
 
 
 
---- Added Role for record Lien LH # 4
+--- Added Role for record Lien LH # 4 and Map Existing Parcel LH # 36
 --
 -- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres
 --
 
 insert into system.approle(code, display_value, status, description) values('recordLien', 'Record Lien', 'c', 'Allows to make changes for registration of lien');
-
-
+insert into system.approle(code, display_value, status, description) values('mapExistingParcel', 'Map Existing Parcel', 'c', 'Allows to map existing parcel as described on existing certificate of occupancy');
+-- system.approle_appgroup
 --
 -- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres
 --
 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT 'recordLien', id FROM system.appgroup WHERE "name" = 'Land Deeds');  
-INSERT INTO system.approle_appgroup (approle_code, appgroup_id) values ('recordLien', 'super-group-id');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) values ('recordLien', 'super-group-id'); 
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) values('mapExistingParcel', 'super-group-id');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id)	(SELECT 'mapExistingParcel', id FROM system.appgroup WHERE "name" = 'GIS');	
+
+ 
 
