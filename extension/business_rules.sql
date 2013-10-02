@@ -1,4 +1,19 @@
-﻿-- BR for not Approving a Systematic Registration Claim if there has not been a public display
+﻿
+----br_generator for administrative.title_nr_seq ------------------------------------------------------------------------------------------------
+delete from system.br_definition  where br_id= 'generate-title-nr';
+delete from system.br  where id= 'generate-title-nr';
+
+insert into system.br(id, technical_type_code) values('generate-title-nr', 'sql');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('generate-title-nr', now(), 'infinity', 
+'SELECT ''KD '' || trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl;
+');
+
+
+
+
+-- BR for not Approving a Systematic Registration Claim if there has not been a public display
 
 delete from system.br_validation where br_id= 'application-on-approve-check-systematic-reg-no-pubdisp';
 delete from system.br_definition  where br_id= 'application-on-approve-check-systematic-reg-no-pubdisp';

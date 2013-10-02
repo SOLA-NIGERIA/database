@@ -75,7 +75,17 @@
 	ALTER TABLE  party.party_historic DROP COLUMN IF EXISTS nationality;
 	ALTER TABLE  party.party_historic ADD COLUMN  nationality character varying(255);
 	
-	
+-- Sequence administrative.title_nr_seq --
+DROP SEQUENCE IF EXISTS administrative.title_nr_seq;
+CREATE SEQUENCE administrative.title_nr_seq
+INCREMENT 1
+MINVALUE 100000
+MAXVALUE 999999999
+START 100000
+CACHE 1
+CYCLE;
+COMMENT ON SEQUENCE administrative.title_nr_seq IS 'Allocates numbers 10000 to 999999999 for source la number.';
+    	
 	
 
 --Creating again the views
@@ -208,7 +218,8 @@ SELECT DISTINCT aa.nr, co.name_firstpart, co.name_lastpart,
 su.ba_unit_id, sg.name::text AS name, aa.id::text AS appid, 
 aa.change_time AS commencingdate, "substring"(lu.display_value::text, 0, "position"(lu.display_value::text, '-'::text)) AS landuse,
  'LOCATION'::text AS proplocation, sa.size,
- administrative.get_parcel_ownernames(su.ba_unit_id) as owners
+ administrative.get_parcel_ownernames(su.ba_unit_id) as owners,
+ 'KD ' || trim(to_char(nextval('administrative.title_nr_seq'), '0000000000')) AS title
    FROM application.application_status_type ast, cadastre.spatial_unit_group sg, cadastre.land_use_type lu, 
    cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, 
    administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s
