@@ -85,7 +85,7 @@ UPDATE administrative.rrr_type SET display_value = 'Limited Access (to Road)', i
 -- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
 --
 
-UPDATE application.request_type SET display_value = 'Field Map', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'cadastreChange';
+UPDATE application.request_type SET display_value = 'Cadastre Change', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 0, description = '', status = 'c' WHERE code = 'cadastreChange';
 UPDATE application.request_type SET display_value = 'Lodge SLTR Claim', nr_days_to_complete = 90, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, notation_template = 'Title issued at completion of systematic registration', description = '', status = 'c' WHERE code = 'systematicRegn';
 
 UPDATE application.request_type SET display_value = 'Redefine Cadastre', nr_days_to_complete = 30, base_fee = 0.00, area_base_fee = 0.00, value_base_fee = 0.00, nr_properties_required = 1, description = '', status = 'c' WHERE code = 'redefineCadastre';
@@ -135,7 +135,7 @@ SET search_path = source, pg_catalog;
 --
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
-UPDATE source.administrative_source_type SET display_value = 'Field Map', status = 'c', description = '' WHERE code = 'cadastralSurvey';
+UPDATE source.administrative_source_type SET display_value = 'Boundary Definition', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE source.administrative_source_type SET display_value = 'Claims Form', status = 'c', description = '' WHERE code = 'systematicRegn';
 UPDATE source.administrative_source_type SET display_value = 'Mortgage', status = 'c', description = '' WHERE code = 'mortgage';
 UPDATE source.administrative_source_type SET display_value = 'Proclamation', status = 'c', description = '' WHERE code = 'proclamation';
@@ -184,7 +184,7 @@ INSERT INTO source.administrative_source_type (code,display_value, description, 
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('evidenceOfOwnership','Evidence of Ownership', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('disputesForm','Disputes Form', '', 'c');
 INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('sketchMap','Sketch Map', '', 'c');
---INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
+INSERT INTO source.administrative_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
 
 
 SET search_path = application, pg_catalog;
@@ -336,7 +336,6 @@ DELETE FROM  party.party_role_type WHERE code = 'demOfficer';
 
 insert into party.party_role_type(code, display_value, status) values('claimant', 'Claimant::::Reclamante', 'c');
 insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant::::Attore', 'c');
---insert into party.party_role_type(code, display_value, status) values('resistent', 'Resistent::::Resistente', 'c');
 insert into party.party_role_type(code, display_value, status) values('recOfficer', 'Recording Officer', 'c');
 insert into party.party_role_type(code, display_value, status) values('demOfficer', 'Demarcation Officer', 'c');
 
@@ -350,8 +349,10 @@ UPDATE source.spatial_source_type SET display_value = 'Orthophoto or Satellite I
 UPDATE source.spatial_source_type SET display_value = 'Relative Measurements', status = 'x', description = '' WHERE code = 'relativeMeasurement';
 UPDATE source.spatial_source_type SET display_value = 'Topographical Map', status = 'c', description = '' WHERE code = 'topoMap';
 UPDATE source.spatial_source_type SET display_value = 'Video', status = 'x', description = '' WHERE code = 'video';
-UPDATE source.spatial_source_type SET display_value = 'Field Map', status = 'c', description = '' WHERE code = 'cadastralSurvey';
 UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c', description = '' WHERE code = 'surveyData';
+UPDATE source.spatial_source_type SET display_value = 'Boundary Definition'  WHERE code = 'cadastralSurvey';
+INSERT INTO source.spatial_source_type (code,display_value, description, status) VALUES('fieldMap','Field Map', '', 'c');
+
 
 --
 --
@@ -362,15 +363,11 @@ UPDATE source.spatial_source_type SET display_value = 'Survey Data', status = 'c
 --
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
 --
-UPDATE source.administrative_source_type SET display_value = 'Field Map'  WHERE code = 'cadastralSurvey';
+UPDATE application.request_type_requires_source_type set source_type_code='fieldMap' where source_type_code='cadastralSurvey' and request_type_code = 'cadastreChange';
 DELETE FROM  source.administrative_source_type WHERE code = 'recordLien';
 insert into source.administrative_source_type(code, display_value, status) values('recordLien', 'Lien', 'c');
 
---
--- Data for Name: spatial_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
---
-
-UPDATE source.spatial_source_type SET display_value = 'Field Map'  WHERE code = 'cadastralSurvey';
+UPDATE application.request_type_requires_source_type set source_type_code='fieldMap' where source_type_code='cadastralSurvey' and request_type_code = 'cadastreChange';
 
 
 
