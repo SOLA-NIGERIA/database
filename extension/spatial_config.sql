@@ -200,6 +200,14 @@ delete from system.query where name = 'map_search.cadastre_object_by_title';
 insert into system.query(name, sql) values('map_search.cadastre_object_by_title', 'select distinct co.id,  ba_unit.name || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'') and ba_unit.name is not null   and compare_strings(#{search_string}, ba_unit.name) limit 30');
 insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) values('TITLE', 'Title', 'map_search.cadastre_object_by_title', true, 3, 50);
 
+----------------------------------------------
+---- update for map label
+CREATE OR REPLACE FUNCTION cadastre.get_map_center_label(center_point geometry)
+RETURNS character varying AS $BODY$ begin
+return coalesce((select 'Section:' || label from cadastre.spatial_unit_group
+where hierarchy_level = 4 and st_within(center_point, geom) limit 1), ''); end;
+$BODY$ LANGUAGE plpgsql;
+
 -------------------------------------------- 
  --SET NEW SRID and OTHER Kaduna PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
