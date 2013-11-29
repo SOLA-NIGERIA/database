@@ -1,25 +1,25 @@
 ﻿  
 --- This is for correctly setting up the orthophoto onto localhost
----UPDATE system.config_map_layer 
----SET url = 'http://localhost:8085/geoserver/kaduna/wms',
----wms_layers= 'kaduna:orthophoto',
----wms_format= 'image/jpeg',
----visible_in_start = TRUE,
----active = TRUE
----WHERE name='orthophoto';
-
---- This is for correctly setting up the orthophoto onto kaduna land ministry server
 UPDATE system.config_map_layer 
-SET url = 'http://192.168.0.6:8085/geoserver/kaduna/wms',
-wms_layers= 'kaduna:orthophoto',
+SET url = 'http://localhost:8085/geoserver/lokoja/wms',
+wms_layers= 'lokoja:Lokoja',
 wms_format= 'image/jpeg',
 visible_in_start = TRUE,
 active = TRUE
 WHERE name='orthophoto';
 
+--- This is for correctly setting up the orthophoto onto kogi land ministry server
+--UPDATE system.config_map_layer 
+--SET url = 'http://192.168.0.6:8085/geoserver/lokoja/wms',
+--wms_layers= 'lokoja:Lokoja',
+--wms_format= 'image/jpeg',
+--visible_in_start = TRUE,
+--active = TRUE
+--WHERE name='orthophoto';
+
 
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by Kaduna, Nigeria
+-- Remove layers from core SOLA that are not used by kogi, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
 ---- Update existing layers to use correct sytles and item_order ----- 
@@ -45,7 +45,7 @@ WHERE "name" = 'roads';
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for kaduna, Nigeria
+-- Setup Spatial Config for kogi, Nigeria
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
@@ -57,7 +57,7 @@ DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
--- Configure the Level data for Kaduna, Nigeria
+-- Configure the Level data for kogi, Nigeria
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -209,14 +209,14 @@ where hierarchy_level = 4 and st_within(center_point, geom) limit 1), ''); end;
 $BODY$ LANGUAGE plpgsql;
 
 -------------------------------------------- 
- --SET NEW SRID and OTHER Kaduna PARAMETERS
+ --SET NEW SRID and OTHER kogi PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '322499' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '1150679' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '334783' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '1173126' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '187286' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '871118' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '211718' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '888012' WHERE "name" = 'map-north'; 
 UPDATE system.crs SET srid = '32632';
 
 -- Reset the SRID check constraints
