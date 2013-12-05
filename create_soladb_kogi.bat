@@ -10,7 +10,7 @@ set archive_password=?
 
 set createDB=NO
 
-set testDataPath=test-data\kaduna\
+set testDataPath=test-data\kogi\
 set rulesPath=rules\
 set extensionPath=extension\
 set utilitiesPath=utilities\
@@ -52,8 +52,8 @@ echo Loading SOLA business rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_public_display.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_spatial_unit_group.sql >> build.log 2>&1
 
-echo Loading kaduna Extensions...
-echo Loading kaduna Extensions... >> build.log 2>&1
+echo Loading kogi Extensions...
+echo Loading kogi Extensions... >> build.log 2>&1
 echo Loading Spatial Config... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%spatial_config.sql >> build.log 2>&1
 echo Loading Spatial Config... >> build.log 2>&1
@@ -62,18 +62,20 @@ echo Loading Table Changes... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%table_changes.sql >> build.log 2>&1
 echo Loading Reference Data... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%reference_data.sql >> build.log 2>&1
-echo Loading kaduna Business Rules... >> build.log 2>&1
+echo Loading kogi Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%business_rules.sql >> build.log 2>&1
-echo Loading kaduna Cadastre Functions... >> build.log 2>&1
+echo Loading kogi Cadastre Functions... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
-echo Loading kaduna Systematic Registration Reports... >> build.log 2>&1
+echo Loading kogi Systematic Registration Reports... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%systematic_registration_reports.sql >> build.log 2>&1
-echo Loading kaduna User Roles... >> build.log 2>&1
+echo Loading kogi User Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
-echo Loading kaduna Dispute Module... >> build.log 2>&1
+echo Loading kogi Dispute Module... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%dispute_module.sql >> build.log 2>&1
-echo Loading kaduna LGA and Ward Boundaries... >> build.log 2>&1
+echo Loading kogi LGA and Ward Boundaries... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
+echo Loading  updates from kaduna... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%updatefromkaduna.sql >> build.log 2>&1
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
 pause
