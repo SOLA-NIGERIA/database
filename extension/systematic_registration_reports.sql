@@ -57,7 +57,8 @@ BEGIN
 			  sg.hierarchy_level=4
     ';
     if namelastpart != '' then
-          sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
+    sqlSt:= sqlSt|| ' AND  sg.name =  '''||namelastpart||'''';  --1. block
+          --sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
     end if;
     --raise exception '%',sqlSt;
        workFound = false;
@@ -69,31 +70,30 @@ BEGIN
     
     select  (      
                   ( SELECT  
-		    count (distinct(aa.id)) 
+		    count( aa.nr)
 		    FROM  application.application aa,
 			  application.service s,
 			  administrative.ba_unit bu, 
 		          application.application_property ap
-			    WHERE s.application_id = aa.id
+			     WHERE s.application_id = aa.id
 			    AND   s.request_type_code::text = 'systematicRegn'::text
 			    AND   aa.action_code ='lodge'
                             AND   aa.id::text = ap.application_id::text
 			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   bu.name_lastpart in 
-                            ( select co.name_lastpart 
+                            and bu.name_firstpart||bu.name_lastpart in
+                            ( select co.name_firstpart||co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
-			   AND  (
+                        AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
 			    ) + 
 	           ( SELECT  
-		    count (distinct(aa.id)) 
+		    count( aa.nr)
 		    FROM  application.application_historic aa,
 			  application.service s,
 			  administrative.ba_unit bu, 
@@ -103,14 +103,13 @@ BEGIN
 			    AND   aa.action_code ='lodge'
                             AND   aa.id::text = ap.application_id::text
 			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   bu.name_lastpart in 
-                            ( select co.name_lastpart 
+                            and bu.name_firstpart||bu.name_lastpart in
+                            ( select co.name_firstpart||co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
-			    AND  (
+                            AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
@@ -128,23 +127,23 @@ BEGIN
 	    AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
 	    AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
 	    AND s.status_code::text = 'completed'::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND bu.id::text = su.ba_unit_id::text
-	    AND co.name_lastpart in ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+	    AND co.id in 
+                            ( select su.spatial_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
 	    )
             ||'/'||
 	    (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND co.name_lastpart in ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
+	            FROM cadastre.cadastre_object co, 
+	            cadastre.spatial_unit_group sg
+		    WHERE co.type_code='parcel'
+	            and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                    and sg.name = ''|| rec.area ||''
+                            
 	     )
 
 	   )
@@ -167,9 +166,15 @@ BEGIN
 				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
 
 			  AND apd.name_firstpart||apd.name_lastpart in ( select co.name_firstpart||co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
+                              from cadastre.cadastre_object co
+                              where co.id in 
+				    ( select su.spatial_unit_id
+				      from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+				      administrative.ba_unit_contains_spatial_unit su
+				      where co.id = su.spatial_unit_id
+				      and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+				      and sg.name = ''|| rec.area ||''
+				    )
                             )
 			  AND  (
 		          (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
@@ -197,11 +202,17 @@ BEGIN
 				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
 				  AND apd.name_firstpart||apd.name_lastpart in 
 					    ( select co.name_firstpart||co.name_lastpart 
-					      from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-					      where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-					      and sg.name = ''|| rec.area ||''
-					      
-					    )
+					      from cadastre.cadastre_object co
+					      where co.id in 
+						    ( select su.spatial_unit_id
+						      from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+						      administrative.ba_unit_contains_spatial_unit su
+						      where co.id = su.spatial_unit_id
+						      and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+						      and sg.name = ''|| rec.area ||''
+						    )
+							      
+					   )
 				  AND  (
 					  (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 					   or
@@ -209,34 +220,15 @@ BEGIN
 					  )
 				), --TotSolvedObj
 		
-		(
-		SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s,
-			  application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.id::text = ap.application_id::text
-			    AND ap.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            ) 
-			    AND ap.name_lastpart in (select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name in( 
-		                             select ss.reference_nr 
-									from   source.source ss 
-									where ss.type_code='publicNotification'
-									AND ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                                                        )
-                                             )     
-
-                 ),  ---TotAppPubDispl
+		(select count(*) FROM administrative.systematic_registration_listing WHERE (name = 'KD/DKA/6/1')
+                and ''|| rec.area ||'' in( 
+		                             select distinct(ss.reference_nr) from   source.source ss 
+					     where ss.type_code='publicNotification'
+					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+                                             and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
+                                             and ss.reference_nr = ''|| rec.area ||'' 
+					   )
+		),  ---TotAppPubDispl
 
 
                  (
@@ -248,9 +240,15 @@ BEGIN
 		   AND ap.application_id = aa.id
 		   AND ap.name_lastpart in 
                             ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
+                              from cadastre.cadastre_object co
+                              where co.id in 
+						    ( select su.spatial_unit_id
+						      from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+						      administrative.ba_unit_contains_spatial_unit su
+						      where co.id = su.spatial_unit_id
+						      and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+						      and sg.name = ''|| rec.area ||''
+						    )
                               
                             )
 		   AND ap.name_lastpart in (select co.name_lastpart 
@@ -576,7 +574,8 @@ BEGIN
 			  sg.hierarchy_level=4
     ';
     if namelastpart != '' then
-          sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
+         -- sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
+          sqlSt:= sqlSt|| ' AND  sg.name =  '''||namelastpart||'''';  --1. block
     end if;
 
     --raise exception '%',sqlSt;
@@ -585,7 +584,7 @@ BEGIN
     -- Loop through results
     
     FOR rec in EXECUTE sqlSt loop
-
+    statusFound = true;
     
     select        ( SELECT  
 		    count (distinct(aa.id)) 
@@ -597,19 +596,20 @@ BEGIN
 			    AND   s.request_type_code::text = 'systematicRegn'::text
                             AND   aa.id::text = ap.application_id::text
 			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
+                            and bu.name_firstpart||bu.name_lastpart in
+                            ( select co.name_firstpart||co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
+			    
 			    AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
-			    ),
+			    )--2. No of Applications Lodged with Surveyed Parcel
+		,
 
 		    (SELECT count (distinct(aa.id))
 		     FROM application.application aa,
@@ -623,31 +623,39 @@ BEGIN
 			 AND   aa.id::text = ap.application_id::text
 			 AND   s.request_type_code::text = 'systematicRegn'::text
 			 AND s.application_id = aa.id
-			 AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+			 AND bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             )
 			 AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )),
+		          )) --3. No of Applications Lodged no Surveyed Parcel	
+		       ,
 
 	          (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND   co.id not in (SELECT su.spatial_unit_id FROM administrative.ba_unit_contains_spatial_unit su)
-			    AND co.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
-	          ),
+	            from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
+                             WHERE co.type_code='parcel'
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                            and sg.name = ''|| rec.area ||''
+			    AND   co.id not in (SELECT (su.spatial_unit_id)
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                           and sg.name = ''|| rec.area ||''
+                         ) 
+
+
+
+                          
+	          )--4. No of Surveyed Parcels with no application	     
+		  ,
 
                   (
 	          SELECT (COUNT(*)) 
@@ -665,19 +673,25 @@ BEGIN
 				  AND    apsr.application_id = aasr.id
 				  AND    apd.application_id = aad.id
 				  AND    apsr.name_firstpart||apsr.name_lastpart = apd.name_firstpart||apd.name_lastpart
-   		  AND apd.name_firstpart||apd.name_lastpart in 
-                            ( select co.name_firstpart||co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+   		  AND apd.name_firstpart||apd.name_lastpart in
+   		  (select bu.name_firstpart||bu.name_lastpart
+   		    from administrative.ba_unit bu
+   		    where  bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
-                            )
+                            ) 
+                    )
 		  AND  (
 		          (aasr.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
-		), 
+		)--5. No of Applications with pending Objection	
+		, 
 
 		  ( WITH appSys AS 	(SELECT  
 		    distinct on (aa.id) aa.id as id
@@ -689,13 +703,14 @@ BEGIN
 			    AND   s.request_type_code::text = 'systematicRegn'::text
 			    AND   aa.id::text = ap.application_id::text
 		            AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		            AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+		            AND bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
-                            )
+                            ) 
 		            AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
@@ -720,34 +735,19 @@ BEGIN
 				WHEN ((SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys) >= 0) THEN (SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys)
 				ELSE 0
 			END 
-				  ),
+				  )--6. No of Applications with incomplete Documentation	        
+		    ,
      
-                 (select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
-		   AND ap.name_lastpart in (select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name in( 
-		                             select ss.reference_nr from   source.source ss 
+               (select count(*) FROM administrative.systematic_registration_listing WHERE (name = 'KD/DKA/6/1')
+                and ''|| rec.area ||'' in( 
+		                             select distinct(ss.reference_nr) from   source.source ss 
 					     where ss.type_code='publicNotification'
 					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
                                              and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''   
+                                             and ss.reference_nr = ''|| rec.area ||'' 
 					   )
-		              )
-
-                 ),
+		)--7. No of Applications in Public Display	
+		 ,
 
                  ( 
                    select count(distinct (aa.id))
@@ -756,13 +756,18 @@ BEGIN
                    where s.request_type_code::text = 'systematicRegn'::text
 		   AND s.application_id = aa.id
 		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+		    AND ap.name_firstpart||ap.name_lastpart in
+   		  (select bu.name_firstpart||bu.name_lastpart
+   		    from administrative.ba_unit bu
+   		    where  bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
-                            )
+                            ) 
+                    )
 		   AND ap.name_lastpart in (select co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
@@ -778,7 +783,8 @@ BEGIN
                                              )   
 					   )  
 		             )
-                 ),
+                 )--8. No of Applications with Completed Public Display but Certificates not Issued	               
+		 ,
 
                  (
                    select count(distinct (aa.id))
@@ -787,13 +793,18 @@ BEGIN
                    where s.request_type_code::text = 'systematicRegn'::text
 		   AND s.application_id = aa.id
 		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+		    AND ap.name_firstpart||ap.name_lastpart in
+   		  (select bu.name_firstpart||bu.name_lastpart
+   		    from administrative.ba_unit bu
+   		    where  bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             ) 
+                    )
 		   AND ap.name_lastpart in (select co.name_lastpart 
                               from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
@@ -809,7 +820,8 @@ BEGIN
                                              )   
 					   )  
 			      )		   
-                ),
+                )--9. No of Applications with Issued Certificate	 
+		 ,
 		 (SELECT count (distinct (aa.id) )
 			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
 			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
@@ -821,13 +833,15 @@ BEGIN
 			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
 			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
 			  AND rrr.ba_unit_id::text = su.ba_unit_id::text
-			  AND co.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+			   AND co.id in 
+                            ( select su.spatial_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
                             ) 
+                    
 			  AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
@@ -839,7 +853,8 @@ BEGIN
 			   OR rrr.type_code::text = 'commonOwnership'::text 
 			   ) 
 			  AND bu.id::text = su.ba_unit_id::text
-		 ),		
+		 )--10. No of Applications for Private Land
+		 ,		
 		 ( SELECT count (distinct (aa.id) )
 			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
 			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
@@ -851,30 +866,24 @@ BEGIN
 			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
 			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
 			  AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
-			  AND co.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+			  AND co.id in 
+                            ( select su.spatial_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
-                            )
+                            ) 
 			  AND  (
 		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
 		           or
 		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          ) 
-	  	 ), 	
-                 (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND co.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                              
-                            )
-                 )    
+	  	 )--11. No of Applications for Public Land 	
+		 , 	
+                 (select count(*) from cadastre.cadastre_object co, cadastre.spatial_unit_group sg where
+                   ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom) and sg.name =''|| rec.area ||'') --12. Total Number of Surveyed Parcels	
+		   
               INTO       TotApp,
                          appLodgedSP,
                          SPnoApp,
@@ -895,13 +904,14 @@ BEGIN
 			    AND   s.request_type_code::text = 'systematicRegn'::text
 			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
 			    AND   aa.id::text = ap.application_id::text
-			    AND bu.name_lastpart in 
-                            ( select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+			    AND bu.id in 
+                            ( select su.ba_unit_id
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
+                              administrative.ba_unit_contains_spatial_unit su
+                              where co.id = su.spatial_unit_id
+                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
-                              
-                            )
+                            ) 
                                                
 	  ;        
 

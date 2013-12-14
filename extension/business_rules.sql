@@ -1,4 +1,22 @@
-﻿
+﻿----br 'public-display-check-complete-status'
+update  system.br_definition
+set  body = 'select
+(select count(*)
+FROM administrative.systematic_registration_listing WHERE (name = #{lastPart}) 
+)*100/
+(select count(*)
+from 
+cadastre.cadastre_object co,
+cadastre.spatial_unit_group sg
+where  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+and sg.name = #{lastPart}
+) > 90 as vl'
+where br_id = 'public-display-check-complete-status';
+
+
+
+
+
 ----br_generator for administrative.title_nr_seq ------------------------------------------------------------------------------------------------
 delete from system.br_definition  where br_id= 'generate-title-nr';
 delete from system.br  where id= 'generate-title-nr';
@@ -111,7 +129,7 @@ delete from system.br where id ='new-co-must-not-overlap-with-existing';
 
 insert into system.br(id, technical_type_code, feedback, technical_description) 
 values('new-co-must-not-overlap-with-existing', 'sql', 
-    'New polygons do not overlap with existing ones',
+    'New polygons must not overlap with existing ones',
  '');
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
@@ -128,7 +146,7 @@ INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_r
 VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'current', 'cadastreChange', 'critical', 115);
 
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
-VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'pending', 'cadastreChange', 'warning', 425);
+VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'pending', 'cadastreChange', 'critical', 425);
 
 -----------------------------------------------------------------------------------------------------------
 --LH # 14 DISABLE
