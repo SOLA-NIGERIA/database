@@ -25,7 +25,7 @@ insert into system.br(id, technical_type_code) values('generate-title-nr', 'sql'
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
 values('generate-title-nr', now(), 'infinity', 
-'SELECT ''KD '' || trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl;
+'SELECT ''KG '' || trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl;
 ');
 
 
