@@ -7,6 +7,8 @@ declare
 newseqnr integer;
 parcel_number_exists integer;
 val_to_return character varying;
+
+apponewseqnr  character varying;
    
 begin
    if last_part != 'NO LGA/WARD' then    
@@ -23,9 +25,12 @@ begin
           where name_firstpart||name_lastpart= newseqnr||last_part;
         if parcel_number_exists > 0 then
           select max (name_firstpart)
-          into newseqnr
+          into apponewseqnr
           from  cadastre.cadastre_object
           where name_lastpart= last_part;
+          apponewseqnr:= replace( apponewseqnr, 'X ', '0');
+          apponewseqnr:= replace( apponewseqnr, 'NC_', '0');
+          newseqnr:=apponewseqnr;
           newseqnr:=newseqnr+1;
         end if;  
 
@@ -42,7 +47,7 @@ begin
 
    end if;
 
-  val_to_return := newseqnr;
+  val_to_return := 'X '||newseqnr;
   return val_to_return;        
 end;
 $$ LANGUAGE plpgsql;
