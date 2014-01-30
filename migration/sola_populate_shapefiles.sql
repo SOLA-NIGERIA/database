@@ -28,8 +28,8 @@ INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  chang
 
 --------------- State
 INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user) 
-        SELECT distinct(upper(adm1)),adm1, 1,(upper(adm1)), 'test'
-	--SELECT distinct('KD'),'KD', 1,('kogi'), 'test'
+        --SELECT distinct(upper(adm1)),adm1, 1,(upper(adm1)), 'test'
+	SELECT distinct('KG'),'KG', 1,('kogi'), 'test'
 	FROM interim_data.lga;
 	-- WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
@@ -38,12 +38,21 @@ INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  chang
 -- KD/DKA/6/2
 
 --------------- LGA
+--INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user)
+--	SELECT upper(adm1||'/'||replace(adm2,'/','-')), 2, replace(adm2,'/','-'), upper(adm1||'/'||replace(adm2,'/','-')), ST_GeometryN(the_geom, 1), 'test'
+--	--SELECT 'KD/'||id, 2, id, 'KD/'||id, the_geom, 'test'
+--	--SELECT 'KD/'||id, 2, lga_code, 'KD/'||lga_code, ST_GeometryN(the_geom, 1), 'test'
+--	FROM interim_data.lga;
+--	-- WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
+
 INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user)
-	SELECT upper(adm1||'/'||replace(adm2,'/','-')), 2, replace(adm2,'/','-'), upper(adm1||'/'||replace(adm2,'/','-')), ST_GeometryN(the_geom, 1), 'test'
+	SELECT upper('KG/'||replace(alga,'/','-')), 2, replace(alga,'/','-'), upper('KG/'||replace(alga,'/','-')), ST_GeometryN(the_geom, 1), 'test'
 	--SELECT 'KD/'||id, 2, id, 'KD/'||id, the_geom, 'test'
 	--SELECT 'KD/'||id, 2, lga_code, 'KD/'||lga_code, ST_GeometryN(the_geom, 1), 'test'
-	FROM interim_data.lga;
+	FROM interim_data."lga_32N"  where statename='Kogi';
 	-- WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
+
+
 
 --------------- Wards
 --INSERT INTO cadastre.spatial_unit_group( id, hierarchy_level, label, name, geom, change_user, seq_nr)
