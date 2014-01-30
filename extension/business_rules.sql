@@ -179,7 +179,9 @@ $BODY$
 BEGIN
  if name_firstpart is null then return false; end if;
   if name_lastpart is null then return false; end if;
-  if not (name_firstpart similar to '[0-9]+') then return false;  end if;
+  --if not (name_firstpart similar to '[0-9]+') then return false;  end if;
+  if not (name_firstpart similar to 'NC_[0-9]+' or name_firstpart similar to '[0-9]+') then return false;  end if;
+  
   
   if name_lastpart not in (select sg.name 
 			   from cadastre.spatial_unit_group sg
