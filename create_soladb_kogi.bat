@@ -74,8 +74,6 @@ echo Loading kogi Dispute Module... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%dispute_module.sql >> build.log 2>&1
 echo Loading kogi LGA and Ward Boundaries... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
-echo Loading  updates from kaduna... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%updatefromkaduna.sql >> build.log 2>&1
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
 pause

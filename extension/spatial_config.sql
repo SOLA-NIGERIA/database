@@ -1,4 +1,4 @@
-﻿  
+﻿   
 --- This is for correctly setting up the orthophoto onto localhost
 UPDATE system.config_map_layer 
 SET url = 'http://localhost:8085/geoserver/lokoja/wms',
@@ -134,27 +134,55 @@ CREATE OR REPLACE VIEW cadastre.section AS
 ALTER TABLE cadastre.section
   OWNER TO postgres; 
 
+--Changes made by Paola to match changes done in kaduna Dec 2013
 
-
---Changes made by Paola to add a new search query for sections - 28/06/2013
-
+---  CHANGED map_search.cadastre_object_by_section
 delete from system.map_search_option  where code = 'SECTION';
 delete from system.query  where name = 'map_search.cadastre_object_by_section';
 
 insert into system.query(name, sql) values('map_search.cadastre_object_by_section', 'select sg.id, sg.label, st_asewkb(sg.geom) as the_geom from  
 cadastre.spatial_unit_group sg 
-where compare_strings(#{search_string}, sg.name) 
+where compare_strings(#{search_string}, sg.label) 
 and sg.hierarchy_level=4
 limit 30');
 
 insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) 
 values('SECTION', 'Section', 'map_search.cadastre_object_by_section', true, 3, 50);
 
+-- ADDED overlapping parcels layer
+DELETE FROM cadastre.level WHERE "name" IN ('OverlappingParcels');
+DELETE FROM system.config_map_layer WHERE "name" IN ('overlappingparcels');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getOverlappingParcels');
+
+-- cadastre.level
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'OverlappingParcels', 'all', 'polygon', 'mixed', 'test');
+
+-- system.query
+INSERT INTO system.query(name, sql, description)
+    VALUES ('SpatialResult.getOverlappingParcels', 'SELECT co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom  
+from cadastre.cadastre_object co, cadastre.cadastre_object co_int 
+where co.type_code= ''parcel''  and co_int.type_code= ''parcel'' 
+  and co.id > co_int.id
+  and ST_Intersects(co.geom_polygon, st_buffer(co_int.geom_polygon, -0.03))
+  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))
+  and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
+
+-- system.config_map_layer
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels');
+
+
+
+
+
+
+
 
 ---  changed public display map query
 update system.query
 set sql =
-'select co.id, co.name_lastpart||''/''||co.name_firstpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) 
+'select co.id, co.name_firstpart as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) 
 as the_geom 
 from cadastre.cadastre_object co, 
 cadastre.spatial_unit_group sg
@@ -169,7 +197,7 @@ where name = 'public_display.parcels';
 
 update system.query
 set sql =
- 'SELECT co_next.id, co.name_lastpart||''/''||co.name_firstpart as label, 
+ 'SELECT co_next.id, co.name_firstpart as label, 
   st_asewkb(st_transform(co_next.geom_polygon, #{srid})) 
  as the_geom  
  from cadastre.cadastre_object co_next, 
@@ -188,6 +216,7 @@ set sql =
   and ST_Intersects(st_transform(co_next.geom_polygon, #{srid}), ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),
   ST_Point(#{maxx}, #{maxy})), #{srid}))' 
 where name = 'public_display.parcels_next';
+
 ---------------------------------------------
 ----- update map search option
 update system.map_search_option set active = true where code = 'BAUNIT';
@@ -200,6 +229,7 @@ delete from system.query where name = 'map_search.cadastre_object_by_title';
 insert into system.query(name, sql) values('map_search.cadastre_object_by_title', 'select distinct co.id,  ba_unit.name || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'') and ba_unit.name is not null   and compare_strings(#{search_string}, ba_unit.name) limit 30');
 insert into system.map_search_option(code, title, query_name, active, min_search_str_len, zoom_in_buffer) values('TITLE', 'Title', 'map_search.cadastre_object_by_title', true, 3, 50);
 
+
 ----------------------------------------------
 ---- update for map label
 CREATE OR REPLACE FUNCTION cadastre.get_map_center_label(center_point geometry)
@@ -207,6 +237,7 @@ RETURNS character varying AS $BODY$ begin
 return coalesce((select 'Section:' || label from cadastre.spatial_unit_group
 where hierarchy_level = 4 and st_within(center_point, geom) limit 1), ''); end;
 $BODY$ LANGUAGE plpgsql;
+
 
 -------------------------------------------- 
  --SET NEW SRID and OTHER kogi PARAMETERS
@@ -218,6 +249,12 @@ UPDATE system.setting SET vl = '871118' WHERE "name" = 'map-south';
 UPDATE system.setting SET vl = '211718' WHERE "name" = 'map-east'; 
 UPDATE system.setting SET vl = '888012' WHERE "name" = 'map-north'; 
 UPDATE system.crs SET srid = '32632';
+
+---------------update cadastre.hierarchy_level --------------------------
+update cadastre.hierarchy_level set status = 'x' where code in ('0','1','2','3');
+
+
+
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;

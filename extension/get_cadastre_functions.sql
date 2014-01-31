@@ -7,9 +7,7 @@ declare
 newseqnr integer;
 parcel_number_exists integer;
 val_to_return character varying;
-
-apponewseqnr  character varying;
-   
+apponewseqnr  character varying;   
 begin
    if last_part != 'NO LGA/WARD' then    
           

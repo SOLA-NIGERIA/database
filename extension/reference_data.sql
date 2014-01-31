@@ -155,13 +155,15 @@ UPDATE source.administrative_source_type SET display_value = 'Power of Attorney'
 UPDATE source.administrative_source_type SET display_value = 'Standard Document', status = 'x', description = '' WHERE code = 'standardDocument';
 UPDATE source.administrative_source_type SET display_value = 'Cadastral Map', status = 'x', description = '' WHERE code = 'cadastralMap';
 UPDATE source.administrative_source_type SET display_value = 'Waiver to Caveat or other requirement', status = 'x', description = '' WHERE code = 'waiver';
-UPDATE source.administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'x', description = '' WHERE code = 'idVerification';
 UPDATE source.administrative_source_type SET display_value = 'Caveat', status = 'x', description = '' WHERE code = 'caveat';
 UPDATE source.administrative_source_type SET display_value = 'Objection', status = 'x', description = '' WHERE code = 'objection';
 UPDATE source.administrative_source_type SET display_value = 'PDF Scanned Document', status = 'x', description = '' WHERE code = 'pdf';
 UPDATE source.administrative_source_type SET display_value = 'TIFF Scanned Document', status = 'x', description = '' WHERE code = 'tiff';
 UPDATE source.administrative_source_type SET display_value = 'JPG Scanned Document', status = 'x', description = '' WHERE code = 'jpg';
 UPDATE source.administrative_source_type SET display_value = 'TIF Scanned Document', status = 'x', description = '' WHERE code = 'tif';
+
+
+UPDATE source.administrative_source_type SET display_value = 'Form of Identification including Personal ID', status = 'c', description = '' WHERE code = 'idVerification';
 
 DELETE FROM source.administrative_source_type WHERE code = 'mainClaimantPhoto';
 DELETE FROM source.administrative_source_type WHERE code = 'mainClaimantId';
@@ -214,6 +216,7 @@ UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'commercial';
 UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'industrial';
 UPDATE cadastre.land_use_type SET  status = 'x' WHERE code = 'agricultural';
 
+DELETE FROM cadastre.land_use_type WHERE code = 'res_home_comm';
 
 DELETE FROM cadastre.land_use_type WHERE code = 'res_home';
 DELETE FROM cadastre.land_use_type WHERE code = 'res_home_agric';
@@ -234,6 +237,7 @@ DELETE FROM cadastre.land_use_type WHERE code = 'inst_other';
 DELETE FROM cadastre.land_use_type WHERE code = 'comm_community_land';
 
 
+INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home_comm','RESIDENTIAL---Home With Commercial', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home','RESIDENTIAL---Home', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('res_home_agric','RESIDENTIAL---Home Agric', '', 'c');
 INSERT INTO cadastre.land_use_type (code,display_value, description, status) VALUES('bus_commercial','BUSINESS---Commecial', '', 'c');
@@ -288,6 +292,7 @@ DELETE FROM  party.id_type WHERE code = 'birth_cert';
 DELETE FROM  party.id_type WHERE code = 'driv_lic';
 DELETE FROM  party.id_type WHERE code = 'national_id';
 DELETE FROM  party.id_type WHERE code = 'no_evidence';
+DELETE FROM  party.id_type WHERE code = 'testimony_id';
 
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('int_passport','International Passport', '', 'c');
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('voting_card','Voting Card', '', 'c');
@@ -295,6 +300,7 @@ INSERT INTO party.id_type(code,display_value, description, status) VALUES('birth
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('driv_lic','Drivers License', '', 'c');
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('national_id','National ID Card', '', 'c');
 INSERT INTO party.id_type(code,display_value, description, status) VALUES('no_evidence','No Evidence', '', 'c');
+INSERT INTO party.id_type(code,display_value, description, status) VALUES('testimony_id','Oral Testimony ID', '', 'c');
 
 
 
