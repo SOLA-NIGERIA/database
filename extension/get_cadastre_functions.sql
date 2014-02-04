@@ -7,7 +7,9 @@ declare
 newseqnr integer;
 parcel_number_exists integer;
 val_to_return character varying;
-apponewseqnr  character varying;   
+
+apponewseqnr  character varying;
+   
 begin
    if last_part != 'NO LGA/WARD' then    
           
@@ -27,7 +29,7 @@ begin
           from  cadastre.cadastre_object
           where name_lastpart= last_part;
           apponewseqnr:= replace( apponewseqnr, 'X ', '0');
-          apponewseqnr:= replace( apponewseqnr, 'NC_', '0');
+          apponewseqnr:= replace( apponewseqnr, 'NC', '0');
           newseqnr:=apponewseqnr;
           newseqnr:=newseqnr+1;
         end if;  

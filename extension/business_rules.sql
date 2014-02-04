@@ -1,5 +1,4 @@
-﻿
-
+﻿----br 'public-display-check-complete-status'
 update  system.br_definition
 set  body = 'select
 (select count(*)
@@ -26,7 +25,7 @@ insert into system.br(id, technical_type_code) values('generate-title-nr', 'sql'
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
 values('generate-title-nr', now(), 'infinity', 
-'SELECT ''KANO '' || trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl;
+'SELECT ''KG '' || trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl;
 ');
 
 
@@ -130,7 +129,7 @@ delete from system.br where id ='new-co-must-not-overlap-with-existing';
 
 insert into system.br(id, technical_type_code, feedback, technical_description) 
 values('new-co-must-not-overlap-with-existing', 'sql', 
-    'New polygons do not overlap with existing ones',
+    'New polygons must not overlap with existing ones',
  '');
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
@@ -147,7 +146,7 @@ INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_r
 VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'current', 'cadastreChange', 'critical', 115);
 
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
-VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'pending', 'cadastreChange', 'warning', 425);
+VALUES ('new-co-must-not-overlap-with-existing', 'cadastre_object', 'pending', 'cadastreChange', 'critical', 425);
 
 -----------------------------------------------------------------------------------------------------------
 --LH # 14 DISABLE
@@ -180,8 +179,7 @@ $BODY$
 BEGIN
  if name_firstpart is null then return false; end if;
   if name_lastpart is null then return false; end if;
-  --if not (name_firstpart similar to '[0-9]+') then return false;  end if;
-  if not (name_firstpart similar to 'NC_[0-9]+' or name_firstpart similar to '[0-9]+') then return false;  end if;
+  if not (name_firstpart similar to 'NC[0-9]+' or name_firstpart similar to '[0-9]+') then return false;  end if;
   
   if name_lastpart not in (select sg.name 
 			   from cadastre.spatial_unit_group sg
