@@ -220,7 +220,7 @@ BEGIN
 					  )
 				), --TotSolvedObj
 		
-		(select count(*) FROM administrative.systematic_registration_listing WHERE (name = 'KD/DKA/6/1')
+		(select count(*) FROM administrative.systematic_registration_listing WHERE (name = ''|| rec.area ||'')
                 and ''|| rec.area ||'' in( 
 		                             select distinct(ss.reference_nr) from   source.source ss 
 					     where ss.type_code='publicNotification'
@@ -738,7 +738,7 @@ BEGIN
 				  )--6. No of Applications with incomplete Documentation	        
 		    ,
      
-               (select count(*) FROM administrative.systematic_registration_listing WHERE (name = 'KD/DKA/6/1')
+               (select count(*) FROM administrative.systematic_registration_listing WHERE (name = ''|| rec.area ||'')
                 and ''|| rec.area ||'' in( 
 		                             select distinct(ss.reference_nr) from   source.source ss 
 					     where ss.type_code='publicNotification'
