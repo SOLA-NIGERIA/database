@@ -90,7 +90,7 @@ COMMENT ON SEQUENCE administrative.title_nr_seq IS 'Allocates numbers 10000 to 9
 
 --Creating again the views
 -- View: administrative.systematic_registration_listing
-drop view administrative.systematic_registration_listing
+drop view administrative.systematic_registration_listing;
 CREATE OR REPLACE VIEW administrative.systematic_registration_listing AS 
  SELECT DISTINCT co.id, co.name_firstpart, co.name_lastpart, round(sa.size,0) size, 
  get_translation(lu.display_value, NULL::character varying) AS land_use_code, 
