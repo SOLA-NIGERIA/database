@@ -9,6 +9,7 @@ insert into party.gender_type(code, display_value, status) values('na', 'na', 'c
 
 
 
+
 --DROP FUNCTION administrative.get_parcel_ownergender(gender character varying, query character varying);
 CREATE OR REPLACE FUNCTION administrative.get_parcel_ownergender(gender character varying, query character varying)
 RETURNS SETOF record AS
@@ -49,23 +50,55 @@ BEGIN
     statusFound = true; 
      
 	for rec in 
-		SELECT 	 bu.id, 
-		(SELECT COUNT('x') FROM party.party par, administrative.party_for_rrr pfr  WHERE pfr.party_id=par.id AND rrr.id=pfr.rrr_id AND par.gender_code='female') as female,
-		(SELECT COUNT('x') FROM party.party par, administrative.party_for_rrr pfr WHERE pfr.party_id=par.id AND rrr.id=pfr.rrr_id AND par.gender_code='male') as male,
-		(SELECT COUNT('x') FROM party.party par, administrative.party_for_rrr pfr WHERE pfr.party_id=par.id AND rrr.id=pfr.rrr_id AND par.gender_code='na') as entity,
-		bu.name_lastpart  as parcel
-		FROM administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
-		application.application aa, application.service s, administrative.ba_unit bu, administrative.rrr rrr
-		WHERE bu.id=rrr.ba_unit_id
-		AND (rrr.type_code::text = 'ownership'::text 
+		SELECT distinct buExt.id as id, 
+		(select count (*) from party.party pp,
+		     administrative.ba_unit bu,
+		     administrative.party_for_rrr pfr,
+		     administrative.rrr rrr
+		     WHERE buExt.id=bu.id 
+		     and bu.id=rrr.ba_unit_id
+		     and rrr.id = pfr.rrr_id
+		     and pp.id = pfr.party_id
+		     AND (rrr.type_code::text = 'ownership'::text 
 		     OR rrr.type_code::text = 'apartment'::text 
 		     OR rrr.type_code::text = 'commonOwnership'::text) 
-		AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text
-		AND ap.name_firstpart::text = bu.name_firstpart::text) AND aa.id::text = ap.application_id::text 
-		AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-		AND s.status_code::text = 'completed'::text  
-		AND bu.id::text = su.ba_unit_id::text 
-		AND bu.name_lastpart = ''||recExt.area||''
+		     and pp.gender_code = 'female') as female,
+		(select count (*) from party.party pp,
+		     administrative.ba_unit bu,
+		     administrative.party_for_rrr pfr,
+		     administrative.rrr rrr
+		     WHERE buExt.id=bu.id 
+		     and bu.id=rrr.ba_unit_id
+		     and rrr.id = pfr.rrr_id
+		     and pp.id = pfr.party_id
+		     AND (rrr.type_code::text = 'ownership'::text 
+		     OR rrr.type_code::text = 'apartment'::text 
+		     OR rrr.type_code::text = 'commonOwnership'::text) 
+		     and pp.gender_code ='male') as male,
+		(select count (*) from party.party pp,
+		     administrative.ba_unit bu,
+		     administrative.party_for_rrr pfr,
+		     administrative.rrr rrr
+		     WHERE buExt.id=bu.id 
+		     and bu.id=rrr.ba_unit_id
+		     and rrr.id = pfr.rrr_id
+		     and pp.id = pfr.party_id
+		     AND (rrr.type_code::text = 'ownership'::text 
+		     OR rrr.type_code::text = 'apartment'::text 
+		     OR rrr.type_code::text = 'commonOwnership'::text) 
+		     and pp.gender_code ='na') as entity,
+		buExt.name_lastpart  as parcel
+	from party.party pp,
+			administrative.ba_unit buExt,
+			administrative.party_for_rrr pfr,
+			administrative.rrr rrr
+	WHERE buExt.id=rrr.ba_unit_id 
+	and rrr.id = pfr.rrr_id
+	and pp.id = pfr.party_id
+	AND (rrr.type_code::text = 'ownership'::text 
+	OR rrr.type_code::text = 'apartment'::text 
+	OR rrr.type_code::text = 'commonOwnership'::text) 
+	AND buExt.name_lastpart = ''||recExt.area||''
 		
        loop
 
