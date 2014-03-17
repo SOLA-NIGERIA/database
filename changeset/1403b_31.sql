@@ -1,11 +1,8 @@
-﻿
----
+﻿---
 -- Data not applicable gender
 ----
 
-delete from party.gender_type where code= 'na';
-
-insert into party.gender_type(code, display_value, status) values('na', 'na', 'c');
+update party.gender_type set display_value = 'Not applicable' where code =  'na';
 
 
 
