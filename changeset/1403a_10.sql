@@ -58,6 +58,7 @@ BEGIN
 			  cadastre.spatial_unit_group sg 
 			  where 
 			  sg.hierarchy_level=4
+			  order by sg.name
     ';  -- 1. Systematic Registration Work Unit
     if namelastpart != '' then
 	sqlSt:= sqlSt|| ' AND  sg.name =  '''||namelastpart||'''';  --1. SRWU
