@@ -30,7 +30,7 @@ VALUES('application-on-approve-check-public-display', now(), 'infinity',
   and 
   (swu.public_display_start_date is null 
   or
-  (swu.public_display_start_date + CAST(coalesce(system.get_setting(''public-notification-duration''), '0') AS integer)>= now())
+  (swu.public_display_start_date + CAST(coalesce(system.get_setting(''public-notification-duration''), ''0'') AS integer)>= now())
  )
 and  aa.id = #{id};');
 
