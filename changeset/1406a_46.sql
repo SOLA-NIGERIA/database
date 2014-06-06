@@ -38,7 +38,7 @@ ALTER TABLE application.systematic_registration_certificates OWNER TO postgres;
 
 -- DROP FUNCTION application.getSection(character varying);
 
-CREATE OR REPLACE FUNCTION application.getSection(nr character varying)
+CREATE OR REPLACE FUNCTION application.getSection(inputnr character varying)
   RETURNS character varying AS
 $BODY$
 declare
@@ -56,7 +56,7 @@ section = '';
 			  application.application_property ap,
 		          cadastre.spatial_unit_group sg,
 		          cadastre.cadastre_object co
-	            WHERE   aa.nr = nr
+	            WHERE   aa.nr = inputnr
 	                    AND s.application_id = aa.id
 			    AND   s.request_type_code::text = 'systematicRegn'::text
                             AND   aa.id::text = ap.application_id::text
