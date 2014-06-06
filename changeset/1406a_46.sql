@@ -56,7 +56,7 @@ section = '';
 			  application.application_property ap,
 		          cadastre.spatial_unit_group sg,
 		          cadastre.cadastre_object co
-	            WHERE   aa.nr = 'KG/LOKOJA-14020013'
+	            WHERE   aa.nr = nr
 	                    AND s.application_id = aa.id
 			    AND   s.request_type_code::text = 'systematicRegn'::text
                             AND   aa.id::text = ap.application_id::text
