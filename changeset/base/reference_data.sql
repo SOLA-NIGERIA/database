@@ -430,3 +430,4 @@ UPDATE cadastre.hierarchy_level SET display_value = 'State'  WHERE code = '1';
 UPDATE cadastre.hierarchy_level SET display_value = 'Lga'  WHERE code = '2';
 UPDATE cadastre.hierarchy_level SET display_value = 'Ward'  WHERE code = '3';
 UPDATE cadastre.hierarchy_level SET display_value = 'Section'  WHERE code = '4';
+

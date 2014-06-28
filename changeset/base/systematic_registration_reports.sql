@@ -1,5 +1,4 @@
-﻿
-CREATE OR REPLACE FUNCTION administrative.getsysregprogress(fromdate character varying, todate character varying, namelastpart character varying)
+﻿CREATE OR REPLACE FUNCTION administrative.getsysregprogress(fromdate character varying, todate character varying, namelastpart character varying)
   RETURNS SETOF record AS
 $BODY$
 DECLARE 
@@ -517,50 +516,55 @@ $BODY$
   ROWS 1000;
 ALTER FUNCTION administrative.getsysregprogress(character varying, character varying, character varying) OWNER TO postgres;
 
+--------------
+--  STATUS REPORT
+--------------
 
 CREATE OR REPLACE FUNCTION administrative.getsysregstatus(fromdate character varying, todate character varying, namelastpart character varying)
   RETURNS SETOF record AS
 $BODY$
 DECLARE 
 
-       	block  			varchar;	
-       	appLodgedNoSP 		decimal:=0 ;	
-       	appLodgedSP   		decimal:=0 ;	
-       	SPnoApp 		decimal:=0 ;	
-       	appPendObj		decimal:=0 ;	
-       	appIncDoc		decimal:=0 ;	
-       	appPDisp		decimal:=0 ;	
-       	appCompPDispNoCert	decimal:=0 ;	
-       	appCertificate		decimal:=0 ;
-       	appPrLand		decimal:=0 ;	
-       	appPubLand		decimal:=0 ;	
-       	TotApp			decimal:=0 ;	
-       	TotSurvPar		decimal:=0 ;	
-
+       	
+                SRWU				varchar;
+		estimatedparcel			decimal:=0 ;
+		recordedparcel			decimal:=0 ;
+		recordedclaims		     	decimal:=0 ;
+		scanneddemarcation 		decimal:=0 ;
+		scannedclaims			decimal:=0 ;        
+		digitizedparcels		decimal:=0 ;
+		claimsentered			decimal:=0 ;               
+		parcelsreadyPD			decimal:=0 ;	-- ready for PD
+		parcelsPD			decimal:=0 ;	
+		parcelscompletedPD		decimal:=0 ;	-- ready for CofO
+		unsolveddisputes 		decimal:=0 ;
+		generatedcertificates	 	decimal:=0 ;
+		distributedcertificates 	decimal:=0 ;
 
 
       
-       rec     record;
-       sqlSt varchar;
-       statusFound boolean;
-       recToReturn record;
+		rec     			record;
+		sqlSt 				varchar;
+		statusFound 			boolean;
+		recToReturn 			record;
 
-        -- From Neil's email 9 march 2013
-	    -- STATUS REPORT
-		--Block	
-		--1. Total Number of Applications	
-		--2. No of Applications Lodged with Surveyed Parcel	
-		--3. No of Applications Lodged no Surveyed Parcel	     
-		--4. No of Surveyed Parcels with no application	
-		--5. No of Applications with pending Objection	        
-		--6. No of Applications with incomplete Documentation	
-		--7. No of Applications in Public Display	               
-		--8. No of Applications with Completed Public Display but Certificates not Issued	 
-		--9. No of Applications with Issued Certificate	
-		--10. No of Applications for Private Land	
-		--11. No of Applications for Public Land 	
-		--12. Total Number of Surveyed Parcels	
-
+        
+        -- From Sean's suggestions  10 February 2014
+          -- NEW STATUS REPORT
+		--1. Systematic Registration Work Unit	
+		--2. Estimated parcel	
+		--3. recorded parcel	
+		--4.recorded claims	     
+		--5.scanned demarcation
+		--6.scanned claims	        
+		--7. digitized parcels	
+		--8.claims entered	               
+		--9.parcels/claims completed  ready for PD	 
+		--10. parcels in Public Display	
+		--11. parcels completed Public Display/Ready for CofO	
+		--12. No not solved Disputes 	
+		--13. Generated Certificates
+		--14. Distributed Certificates
     
 BEGIN  
 
@@ -572,11 +576,10 @@ BEGIN
 			  cadastre.spatial_unit_group sg 
 			  where 
 			  sg.hierarchy_level=4
-    ';
+    ';  -- 1. Systematic Registration Work Unit
     if namelastpart != '' then
-         -- sqlSt:= sqlSt|| ' AND compare_strings('''||namelastpart||''', sg.name) ';
-          sqlSt:= sqlSt|| ' AND  sg.name =  '''||namelastpart||'''';  --1. block
-    end if;
+	sqlSt:= sqlSt|| ' AND  sg.name =  '''||namelastpart||'''';  --1. SRWU
+    end if;   
 
     --raise exception '%',sqlSt;
        statusFound = false;
@@ -587,6 +590,44 @@ BEGIN
     statusFound = true;
     
     select        ( SELECT  
+		    srwu.parcel_estimated
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                  ) as estimatedparcel 		--2. Estimated parcel
+		,
+
+		( SELECT  
+		    srwu.parcel_recorded
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                 ) as recordedparcel 		--3. recorded parcel
+                ,
+                 ( SELECT  
+		    srwu.claims_recorded
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                  ) as recordedclaims		--4.recorded claims
+                ,
+                 ( SELECT  
+		    srwu.demarcation_scanned
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                  ) as scanneddemarcation	--5.scanned demarcation
+                ,
+                 ( SELECT  
+		    srwu.claims_scanned
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                  ) as scannedclaims		--6.scanned claims
+                  ,
+                 ( SELECT count (distinct(co.id) )
+		    from cadastre.cadastre_object  co,
+		    cadastre.spatial_unit_group sg
+		    where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                    and  sg.name = ''|| rec.area ||''
+                  ) as digitizedparcels		--7.digitized parcels
+                  ,
+                 ( SELECT  
 		    count (distinct(aa.id)) 
 		    FROM  application.application aa,
 			  application.service s,
@@ -602,60 +643,43 @@ BEGIN
                               where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
                             )
-			    
-			    AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    )--2. No of Applications Lodged with Surveyed Parcel
-		,
-
-		    (SELECT count (distinct(aa.id))
-		     FROM application.application aa,
-		     administrative.ba_unit bu, 
-		     administrative.ba_unit_contains_spatial_unit su, 
-		     application.application_property ap,
-		     application.service s
-			 WHERE 
-			 bu.id::text = su.ba_unit_id::text 
-			 AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			 AND   aa.id::text = ap.application_id::text
-			 AND   s.request_type_code::text = 'systematicRegn'::text
-			 AND s.application_id = aa.id
-			 AND bu.id in 
-                            ( select su.ba_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+                   ) as claimsentered		--8.claims entered
+                  ,
+                 ( SELECT  
+		    count (distinct(aa.id)) 
+		    FROM  application.application aa,
+			  application.service s,
+			  administrative.ba_unit bu, 
+		          application.application_property ap
+			    WHERE s.application_id = aa.id
+			    AND   s.request_type_code::text = 'systematicRegn'::text
+			    AND   s.action_code::text = 'complete'::text 
+                            AND   aa.id::text = ap.application_id::text
+			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
+                            and bu.name_firstpart||bu.name_lastpart in
+                            ( select co.name_firstpart||co.name_lastpart 
+                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
+                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
                               and sg.name = ''|| rec.area ||''
                             )
-			 AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )) --3. No of Applications Lodged no Surveyed Parcel	
-		       ,
-
-	          (SELECT count (*)
-	            from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                             WHERE co.type_code='parcel'
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                            and sg.name = ''|| rec.area ||''
-			    AND   co.id not in (SELECT (su.spatial_unit_id)
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                           and sg.name = ''|| rec.area ||''
-                         ) 
-
-
-
-                          
-	          )--4. No of Surveyed Parcels with no application	     
-		  ,
+                   ) as parcelsreadyPD		--9.parcels/claims completed  ready for PD
+                   ,
+                   (select count(*) FROM administrative.systematic_registration_listing srl,
+                    cadastre.sr_work_unit  srwu
+                    WHERE srwu.name = ''|| rec.area ||''
+                    and srwu.name = srl.name
+                    and srwu.public_display_start_date between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+		    and (srwu.public_display_start_date + CAST(coalesce(system.get_setting('public-notification-duration'), '0') AS integer))<= to_date(''|| toDate ||'','yyyy-mm-dd')
+                    )as parcelsPD		--10. parcels in Public Display
+                   ,
+                   (select count(*) FROM administrative.systematic_registration_listing srl,
+                    cadastre.sr_work_unit  srwu
+                    WHERE srwu.name = ''|| rec.area ||''
+                    and srwu.name = srl.name
+                    and srwu.public_display_start_date between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
+		    and (srwu.public_display_start_date + CAST(coalesce(system.get_setting('public-notification-duration'), '0') AS integer))> to_date(''|| toDate ||'','yyyy-mm-dd')
+                    ) as parcelscompletedPD	--11. parcels completed Public Display/Ready for CofO
+                  ,
 
                   (
 	          SELECT (COUNT(*)) 
@@ -690,101 +714,9 @@ BEGIN
 		           or
 		          (aasr.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
 		          )
-		)--5. No of Applications with pending Objection	
+		) as unsolveddisputes		--12. No solved Disputes	
 		, 
-
-		  ( WITH appSys AS 	(SELECT  
-		    distinct on (aa.id) aa.id as id
-		    FROM  application.application aa,
-			  application.service s,
- 		          administrative.ba_unit bu, 
-		          application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.id::text = ap.application_id::text
-		            AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		            AND bu.id in 
-                            ( select su.ba_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                            ) 
-		            AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )),
-		     sourceSys AS	
-		     (
-		     SELECT  DISTINCT (sc.id) FROM  application.application_uses_source a_s,
-							   source.source sc,
-							   appSys app
-						where sc.type_code='systematicRegn'
-						 and  sc.id = a_s.source_id
-						 and a_s.application_id=app.id
-						 AND  (
-						  (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-						   or
-						  (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-						  )
-						
-				)
-		      SELECT 	CASE 	WHEN (SELECT (SUM(1) IS NULL) FROM appSys) THEN 0
-				WHEN ((SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys) >= 0) THEN (SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys)
-				ELSE 0
-			END 
-				  )--6. No of Applications with incomplete Documentation	        
-		    ,
-     
-               (select count(*) FROM administrative.systematic_registration_listing WHERE (name = ''|| rec.area ||'')
-                and ''|| rec.area ||'' in( 
-		                             select distinct(ss.reference_nr) from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||'' 
-					   )
-		)--7. No of Applications in Public Display	
-		 ,
-
-                 ( 
-                   select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		    AND ap.name_firstpart||ap.name_lastpart in
-   		  (select bu.name_firstpart||bu.name_lastpart
-   		    from administrative.ba_unit bu
-   		    where  bu.id in 
-                            ( select su.ba_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                            ) 
-                    )
-		   AND ap.name_lastpart in (select co.name_lastpart 
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg
-                              where ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name in( 
-		                              select ss.reference_nr 
-					     from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and   ss.reference_nr not in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='title'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''
-                                             )   
-					   )  
-		             )
-                 )--8. No of Applications with Completed Public Display but Certificates not Issued	               
-		 ,
+                 
 
                  (
                    select count(distinct (aa.id))
@@ -820,133 +752,65 @@ BEGIN
                                              )   
 					   )  
 			      )		   
-                )--9. No of Applications with Issued Certificate	 
-		 ,
-		 (SELECT count (distinct (aa.id) )
-			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
-			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
-			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
-			administrative.rrr rrr, administrative.ba_unit bu
-			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
-			  AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
-			  AND rrr.ba_unit_id::text = su.ba_unit_id::text
-			   AND co.id in 
-                            ( select su.spatial_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                            ) 
-                    
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			  AND 
-			  (rrr.type_code::text = 'ownership'::text 
-			   OR rrr.type_code::text = 'apartment'::text 
-			   OR rrr.type_code::text = 'commonOwnership'::text 
-			   ) 
-			  AND bu.id::text = su.ba_unit_id::text
-		 )--10. No of Applications for Private Land
-		 ,		
-		 ( SELECT count (distinct (aa.id) )
-			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
-			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
-			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
-			administrative.rrr rrr, administrative.ba_unit bu
-			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
-			  AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
-			  AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
-			  AND co.id in 
-                            ( select su.spatial_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                            ) 
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          ) 
-	  	 )--11. No of Applications for Public Land 	
+                ) as generatedcertificates		--13. Generated Certificates	 
 		 , 	
-                 (select count(*) from cadastre.cadastre_object co, cadastre.spatial_unit_group sg where
-                   ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom) and sg.name =''|| rec.area ||'') --12. Total Number of Surveyed Parcels	
+                 ( SELECT  
+		    srwu.certificates_distributed
+		    from cadastre.sr_work_unit  srwu
+                    where srwu.name = ''|| rec.area ||''
+                  ) as distributedcertificates		--14. Distributed Certificates	
 		   
-              INTO       TotApp,
-                         appLodgedSP,
-                         SPnoApp,
-                         appPendObj,
-                         appIncDoc,
-                         appPDisp,
-                         appCompPDispNoCert,
-                         appCertificate,
-                         appPrLand,
-                         appPubLand,
-                         TotSurvPar
-                
-              FROM        application.application aa,
-			  application.service s,
-			  application.application_property ap,
-		          administrative.ba_unit bu
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   aa.id::text = ap.application_id::text
-			    AND bu.id in 
-                            ( select su.ba_unit_id
-                              from cadastre.cadastre_object co, cadastre.spatial_unit_group sg,
-                              administrative.ba_unit_contains_spatial_unit su
-                              where co.id = su.spatial_unit_id
-                              and  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
-                              and sg.name = ''|| rec.area ||''
-                            ) 
-                                               
-	  ;        
+              INTO       
+                estimatedparcel,
+		recordedparcel,
+		recordedclaims,
+		scanneddemarcation,
+		scannedclaims, 
+		digitizedparcels,
+		claimsentered,               
+		parcelsreadyPD,	-- ready for PD
+		parcelsPD,	
+		parcelscompletedPD,	-- ready for CofO
+		unsolveddisputes,
+		generatedcertificates,
+		distributedcertificates;
 
-                block = rec.area;
-                TotApp = TotApp;
-		appLodgedSP = appLodgedSP;
-		SPnoApp = SPnoApp;
-                appPendObj = appPendObj;
-		appIncDoc = appIncDoc;
-		appPDisp = appPDisp;
-		appCompPDispNoCert = appCompPDispNoCert;
-		appCertificate = appCertificate;
-		appPrLand = appPrLand;
-		appPubLand = appPubLand;
-		TotSurvPar = TotSurvPar;
-		appLodgedNoSP = TotApp-appLodgedSP;
+
+                  
+
+                SRWU 			= rec.area;
+                estimatedparcel		= estimatedparcel;
+		recordedparcel		= recordedparcel;
+		recordedclaims		= recordedclaims;
+		scanneddemarcation	= scanneddemarcation;
+		scannedclaims		= scannedclaims; 
+		digitizedparcels	= digitizedparcels;
+		claimsentered		= claimsentered;               
+		parcelsreadyPD		= parcelsreadyPD;	-- ready for PD
+		parcelsPD		= parcelsPD;	
+		parcelscompletedPD	= parcelscompletedPD;	-- ready for CofO
+		unsolveddisputes	= unsolveddisputes;
+		generatedcertificates	= generatedcertificates;
+		distributedcertificates	= distributedcertificates;
 		
 
 
 	  
 	  select into recToReturn
-	       	block::			varchar,
-		TotApp::  		decimal,
-		appLodgedSP::  		decimal,
-		SPnoApp::  		decimal,
-		appPendObj::  		decimal,
-		appIncDoc::  		decimal,
-		appPDisp::  		decimal,
-		appCompPDispNoCert::  	decimal,
-		appCertificate::  	decimal,
-		appPrLand::  		decimal,
-		appPubLand::  		decimal,
-		TotSurvPar::  		decimal,
-		appLodgedNoSP::  	decimal;
-
+	        SRWU::				varchar,
+		estimatedparcel::		decimal,
+		recordedparcel::		decimal,
+		recordedclaims::	     	decimal,
+		scanneddemarcation:: 		decimal,
+		scannedclaims::			decimal, 
+		digitizedparcels::		decimal,
+		claimsentered::			decimal,
+		parcelsreadyPD::		decimal,
+		parcelsPD::			decimal,
+		parcelscompletedPD::		decimal,
+		unsolveddisputes:: 		decimal,
+		generatedcertificates::	 	decimal,
+		distributedcertificates:: 	decimal;
 		                         
           return next recToReturn;
           statusFound = true;
@@ -954,23 +818,23 @@ BEGIN
     end loop;
    
     if (not statusFound) then
-         block = 'none';
+         SRWU = 'none';
                 
         select into recToReturn
-	       	block::			varchar,
-		TotApp::  		decimal,
-		appLodgedSP::  		decimal,
-		SPnoApp::  		decimal,
-		appPendObj::  		decimal,
-		appIncDoc::  		decimal,
-		appPDisp::  		decimal,
-		appCompPDispNoCert::  	decimal,
-		appCertificate::  	decimal,
-		appPrLand::  		decimal,
-		appPubLand::  		decimal,
-		TotSurvPar::  		decimal,
-		appLodgedNoSP::  	decimal;
-
+	       	SRWU::				varchar,
+		estimatedparcel::		decimal,
+		recordedparcel::		decimal,
+		recordedclaims::	     	decimal,
+		scanneddemarcation:: 		decimal,
+		scannedclaims::			decimal, 
+		digitizedparcels::		decimal,
+		claimsentered::			decimal,
+		parcelsreadyPD::		decimal,
+		parcelsPD::			decimal,
+		parcelscompletedPD::		decimal,
+		unsolveddisputes:: 		decimal,
+		generatedcertificates::	 	decimal,
+		distributedcertificates:: 	decimal;
 		                         
           return next recToReturn;
 
@@ -984,13 +848,14 @@ $BODY$
 ALTER FUNCTION administrative.getsysregstatus(character varying, character varying, character varying) OWNER TO postgres;
 
 
-
+-----
+--  Production report
+-----
 -- Function: application.getsysregproduction(character varying, character varying)
 
 -- DROP FUNCTION application.getsysregproduction(character varying, character varying);
 
-
-CREATE OR REPLACE FUNCTION application.getsysregproduction(fromdate  character varying, todate  character varying)
+CREATE OR REPLACE FUNCTION application.getsysregproduction(fromdate character varying, todate character varying)
   RETURNS SETOF record AS
 $BODY$
 DECLARE 
@@ -1016,13 +881,13 @@ sqlSt :=
                   '
                   SELECT s.owner_name ownerName, 
 		         ''Demarcation Officer'' typeCode,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 1 ) monday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 2 ) tuesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 3 ) wednesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 4 ) thursday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 5 ) friday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 6 ) saturday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 6 ) sunday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 1 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) monday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 2 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) tuesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 3 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) wednesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 4 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) thursday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 5 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) friday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 6 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) saturday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 0 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) sunday,
                          1 as ord
 		  FROM source.source s
 		  WHERE s.type_code::text = ''sketchMap''::text
@@ -1031,13 +896,13 @@ sqlSt :=
                   UNION
                   SELECT ''Total'' as ownerName,
                         ''Demarcation Officer'' as typeCode,
-                        (select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and EXTRACT(DOW FROM ss.recordation) = 1 ) monday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 2 ) tuesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 3 ) wednesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 4 ) thursday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 5 ) friday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and EXTRACT(DOW FROM ss.recordation) = 6 ) saturday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 6 ) sunday,
+                        (select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and EXTRACT(DOW FROM ss.recordation) = 1 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) monday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 2 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) tuesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 3 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) wednesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 4 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) thursday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 5 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) friday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and EXTRACT(DOW FROM ss.recordation) = 6 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) saturday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''sketchMap''::text and  EXTRACT(DOW FROM ss.recordation) = 0 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) sunday,
                          2 as ord
 		   FROM source.source s
                    WHERE s.type_code::text = ''sketchMap''::text
@@ -1045,13 +910,13 @@ sqlSt :=
 		  UNION  
 		  SELECT  s.owner_name ownerName, 
 		         ''Recording Officer'' typeCode,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 1 ) monday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 2 ) tuesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 3 ) wednesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 4 ) thursday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 5 ) friday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 6 ) saturday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 6 ) sunday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 1 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) monday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 2 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) tuesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 3 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) wednesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 4 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) thursday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 5 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) friday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and EXTRACT(DOW FROM ss.recordation) = 6 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) saturday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and ss.owner_name=s.owner_name and  EXTRACT(DOW FROM ss.recordation) = 0 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) sunday,
                         4 as ord
                   FROM source.source s
 		  WHERE s.type_code::text = ''systematicRegn''::text
@@ -1060,13 +925,13 @@ sqlSt :=
                   UNION
                   SELECT ''Total''  as ownerName,
                          ''Recording Officer'' as typeCode,
-                      	(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and EXTRACT(DOW FROM ss.recordation) = 1 ) monday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 2 ) tuesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 3 ) wednesday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 4 ) thursday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 5 ) friday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and EXTRACT(DOW FROM ss.recordation) = 6 ) saturday,
-			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 6 ) sunday,
+                      	(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and EXTRACT(DOW FROM ss.recordation) = 1 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) monday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 2 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) tuesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 3 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) wednesday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 4 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) thursday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 5 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) friday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and EXTRACT(DOW FROM ss.recordation) = 6 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) saturday,
+			(select count(DISTINCT ss.id) FROM source.source ss where  ss.type_code::text = ''systematicRegn''::text and  EXTRACT(DOW FROM ss.recordation) = 0 and ss.recordation between to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and ((to_date('''|| fromdate || ''',''yyyy-mm-dd''))+6)) sunday,
                         5 as ord
 		   FROM source.source s
 		  WHERE s.type_code::text = ''systematicRegn''::text

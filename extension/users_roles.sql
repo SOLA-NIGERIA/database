@@ -30,6 +30,10 @@ INSERT INTO system.approle (code, display_value, status, description)
 SELECT 'ExportMap', 'Export Map','c', 'Export a selected map feature to KML for display in Google Earth'
 WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'ExportMap');
 
+insert into system.approle(code, display_value, status, description) values('recordLien', 'Record Lien', 'c', 'Allows to make changes for registration of lien');
+insert into system.approle(code, display_value, status, description) values('mapExistingParcel', 'Map Existing Parcel', 'c', 'Allows to map existing parcel as described on existing certificate of occupancy');
+
+
 -- Accounts Role   
 INSERT INTO system.appgroup(id, "name", description)
   (SELECT '50', 'Accounts', 'The Accounts staff of the Accounting Division have access to set the fee payment details for lodged ' ||
@@ -481,15 +485,6 @@ INSERT INTO system.appuser_appgroup (appuser_id, appgroup_id)
 VALUES ((SELECT id FROM system.appuser WHERE username = 'appapprover'), (SELECT id FROM system.appgroup WHERE "name" = 'Application Approver'));
 
 
-
-
---- Added Role for record Lien LH # 4 and Map Existing Parcel LH # 36
---
--- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres
---
-
-insert into system.approle(code, display_value, status, description) values('recordLien', 'Record Lien', 'c', 'Allows to make changes for registration of lien');
-insert into system.approle(code, display_value, status, description) values('mapExistingParcel', 'Map Existing Parcel', 'c', 'Allows to map existing parcel as described on existing certificate of occupancy');
 -- system.approle_appgroup
 --
 -- Data for Name: approle;approle_appgroup Type: TABLE DATA; Schema: system; Owner: postgres

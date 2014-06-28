@@ -1,25 +1,31 @@
-﻿   
+﻿  
+--- This is for correctly setting up the orthophoto onto localhost
+
 --- This is for correctly setting up the orthophoto onto localhost
 UPDATE system.config_map_layer 
-SET url = 'http://localhost:8085/geoserver/lokoja/wms',
-wms_layers= 'lokoja:Lokoja',
+SET url = 'http://localhost:8085/geoserver/nigeria/wms',
+wms_layers= 'nigeria:orthophoto',
 wms_format= 'image/jpeg',
 visible_in_start = TRUE,
 active = TRUE
 WHERE name='orthophoto';
 
---- This is for correctly setting up the orthophoto onto kogi land ministry server
+--- This is for correctly setting up the orthophoto onto kano land ministry server
+
+--- This is for correctly setting up the orthophoto onto localhost
 --UPDATE system.config_map_layer 
---SET url = 'http://192.168.0.6:8085/geoserver/lokoja/wms',
---wms_layers= 'lokoja:Lokoja',
+--SET url = 'http://<serveripaddress>:8085/geoserver/nigeria/wms',
+--wms_layers= 'nigeria:orthophoto',
 --wms_format= 'image/jpeg',
 --visible_in_start = TRUE,
 --active = TRUE
 --WHERE name='orthophoto';
 
 
+
+
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by kogi, Nigeria
+-- Remove layers from core SOLA that are not used by kano, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
 ---- Update existing layers to use correct sytles and item_order ----- 
@@ -45,7 +51,7 @@ WHERE "name" = 'roads';
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for kogi, Nigeria
+-- Setup Spatial Config for kano, Nigeria
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
@@ -57,7 +63,7 @@ DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
--- Configure the Level data for kogi, Nigeria
+-- Configure the Level data for kano, Nigeria
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -240,14 +246,14 @@ $BODY$ LANGUAGE plpgsql;
 
 
 -------------------------------------------- 
- --SET NEW SRID and OTHER kogi PARAMETERS
+ --SET NEW SRID and OTHER kano PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 
-UPDATE system.setting SET vl = '187286' WHERE "name" = 'map-west'; 
-UPDATE system.setting SET vl = '871118' WHERE "name" = 'map-south'; 
-UPDATE system.setting SET vl = '211718' WHERE "name" = 'map-east'; 
-UPDATE system.setting SET vl = '888012' WHERE "name" = 'map-north'; 
+UPDATE system.setting SET vl = '350000' WHERE "name" = 'map-west'; 
+UPDATE system.setting SET vl = '1220000' WHERE "name" = 'map-south'; 
+UPDATE system.setting SET vl = '550000' WHERE "name" = 'map-east'; 
+UPDATE system.setting SET vl = '1395000' WHERE "name" = 'map-north';
 UPDATE system.crs SET srid = '32632';
 
 ---------------update cadastre.hierarchy_level --------------------------
