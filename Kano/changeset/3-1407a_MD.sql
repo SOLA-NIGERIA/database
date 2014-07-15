@@ -19,6 +19,7 @@ insert into system.config_map_layer(name, title, type_code, active, visible_in_s
 values('parcels-for-parcel-plan', 'Parcels for Parcel Plan', 'pojo', false, false, 82, 'parcels_for_parcel_plan.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsForParcelPlan', false);
 
 insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('parcels-for-parcel-plan', 'in-plan-production', 'true');
+insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('parcels-for-parcel-plan', 'in-plan-sketch-production', 'true');
 
 
 
