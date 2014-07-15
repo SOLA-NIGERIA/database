@@ -1,10 +1,45 @@
-﻿insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'resolution', '50 cm');
+﻿insert into system.setting(name, vl, active, description) values('title-plan-gridcut-srid', 26332, true, 'The srid of the grid cut used in the title plan map');
+insert into system.setting(name, vl, active, description) values('surveyor', 'John Smith', true, 'Name of Surveyor');
+insert into system.setting(name, vl, active, description) values('surveyorRank', 'Surveyor', true, 'The rank of the Surveyor');
+
+
+
+
+insert into system.query(name, sql) 
+values('SpatialResult.getParcelsForParcelPlan', 
+'select co.id, 
+co.name_firstpart as label,  
+st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom 
+from cadastre.cadastre_object co 
+where type_code= ''parcel'' and status_code= ''current'' 
+and ST_Intersects(st_transform(co.geom_polygon, #{srid}), 
+ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(co.geom_polygon)> power(5 * #{pixel_res}, 2)');
+
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) 
+values('parcels-for-parcel-plan', 'Parcels for Parcel Plan', 'pojo', false, false, 82, 'parcels_for_parcel_plan.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsForParcelPlan', false);
+
+insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('parcels-for-parcel-plan', 'in-plan-production', 'true');
+
+
+
+insert into system.query(name, sql)
+values('SpatialResult.getRoadCenterlinesForParcelPlan', 
+'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom 
+from cadastre.spatial_unit
+where level_id = ''road-centerline'' and ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))');
+
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+values('road-centerlines-for-parcel-plan', 'Road centerlines for Parcel Plan', 'pojo', true, true, 35, 'road_centerline_for_parcel_plan.xml', 'theGeom:LineString,label:""', 'SpatialResult.getRoadCenterlinesForParcelPlan');
+
+insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('road-centerlines-for-parcel-plan', 'in-plan-production', 'true');
+
+
+insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'resolution', '50 cm');
 insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'data-source', 'Minna Datum/UTM');
-insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'surveyor', 'Name Of Surveyor');
-insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'rank', 'Rank');
 insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('orthophoto', 'in-plan-sketch-production', 'true');
-insert into system.config_map_layer_metadata (name_layer ,"name" , "value") values ('road-centerlines', 'in-plan-sketch-production', 'true');
 update system.config_map_layer_metadata set  value = 'true' where "name" = 'in-plan-production' and  name_layer = 'orthophoto';
+update system.config_map_layer_metadata set  value = 'false' where "name" = 'in-plan-production' and  name_layer not in ('orthophoto','parcels-for-parcel-plan','road-centerlines-for-parcel-plan');
+
 
 
 
@@ -43,12 +78,12 @@ CREATE OR REPLACE VIEW application.systematic_registration_certificates AS
            FROM system.config_map_layer_metadata
           WHERE config_map_layer_metadata.name_layer::text = 'orthophoto'::text AND config_map_layer_metadata.name::text = 'data-source'::text) AS imagerysource,
           '' as sheetnr,
-          ( SELECT config_map_layer_metadata.value
-           FROM system.config_map_layer_metadata
-          WHERE config_map_layer_metadata.name_layer::text = 'orthophoto'::text AND config_map_layer_metadata.name::text = 'surveyor'::text) AS surveyor,
-          ( SELECT config_map_layer_metadata.value
-           FROM system.config_map_layer_metadata
-          WHERE config_map_layer_metadata.name_layer::text = 'orthophoto'::text AND config_map_layer_metadata.name::text = 'rank'::text) AS rank
+          ( SELECT system.setting.vl
+           FROM system.setting
+          WHERE system.setting.name::text = 'surveyor'::text) AS surveyor,
+          ( SELECT system.setting.vl
+           FROM system.setting
+          WHERE system.setting.name::text = 'surveyorRank'::text) AS rank
     FROM 
    cadastre.spatial_unit_group sg,
    cadastre.cadastre_object co,
