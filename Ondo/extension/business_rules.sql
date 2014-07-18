@@ -1,4 +1,18 @@
 ﻿	
+----br 'public-display-check-complete-status'
+update  system.br_definition
+set  body = 'select
+(select count(*)
+FROM administrative.systematic_registration_listing WHERE (name = #{lastPart}) 
+)*100/
+(select count(*)
+from 
+cadastre.cadastre_object co,
+cadastre.spatial_unit_group sg
+where  ST_Intersects(ST_PointOnSurface(co.geom_polygon), sg.geom)
+and sg.name = #{lastPart}
+) > 90 as vl'
+where br_id = 'public-display-check-complete-status';
 ----br_generator for administrative.title_nr_seq ------------------------------------------------------------------------------------------------
 delete from system.br_definition  where br_id= 'generate-title-nr';
 delete from system.br  where id= 'generate-title-nr';
