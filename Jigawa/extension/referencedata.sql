@@ -1,4 +1,31 @@
-﻿--
+﻿
+
+-- new table for state reference data
+
+-- Table: party.state_type
+
+DROP TABLE party.state_type;
+
+CREATE TABLE party.state_type
+(
+  code character varying(20) NOT NULL,
+  display_value character varying(250) NOT NULL,
+  status character(1) NOT NULL DEFAULT 't'::bpchar,
+  description character varying(555),
+  CONSTRAINT state_type_pkey PRIMARY KEY (code)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE party.state_type OWNER TO postgres;
+COMMENT ON TABLE party.state_type IS 'Reference Table / Code list of states
+LADM Reference Object 
+LA_
+LADM Definition
+State';
+
+
+--
 -- PostgreSQL database dump
 --
 
