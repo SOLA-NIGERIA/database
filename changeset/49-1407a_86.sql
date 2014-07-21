@@ -2,6 +2,8 @@
 
 	ALTER TABLE "document"."document" ALTER description TYPE character varying(300);
         ALTER TABLE "document"."document_historic" ALTER description TYPE character varying(300);
+        ALTER TABLE "document"."document" ALTER nr TYPE character varying(100);
+        ALTER TABLE "document"."document_historic" ALTER nr TYPE character varying(100);
 
 
       -- document.document
@@ -31,8 +33,7 @@ BEGIN
 
   return (
           select sg.id ||'-'
-           from cadastre.spatial_unit_group sg where sg.hierarchy_level='2' and sg.seq_nr >0
-
+          from cadastre.spatial_unit_group sg where sg.hierarchy_level='2' and sg.seq_nr >0
          );
 END;
 $BODY$
