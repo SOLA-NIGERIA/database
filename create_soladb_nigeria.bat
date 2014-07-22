@@ -63,11 +63,11 @@ echo Loading SOLA business rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%rulesPath%br_target_spatial_unit_group.sql >> build.log 2>&1
 
 
-echo STATE: %label% >> ..\build.log 2>&1
+echo STATE: %label% >>  build.log 2>&1
 echo Loading   Extensions...
 echo Loading   Extensions... >> build.log 2>&1
 echo Loading Spatial Config... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%extensionPath%spatial_config.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%extensionPath%spatial_config.sql >> build.log 2>&1
 echo Loading Spatial Config... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%utilitiesPath%reset_srid.sql >> build.log 2>&1
 echo Loading Table Changes... >> build.log 2>&1
@@ -76,18 +76,18 @@ echo Loading   Dispute Module... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%dispute_module.sql >> build.log 2>&1
 echo Loading Reference Data... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%reference_data.sql >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%extensionPath%reference_data.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%extensionPath%reference_data.sql >> build.log 2>&1
 
 echo Loading   Business Rules... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%extensionPath%business_rules.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%extensionPath%business_rules.sql >> build.log 2>&1
 echo Loading   Cadastre Functions... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%extensionPath%get_cadastre_functions.sql >> build.log 2>&1
 echo Loading   Systematic Registration Reports... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%systematic_registration_reports.sql >> build.log 2>&1
 echo Loading   User Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
 echo Loading   LGA and Ward Boundaries... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
 
 
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%1-1403a_8.sql >> build.log 2>&1
@@ -144,10 +144,10 @@ echo INPUT LGA: %lga% >> ..\build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%49-1407a_86.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%50-1407a_8.sql >> build.log 2>&1
 
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%changesetPath%1-1405a_GR.sql >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%changesetPath%2-1405c_MD.sql >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%changesetPath%3-1407a_MD.sql >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%label%\%changesetPath%4-1407a_MD.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%1-1405a_GR.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%2-1405c_MD.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%3-1407a_MD.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%4-1407a_MD.sql >> build.log 2>&1
 
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
