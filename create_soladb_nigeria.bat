@@ -143,6 +143,8 @@ echo INPUT LGA: %lga% >> ..\build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%48-1406c_85.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%49-1407a_86.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%50-1407a_8.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%51-1407b_85.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%changesetPath%52-1407b_87.sql >> build.log 2>&1
 
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%1-1405a_GR.sql >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%2-1405c_MD.sql >> build.log 2>&1
