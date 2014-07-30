@@ -104,7 +104,7 @@ echo Loading   LGA and Ward Boundaries... >> build.log 2>&1
 echo Loading   Systematic Registration Reports... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%extensionPath%create_generator_nr.sql >> build.log 2>&1
 
-echo INPUT LGA: %lga% >> ..\build.log 2>&1
+echo INPUT LGA: %lga% >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --command="select system.set_system_id('%lga%')" >> build.log 2>&1
 
 REM echo the files in the folder changeset
