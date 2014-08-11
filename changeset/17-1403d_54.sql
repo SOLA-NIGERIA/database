@@ -25,29 +25,12 @@ BEGIN
 		and rrrsh.id = pr.share_id
 		AND rrr.type_code = rrrt.code
 		and   rrr.ba_unit_id= baunit_id
-	        union
-	         select distinct (notation.notation_text)  as value
-                 from party.party pp,
-		     administrative.party_for_rrr  pr,
-		     administrative.rrr rrr,
-		     administrative.rrr_share  rrrsh,
-		     administrative.rrr_type  rrrt,
-		     administrative.notation notation
-		where pp.id=pr.party_id
-		and   pr.rrr_id=rrr.id
-		and rrrsh.id = pr.share_id
-		AND rrr.type_code = rrrt.code
-		and rrrsh.share_type = 'Shared Land Holders' 
-		and rrrsh.nominator = 1
-		and rrrsh.denominator = 1
-		and notation.ba_unit_id = rrr.ba_unit_id
-		and   rrr.ba_unit_id= baunit_id	
 	loop
            rrr = rrr || ', ' || rec.value;
 	end loop;
 
         if rrr = '' then
-	  rrr = 'No rrr claimed ';
+	  rrr = 'No Other rrr claimed ';
        end if;
 
 	if substr(rrr, 1, 1) = ',' then

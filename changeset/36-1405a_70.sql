@@ -11,14 +11,16 @@ $BODY$
 declare
   rec record;
   rrr character varying;
-  
+  i integer =0 ;
 BEGIN
   rrr = '';
-   
+              
+
 	for rec in 
               select  (rrrt.display_value)  as tiporrr,
-              rrrsh.share_type as tiposhare,
-              initcap(pp.name)||' '||initcap(pp.last_name) || ' ( '||rrrsh.nominator||'/'||rrrsh.denominator||' )' as value
+              initcap(pp.name)||' '||initcap(pp.last_name) || ' ( '||rrrsh.nominator||'/'||rrrsh.denominator||' )'
+               as value,
+               rrrsh.nominator||'/'||rrrsh.denominator as shareFraction
               from party.party pp,
 		     administrative.party_for_rrr  pr,
 		     administrative.rrr rrr,
@@ -30,18 +32,23 @@ BEGIN
 		AND rrr.type_code = rrrt.code
 		and   rrr.ba_unit_id= baunit_id
 	loop
-          if rec.tiposhare = 'Shared Land Holders' then
-	   rec.value = replace(rec.value, '( 1/1 )',' (in undefined unequal shares)');
-	  end if;
            rrr = rrr || ', ' || rec.value;
+           i = i+1;
 	end loop;
 
         if rrr = '' then
 	  rrr = 'No rrr claimed ';
        end if;
 
+        
 	if substr(rrr, 1, 1) = ',' then
           rrr = substr(rrr,2);
+        end if;
+        if i = 2 then
+          rrr= replace(rrr, '( 1/1 )','Joint');
+        end if;
+        if i > 2 then
+          rrr= replace(rrr, '( 1/1 )','Undefined Share');
         end if;
         rrr= replace(rrr, '( 1/1 )','');
 return rrr;
