@@ -48,7 +48,7 @@ BEGIN
           rrr= replace(rrr, '( 1/1 )','Joint');
         end if;
         if i > 2 then
-          rrr= replace(rrr, '( 1/1 )','Undefined Share');
+          rrr= replace(rrr, '( 1/1 )','Undevided Share');
         end if;
         rrr= replace(rrr, '( 1/1 )','');
 return rrr;
