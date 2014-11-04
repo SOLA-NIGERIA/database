@@ -96,6 +96,12 @@ COMMENT ON COLUMN administrative.ba_unit_as_party.rowidentifier
 --
 -- Name: extracted_rows; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
 --
+DROP TABLE IF EXISTS  system.extracted_rows;
+CREATE TABLE IF NOT EXISTS  system.extracted_rows (
+    table_name character varying(200) NOT NULL,
+    rowidentifier character varying(40) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS  system.extracted_rows (
     table_name character varying(200) NOT NULL,
     rowidentifier character varying(40) NOT NULL
