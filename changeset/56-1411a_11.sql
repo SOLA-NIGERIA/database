@@ -2,9 +2,13 @@
             code, display_value, description, status)
     VALUES ('5','Daily Work Unit','','c');
 
-update cadastre.hierarchy_level set display_value = 'Public Display Area' where code='4';
 
-update cadastre.spatial_unit_group set hierarchy_level = 5 where hierarchy_level=4;
+UPDATE cadastre.hierarchy_level set display_value = 'Public Display Area' where code='4';
+UPDATE system.config_map_layer  set title = 'Public Display Area' where name = 'sug_section';
+UPDATE system.map_search_option set title = 'Public Display Area' where CODE = 'SECTION';
+
+
+UPDATE cadastre.spatial_unit_group set hierarchy_level = 5 where hierarchy_level=4;
 
 -- DROP VIEW cadastre.dwu;
 
@@ -17,18 +21,14 @@ ALTER TABLE cadastre.dwu
   OWNER TO postgres;
 
 
-
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES (uuid_generate_v1(), 'Daily Work Unit', 'all', 'polygon', 'mixed', 'test');
-
 
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getDWU', 'select id, label, st_asewkb(geom) as the_geom from cadastre.dwu where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves Daily Work Unit');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_dwu', 'Daily Work Unit', 'pojo', true, true, 80, 'dwu.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getDWU');
-
-UPDATE system.config_map_layer set title = 'Public Display Area' where name = 'sug_section';
 
 
 CREATE OR REPLACE VIEW application.systematic_registration_certificates AS 
