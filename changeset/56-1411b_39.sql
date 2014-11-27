@@ -1,6 +1,6 @@
--- ***********************************************************************
+﻿-- ***********************************************************************
 
-Insert the new requesty_type called registerSLTRCofO and make it available as a service
+--Insert the new requesty_type called registerSLTRCofO and make it available as a service
 
 INSERT into application.request_type(code, request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) 
 values('registerSLTRCofO','registrationServices','Register an SLTR C of O','This request types allows for the registration of an SLTR C of O','c',1,0.00,0.00,0.00,0,'Registers an SLTR C of O','ownership','new');
@@ -17,7 +17,7 @@ INSERT INTO system.appgroup (id,name) VALUES(uuid_generate_v1(),'Deeds Registrar
 
 -- ***********************************************************************
 
-INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('newFreehold','174a8992-7644-11e4-91ba-67bdb1041ecc');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('newFreehold','super-group-id');
 
 
 -- ***********************************************************************
