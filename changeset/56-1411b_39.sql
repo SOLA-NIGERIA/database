@@ -17,12 +17,12 @@ INSERT INTO system.appgroup (id,name) VALUES(uuid_generate_v1(),'Deeds Registrar
 
 -- ***********************************************************************
 
-INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('newFreehold','super-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('registerSLTRCofO','super-group-id');
 
 
 -- ***********************************************************************
 
-update system.approle set display_value = 'CofO Registration', description = 'Allows to register a new CofO' where code = 'newFreehold';
+update system.approle set display_value = 'CofO Registration', description = 'Allows to register a new CofO' where code = 'registerSLTRCofO';
 
 
 -- ***********************************************************************
