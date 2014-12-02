@@ -16,6 +16,29 @@ ALTER TABLE administrative.ba_unit_as_party ADD COLUMN rowidentifier character v
 COMMENT ON COLUMN administrative.ba_unit_as_party.rowidentifier
  IS 'SOLA Extension: Identifies the all change records for the row in the ba_unit_as_party table';
 
+--- DELETE BR -------------------
+--- BR ------------
+DELETE FROM system.br_validation where br_id = 'consolidation-not-again';
+DELETE FROM system.br_validation where br_id = 'application-spatial-unit-not-transferred';
+DELETE FROM system.br_validation where br_id = 'application-not-transferred';;
+DELETE FROM system.br_validation where br_id = 'generate-process-progress-consolidate-max';
+DELETE FROM system.br_validation where br_id = 'generate-process-progress-extract-max';
+
+DELETE FROM system.br_definition where br_id = 'application-spatial-unit-not-transferred';
+DELETE FROM system.br_definition where br_id = 'consolidation-not-again';
+DELETE FROM system.br_definition where br_id = 'application-not-transferred';
+DELETE FROM system.br_definition where br_id = 'generate-process-progress-consolidate-max';
+DELETE FROM system.br_definition where br_id = 'generate-process-progress-extract-max';
+
+DELETE FROM system.br where id = 'application-spatial-unit-not-transferred';
+DELETE FROM system.br where id = 'consolidation-not-again';
+DELETE FROM system.br where id = 'application-not-transferred';
+DELETE FROM system.br where id = 'generate-process-progress-consolidate-max';
+DELETE FROM system.br where id = 'generate-process-progress-extract-max';
+DELETE from system.br where id='consolidation-extraction-file-name';
+
+
+
 --- REFERENCE TABLES  -----------
 DELETE FROM application.application_action_type where code = 'transfer';
 DELETE FROM application.application_status_type where code = 'to-be-transferred';
@@ -30,22 +53,6 @@ INSERT INTO application.application_action_type (code, display_value, status_to_
 
 --- SYSTEM-ID ---------------------------------
 Update system.setting set vl = replace(vl, '/', '-') where name = 'system-id';
-
---- BR ------------
-DELETE FROM system.br_validation where id = 'consolidation-not-again';
-
-DELETE FROM system.br_definition where br_id = 'application-spatial-unit-not-transferred';
-DELETE FROM system.br_definition where br_id = 'consolidation-not-again';
-DELETE FROM system.br_definition where br_id = 'application-not-transferred';
-DELETE FROM system.br_definition where br_id = 'generate-process-progress-consolidate-max';
-DELETE FROM system.br_definition where br_id = 'generate-process-progress-extract-max';
-
-DELETE FROM system.br where id = 'application-spatial-unit-not-transferred';
-DELETE FROM system.br where id = 'consolidation-not-again';
-DELETE FROM system.br where id = 'application-not-transferred';
-DELETE FROM system.br where id = 'generate-process-progress-consolidate-max';
-DELETE FROM system.br where id = 'generate-process-progress-extract-max';
-delete from system.br where id='consolidation-extraction-file-name';
 
 INSERT INTO system.br (id, display_name, technical_type_code, feedback, description, technical_description) 
 VALUES ('consolidation-extraction-file-name', 'Consolidation extraction file name', 'sql', '', 'Generates the name of the extraction file for the consolidation. The extension is not part of this generation.', '');
