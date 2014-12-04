@@ -10,31 +10,49 @@ lga_exists integer;
 val_to_return character varying;
    
 begin
+
    if input_label  != '' then   
+
+    if input_label  = 'State' then   
+        select sg.id
+        into val_to_return
+        from  cadastre.spatial_unit_group sg
+        where hierarchy_level='1';
+		
+		update system.setting
+		set vl = val_to_return
+		where name = 'system-id';
+    else
           select count('X')
           into lga_exists
           from  cadastre.spatial_unit_group
           where hierarchy_level='2' and label = input_label;
-      if lga_exists > 0 then
+       if lga_exists > 0 then
           select count('X')
           into lga_exists
           from  cadastre.spatial_unit_group
           where hierarchy_level='2' and seq_nr = 1;
-        if lga_exists > 0 then
+         if lga_exists > 0 then
            RAISE EXCEPTION 'system id already set';
-        else
+         else
       
-        ---  update the cadastre.spatial_unit_group table for setting the lga as system-id
-	update cadastre.spatial_unit_group
-	set seq_nr = 1 
-	-- NB  to be uncommented only the line correspondent to the lga office  database
-	where hierarchy_level='2' and label = input_label;
-          
-        select sg.id
-        into val_to_return
-        from  cadastre.spatial_unit_group sg
-        where hierarchy_level='2' and label = input_label;
-
+		---  update the cadastre.spatial_unit_group table for setting the lga as system-id
+		update cadastre.spatial_unit_group
+		set seq_nr = 1 
+		-- NB  to be uncommented only the line correspondent to the lga office  database
+		where hierarchy_level='2' and label = input_label;
+		  
+		select sg.id
+		into val_to_return
+		from  cadastre.spatial_unit_group sg
+		where hierarchy_level='2' and label = input_label;
+         end if;
+        end if;  
+    end if;
+		
+		update system.setting set vl = 
+		val_to_return
+		where name = 'system-id';   
 	---------------------------------------
 	-- update existing generated numbers --
 	---------------------------------------
@@ -137,50 +155,85 @@ begin
 
 	---'generate-title-nr'
 
-	update system.br_definition
-	set  body = 'select sg.id ||''-''|| trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''|| trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-title-nr';
+
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''|| trim(to_char(nextval(''administrative.title_nr_seq''), ''0000000000'')) AS vl'
 	where br_id = 'generate-title-nr';
-
-
+   
+         
 	-- generate-dispute-nr
-	update system.br_definition
-	set  body = 'select sg.id ||''-''||to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.dispute_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.dispute_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-dispute-nr';
+
+
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''|| to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.dispute_nr_seq''), ''0000'')) AS vl'
 	where br_id = 'generate-dispute-nr';
 
 
 	----------------------------------------------------------------------------------------------------
 	---generate-application-nr
-	update system.br_definition
-	set  body = 'select sg.id ||''-''||to_char(now(), ''yymm'') || trim(to_char(nextval(''application.application_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''||to_char(now(), ''yymm'') || trim(to_char(nextval(''application.application_nr_seq''), ''0000'')) AS vl'
 	where br_id = 'generate-application-nr';
+
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymm'') || trim(to_char(nextval(''application.application_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-application-nr';
 
 
 	----------------------------------------------------------------------------------------------------
 	---'generate-notation-reference-nr'
-	update system.br_definition
-	set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.notation_reference_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	 
+
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.notation_reference_nr_seq''), ''0000'')) AS vl'
 	where br_id = 'generate-notation-reference-nr';
 
+
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.notation_reference_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-notation-reference-nr';
+       
 	----------------------------------------------------------------------------------------------------
 	----'generate-rrr-nr'
-	update system.br_definition
-	set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.rrr_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	 
+
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.rrr_nr_seq''), ''0000'')) AS vl'
 	where br_id = 'generate-rrr-nr';
+  
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''administrative.rrr_nr_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-rrr-nr';
 
 	----------------------------------------------------------------------------------------------------
 	-----'generate-source-nr'
-
-	update system.br_definition
-	set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''source.source_la_nr_seq''), ''000000000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	 
+        update system.br_definition
+	set  body = 'select '''||val_to_return||'-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''source.source_la_nr_seq''), ''000000000'')) AS vl'
 	where br_id = 'generate-source-nr';
+ 
+        
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' || trim(to_char(nextval(''source.source_la_nr_seq''), ''000000000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-source-nr';
 
 	----------------------------------------------------------------------------------------------------
 	---- 'generate-baunit-nr'
-	 
 	update system.br_definition
-	set  body = 'select sg.id ||''-''||  to_char(now(), ''yymmdd'') || ''-'' ||  trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
-	|| ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	set  body = 'select '''||val_to_return||'-''||to_char(now(), ''yymmdd'') || ''-'' ||  trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
+	|| ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) AS vl'
 	where br_id = 'generate-baunit-nr';
+	--update system.br_definition
+	--set  body = 'select sg.id ||''-''||  to_char(now(), ''yymmdd'') || ''-'' ||  trim(to_char(nextval(''administrative.ba_unit_first_name_part_seq''), ''0000''))
+	--|| ''/'' || trim(to_char(nextval(''administrative.ba_unit_last_name_part_seq''), ''0000'')) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
+	--where br_id = 'generate-baunit-nr';
 
 	-----------------------------------------------------------------------------------------------
 	--------------- keep commented ---------------------------------------------------------------------
@@ -206,8 +259,9 @@ begin
 	--set  body = 'select sg.id ||''-''||to_char(now(), ''yymmdd'') || ''-'' ||  to_char(now(), ''yymmdd'') || ''-'' ||  cadastre.generate_spatial_unit_group_name(get_geometry_with_srid(#{geom_v}), #{hierarchy_level_v}, #{label_v}) AS vl from cadastre.spatial_unit_group sg where sg.hierarchy_level=''2'' and sg.seq_nr >0'
 	--where br_id = 'generate-spatial-unit-group-name';
          end if;
-       end if;  
-   end if; 
+       --end if; 
+     --end if; 
+   --end if; 
    if val_to_return is not null then
           val_to_return := val_to_return;
    else
@@ -218,5 +272,6 @@ end;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION system.set_system_id(character varying) OWNER TO postgres;
+ALTER FUNCTION system.set_system_id(character varying)
+  OWNER TO postgres;
 COMMENT ON FUNCTION system.set_system_id(character varying) IS 'This function generates the systemid.';
