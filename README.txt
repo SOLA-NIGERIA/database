@@ -1,5 +1,5 @@
 Database repository for the Solutions for Open Land Administration
-(SOLA) open source project. This repository contains sql scripts
+(SOLA) NIGERIA open source project. This repository contains sql scripts
 and OS batch/command files for building and populating the SOLA 
 PostgreSQL database.
 
