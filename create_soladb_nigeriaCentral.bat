@@ -10,7 +10,7 @@ set username=postgres
 set archive_password=?
 set label=Enter State (Kano,Ondo,Kaduna,Kogi,Jigawa,CrossRiver...)
 
-set lga=Enter LGA  (Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
+REM set lga=Enter LGA  (Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
 
 set createDB=NO
 
@@ -25,7 +25,7 @@ set /p username= Username [%username%] :
 
 set /p label= State: [%label%] :
 
-set /p lga= Lga office code: [%lga%] :
+REM set /p lga= Lga office code: [%lga%] :
 
 
 set rulesPath=rules\
@@ -103,18 +103,18 @@ echo Loading   Systematic Registration Reports... >> build.log 2>&1
 echo Loading   User Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%extensionPath%users_roles.sql >> build.log 2>&1
 echo Loading   LGA and Ward Boundaries... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\database-%label%\%migrationPath%sola_populate_shapefiles.sql >> build.log 2>&1
+
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\database-%label%\%migrationPath%populate_sug.sql >> build.log 2>&1
+
 echo Loading   Systematic Registration Reports... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%extensionPath%create_generator_nr.sql >> build.log 2>&1
-
-echo INPUT LGA: %lga% >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --command="select system.set_system_id('%lga%')" >> build.log 2>&1
 
 REM echo the files in the folder changeset
 for /f "eol=: delims=" %%F in (
   'dir %changesetPath%\*.sql /b /a-d /one   2^>nul'
 ) do %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%changesetPath%\%%F  >> build.log 2>&1
 
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --command="select system.set_system_id('State')" >> build.log 2>&1
 
 for /f "eol=: delims=" %%F in (
   'dir ..\database-%label%\%changesetPath%\*.sql /b /a-d /one   2^>nul'
