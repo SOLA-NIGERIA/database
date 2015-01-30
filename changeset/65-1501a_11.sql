@@ -1,4 +1,48 @@
-﻿INSERT INTO cadastre.hierarchy_level(
+﻿CREATE OR REPLACE VIEW administrative.sys_reg_signing_list AS 
+
+ SELECT DISTINCT co.id, co.name_firstpart, co.name_lastpart, 
+    (co.name_lastpart::text || '/'::text) || co.name_firstpart::text AS parcel, 
+    sg.name::text AS name, 
+    administrative.get_parcel_ownernames(bu.id) AS persons
+   FROM cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
+    administrative.ba_unit_contains_spatial_unit su, 
+    application.application_property ap, application.application aa, 
+    application.service s, administrative.ba_unit bu, 
+    cadastre.spatial_unit_group sg, administrative.rrr rrr, 
+    administrative.rrr_type rrrt, party.party pp, 
+    administrative.party_for_rrr pr
+  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text 
+  AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text 
+  OR (ap.name_lastpart::text || ap.name_firstpart::text) = (bu.name_lastpart::text || bu.name_firstpart::text))
+   AND (co.name_lastpart::text || co.name_firstpart::text) = (bu.name_lastpart::text || bu.name_firstpart::text) 
+   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text
+    AND bu.id::text = su.ba_unit_id::text AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom) AND sg.hierarchy_level = 4 
+    AND rrr.ba_unit_id::text = bu.id::text AND rrr.type_code::text = rrrt.code::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text AND sg.hierarchy_level = 4 
+    AND st_intersects(st_pointonsurface(co.geom_polygon), sg.geom)
+  ORDER BY (co.name_lastpart::text || '/'::text) || co.name_firstpart::text;
+
+update system.br_definition set body = '
+WITH 
+reqForAp
+ AS 	(SELECT DISTINCT ON(r_s.source_type_code) r_s.source_type_code AS typeCode 
+	FROM application.request_type_requires_source_type r_s INNER JOIN application.service sv 
+	ON((r_s.request_type_code = sv.request_type_code) AND (sv.status_code != ''cancelled'')) 
+	WHERE sv.application_id = #{id} AND sv.request_type_code = ''systematicRegn''
+	AND r_s.source_type_code=''signingList''), 
+inclInAp
+ AS 
+	(SELECT DISTINCT ON (sc.id) sc.id FROM reqForAp req INNER JOIN source.source sc ON (req.typeCode = sc.type_code) 
+	INNER JOIN application.application_uses_source a_s ON ((sc.id = a_s.source_id) AND req.typeCode=''signingList'' 
+	AND (a_s.application_id = #{id}))) 
+	
+SELECT CASE WHEN (SELECT (SUM(1) IS NULL) FROM reqForAp) THEN NULL 
+WHEN ((SELECT COUNT(*) FROM inclInAp) - (SELECT COUNT(*) FROM reqForAp) >= 0) THEN TRUE ELSE FALSE END AS vl 
+'
+where br_id = 'application-check-signing-list';
+
+
+
+INSERT INTO cadastre.hierarchy_level(
             code, display_value, description, status)
     VALUES ('5','Daily Work Unit','','c');
 
