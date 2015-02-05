@@ -22,7 +22,7 @@ INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('registerS
 
 -- ***********************************************************************
 
-update system.approle set display_value = 'CofO Registration', description = 'Allows to register a new CofO' where code = 'registerSLTRCofO';
+INSERT INTO system.approle (code,display_value,status, description) VALUES ('registerSLTRCofO','CofO Registration','c','Allows to register a new CofO')
 
 
 -- ***********************************************************************
