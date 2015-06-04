@@ -8,9 +8,9 @@ set port=5432
 
 set username=postgres
 set archive_password=?
-set label=Enter State (Kano,Ondo,Kaduna,Kogi,Jigawa,CrossRiver...)
+set label=Enter State (Anambra, Kano,Ondo,Kaduna,Kogi,Jigawa,CrossRiver...)
 
-set lga=Enter LGA  (Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
+set lga=Enter LGA  (Ogbaru, Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
 
 set createDB=NO
 
