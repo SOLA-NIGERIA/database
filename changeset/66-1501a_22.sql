@@ -1,5 +1,4 @@
-﻿INSERT INTO system.version SELECT '1501a' WHERE NOT EXISTS (SELECT version_num FROM system.version WHERE version_num = '1501a');
-
+INSERT INTO system.version SELECT '1501a' WHERE NOT EXISTS (SELECT version_num FROM system.version WHERE version_num = '1501a');
 
 
 

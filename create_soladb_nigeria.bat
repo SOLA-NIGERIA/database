@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 
 set psql_path=%~dp0
 set psql_path="%psql_path%psql\psql.exe"
@@ -10,8 +10,8 @@ set username=postgres
 set archive_password=?
 set label=Enter State (Anambra, Kano,Ondo,Kaduna,Kogi,Jigawa,CrossRiver...)
 
-set lga=Enter LGA  (Awka North, Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
-
+set lga=Enter LGA  (Awka South, Ungogo, Fagge, AKR, Kaduna, LKJ, KAB....)
+SET fillWithSampleData=N
 set createDB=NO
 
 
@@ -26,6 +26,7 @@ set /p username= Username [%username%] :
 set /p label= State: [%label%] :
 
 set /p lga= Lga office code: [%lga%] :
+SET /p fillWithSampleData= Fill database with sample data? (Y/N) [%fillWithSampleData%] :
 
 
 set rulesPath=rules\
@@ -120,6 +121,21 @@ for /f "eol=: delims=" %%F in (
   'dir ..\database-%label%\%changesetPath%\*.sql /b /a-d /one   2^>nul'
 ) do %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\database-%label%\%changesetPath%\%%F  >> build.log 2>&1
 
+IF /I "%fillWithSampleData%"=="N" GOTO FINISH
+REM Extract the test data from the 7z archive and load it into the database. 
+echo Extracting data files...
+echo ### Extracting data files... >> build.log 2>&1
+
+REM Load the SQL files containing the test data
+for %%f in (..\database-%label%\data\*.sql) do (
+   echo Loading %%f...
+   echo ### Loading %%f... >> build.log 2>&1
+   %psql_path% --host=%host% --port=%port% --dbname=%dbname% --username=%username% --file=%%f >> build.log 2>&1
+)
+
+:FINISH
+REM Report the finish time
+echo Finished at %time% - Check build.log for errors!
 
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1

@@ -17,12 +17,11 @@ INSERT INTO system.appgroup (id,name) VALUES(uuid_generate_v1(),'Deeds Registrar
 
 -- ***********************************************************************
 
+INSERT INTO system.approle (code,display_value,status, description) VALUES ('registerSLTRCofO','CofO Registration','c','Allows to register a new CofO');
+
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) VALUES('registerSLTRCofO','super-group-id');
 
 
--- ***********************************************************************
-
-INSERT INTO system.approle (code,display_value,status, description) VALUES ('registerSLTRCofO','CofO Registration','c','Allows to register a new CofO')
 
 
 -- ***********************************************************************
